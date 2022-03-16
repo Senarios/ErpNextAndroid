@@ -32,7 +32,7 @@ public class LogsStockEntryAdapter extends RecyclerView.Adapter<LogsStockEntryAd
     }
 
     public interface LogStockEntryUpdate {
-        void stockentrydoupdate(View view,int position);
+        void updateStockEntry(View view,int position);
     }
 
     @NonNull
@@ -57,7 +57,7 @@ public class LogsStockEntryAdapter extends RecyclerView.Adapter<LogsStockEntryAd
         holder.swarehouse.setText("Posting Time: " + swarehouse);
         holder.twarehouse.setText("Target Warehouse:  " + twarehouse);
         holder.menu.setOnClickListener(v -> {
-            logStockEntryUpdate.stockentrydoupdate(holder.menu,holder.getAdapterPosition());
+            logStockEntryUpdate.updateStockEntry(holder.menu,holder.getAdapterPosition());
         });
     }
 
