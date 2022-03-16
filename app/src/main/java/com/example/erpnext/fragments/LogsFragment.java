@@ -2,6 +2,7 @@ package com.example.erpnext.fragments;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,6 +20,7 @@ import com.example.erpnext.adapters.LogsInvoiceAdapter;
 import com.example.erpnext.adapters.LogsTasksAdapter;
 import com.example.erpnext.app.MainApp;
 import com.example.erpnext.databinding.FragmentLogsBinding;
+import com.example.erpnext.models.AddCustomerOfflineModel;
 import com.example.erpnext.models.MyTaskOfflineModel;
 import com.example.erpnext.models.MyTaskUpdateRes;
 import com.example.erpnext.models.PendingOrder;
@@ -45,6 +47,7 @@ public class LogsFragment extends Fragment implements LogsTasksAdapter.LogTaskUp
     private FragmentLogsBinding binding;
     private LogsViewModel mViewModel;
     List<MyTaskOfflineModel> tasks = new ArrayList<>();
+    List<AddCustomerOfflineModel> customers = new ArrayList<>();
 
     public LogsFragment() {
         // Required empty public constructor
@@ -65,6 +68,12 @@ public class LogsFragment extends Fragment implements LogsTasksAdapter.LogTaskUp
             getActivity().onBackPressed();
         });
 
+//        customers = MainApp.database.addCustomerDao().getCustomers();
+//        if (customers.size() > 0) {
+//            Log.wtf("addcustomers", customers.toString());
+//        } else {
+//            Log.wtf("showcustomers", customers.toString());
+//        }
 
         setTasksAdapter();
         setInvoicesAdapter();

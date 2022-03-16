@@ -26,6 +26,8 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.erpnext.R;
+import com.example.erpnext.models.AddCustomerOfflineModel;
+import com.example.erpnext.models.MyTaskOfflineModel;
 import com.example.erpnext.models.ProfileDoc;
 import com.example.erpnext.models.RealPathUtil;
 import com.example.erpnext.app.MainApp;
@@ -310,6 +312,17 @@ public class AddCustomerActivity extends AppCompatActivity implements View.OnCli
 
     }
 
+    public void saveCustomerForOffline(String image, String cusName, String phone, String reference,double lat,double lng) {
+        AddCustomerOfflineModel addCustomerOfflineModel = new AddCustomerOfflineModel();
+        addCustomerOfflineModel.setImage(image);
+        addCustomerOfflineModel.setCustomerName(cusName);
+        addCustomerOfflineModel.setPhoneNo(phone);
+        addCustomerOfflineModel.setReference(reference);
+        addCustomerOfflineModel.setLattitude(lat);
+        addCustomerOfflineModel.setLongitude(lng);
+//        MainApp.database.addCustomerDao().insertCustomer(addCustomerOfflineModel);
+        Toast.makeText(AddCustomerActivity.this, getString(R.string.mytask_logs), Toast.LENGTH_SHORT).show();
+    }
 
     private void addCustomer(String cus_name, String phone, String reference, double lat, double lng) {
         Utils.showLoading(this);
@@ -347,10 +360,12 @@ public class AddCustomerActivity extends AppCompatActivity implements View.OnCli
                         onBackPressed();
                     } else {
                         Utils.dismiss();
+                        saveCustomerForOffline(path,cus_name,phone,reference,lat,lng);
                         Toast.makeText(getApplicationContext(), "Customer already exist", Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     Utils.dismiss();
+                    saveCustomerForOffline(path,cus_name,phone,reference,lat,lng);
                     Toast.makeText(getApplicationContext(), "Process Failed", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -358,6 +373,7 @@ public class AddCustomerActivity extends AppCompatActivity implements View.OnCli
             @Override
             public void onFailure(Call<AddCustomerRes> call, Throwable t) {
                 Utils.dismiss();
+                saveCustomerForOffline(path,cus_name,phone,reference,lat,lng);
                 Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_SHORT).show();
             }
         });
