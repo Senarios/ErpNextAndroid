@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/_10sdp"
+    android:background="@drawable/round_bg">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/_10sdp">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:text="@string/add_territory_targets"
+            android:textColor="@color/primary"
+            android:textSize="@dimen/_14sdp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/title"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:orientation="vertical">
+
+
+            <RelativeLayout
+                android:id="@+id/edit_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginRight="@dimen/_5sdp"
+                android:visibility="visible">
+
+                <TextView
+                    android:id="@+id/field_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/item_group"
+                    android:textColor="@color/newGrey" />
+
+                <AutoCompleteTextView
+                    android:id="@+id/tr_item_group"
+                    style="@style/editTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_35sdp"
+                    android:layout_below="@+id/field_label"
+                    android:layout_marginTop="1dp"
+                    android:completionThreshold="0" />
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginRight="@dimen/_5sdp"
+                android:visibility="visible">
+
+                <TextView
+                    android:id="@+id/field_label2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/fiscal_year"
+                    android:textColor="@color/newGrey" />
+
+                <TextView
+                    android:id="@+id/requid"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/_5sdp"
+                    android:layout_toRightOf="@id/field_label2"
+                    android:text="*"
+                    android:textColor="@color/red"
+                    android:visibility="visible" />
+
+                <AutoCompleteTextView
+                    android:id="@+id/fiscal_year"
+                    style="@style/editTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_35sdp"
+                    android:layout_below="@+id/field_label2"
+                    android:completionThreshold="0" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginRight="@dimen/_5sdp"
+                android:visibility="visible">
+
+                <TextView
+                    android:id="@+id/field_label3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/target_qty"
+                    android:textColor="@color/newGrey" />
+
+                <AutoCompleteTextView
+                    android:id="@+id/target_qty"
+                    style="@style/editTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_35sdp"
+                    android:layout_below="@+id/field_label3"
+                    android:completionThreshold="0"
+                    android:inputType="numberDecimal|number" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginRight="@dimen/_5sdp"
+                android:visibility="visible">
+
+                <TextView
+                    android:id="@+id/field_label4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/target_amount"
+                    android:textColor="@color/newGrey" />
+
+                <AutoCompleteTextView
+                    android:id="@+id/target_amount"
+                    style="@style/editTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_35sdp"
+                    android:layout_below="@+id/field_label4"
+                    android:completionThreshold="0"
+                    android:inputType="numberDecimal|number" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginRight="@dimen/_5sdp"
+                android:visibility="visible">
+
+                <TextView
+                    android:id="@+id/field_label5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/target_distribution"
+                    android:textColor="@color/newGrey" />
+
+                <TextView
+                    android:id="@+id/required"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/_5sdp"
+                    android:layout_toRightOf="@id/field_label5"
+                    android:text="*"
+                    android:textColor="@color/red"
+                    android:visibility="visible" />
+
+                <AutoCompleteTextView
+                    android:id="@+id/target_distribution"
+                    style="@style/editTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_35sdp"
+                    android:layout_below="@+id/field_label5"
+                    android:completionThreshold="0" />
+            </RelativeLayout>
+
+            <Button
+                android:id="@+id/add"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_32sdp"
+                android:layout_marginLeft="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginRight="@dimen/_5sdp"
+                android:layout_marginBottom="@dimen/_5sdp"
+                android:background="@drawable/button_bg"
+                android:text="@string/add" />
+        </LinearLayout>
+
+    </RelativeLayout>
+</ScrollView>

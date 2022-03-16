@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.example.erpnext">
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission
+        android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.RECORD_VIDEO" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <application
+        android:name=".app.MainApp"
+        android:allowBackup="true"
+        android:icon="@mipmap/app_icon"
+        android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
+        android:roundIcon="@mipmap/app_icon_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.ERPNext"
+        android:usesCleartextTraffic="true">
+        <activity
+            android:name=".activities.MessageActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activities.SalesPersonLocHistoryActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activities.MapDetailsActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activities.ScanQRActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activities.AddSalesPersonActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activities.AddContactActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activities.AddCustomerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.AddTerritoryActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activities.AddCustomerGroupActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activities.AddNewLandedCostActivity"
+            android:exported="true" />
+        <activity android:name=".activities.AddReconciliationActivity" />
+        <activity
+            android:name=".activities.AddNewWarehouseActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activities.AddOpportunityActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activities.AddNewDeliveryNoteActivity"
+            android:exported="true" />
+        <activity android:name=".activities.AddItemPriceActivity" />
+        <activity android:name=".activities.AddNewPurchaseReceiptActivity" />
+        <activity android:name=".activities.AddItemActivity" />
+        <activity android:name=".activities.AddLeadActivity" />
+        <activity android:name=".activities.AddNewLoyaltyProgramActivity" />
+        <activity android:name=".activities.AddNewClosingActivity" />
+        <activity android:name=".activities.AddNewOpeningActivity" />
+        <activity android:name=".activities.AddNewPOSProfileActivity" />
+        <activity android:name=".activities.AddNewStockEntryActivity" />
+        <activity android:name=".activities.SplashActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".activities.LoginActivity" />
+        <activity android:name=".activities.MainActivity" />
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDnf7BAG-b80T1j9ipNmeeet0KxXfQ2k6g" />
+
+        <receiver
+            android:name=".utils.NetworkReceiver"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
+
+<!--        <service-->
+<!--            android:name=".fcm.FCMService"-->
+<!--            android:exported="false">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="com.google.firebase.MESSAGING_EVENT" />-->
+<!--            </intent-filter>-->
+<!--        </service>-->
+
+        <service
+            android:name=".chatroom.chatnotification.MyFirebaseIdService"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".chatroom.chatnotification.MyFirebaseMessaging"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".fcm.BackgroundService"
+            android:enabled="true"
+            android:label="" />
+        <service
+            android:name=".fcm.BgServiceForSPLoc"
+            android:enabled="true"
+            android:label="" />
+    </application>
+
+</manifest>

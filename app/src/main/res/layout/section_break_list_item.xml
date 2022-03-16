@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/section_break_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/_10sdp"
+        android:visibility="visible">
+
+        <TextView
+            android:id="@+id/table_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/_15sdp"
+            android:fontFamily="@font/roboto"
+            android:text="@string/nname"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_13sdp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/down_arrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/_5sdp"
+            android:layout_toRightOf="@id/table_name" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/table_fields"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/table_name"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:visibility="gone" />
+
+        <View
+            android:id="@+id/break_line"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_below="@id/table_fields"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_7sdp"
+            android:layout_marginRight="@dimen/_10sdp"
+            android:background="@color/grey_for_viewLine" />
+    </RelativeLayout>
+</RelativeLayout>

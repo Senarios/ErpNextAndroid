@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/_10sdp"
+    android:background="@drawable/round_bg"
+    android:orientation="vertical"
+    android:padding="@dimen/_10sdp">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:text="Add Tag"
+        android:textColor="@color/primary"
+        android:textSize="@dimen/_14sdp" />
+
+    <RelativeLayout
+        android:id="@+id/edit_field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/_5sdp"
+        android:layout_marginTop="@dimen/_15sdp"
+        android:layout_marginRight="@dimen/_5sdp"
+        android:visibility="visible">
+
+        <TextView
+            android:id="@+id/field_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tag"
+            android:textColor="@color/newGrey" />
+
+        <TextView
+            android:id="@+id/required"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/_5sdp"
+            android:layout_toRightOf="@id/field_label"
+            android:text="*"
+            android:textColor="@color/red"
+            android:visibility="visible" />
+
+        <AutoCompleteTextView
+            android:id="@+id/autoCompleteEdit"
+            style="@style/editTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_35sdp"
+            android:layout_below="@+id/field_label"
+            android:layout_marginTop="@dimen/_3sdp"
+            android:completionThreshold="0" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginRight="@dimen/_25sdp">
+
+        <Button
+            android:id="@+id/cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/_20sdp"
+            android:layout_toLeftOf="@+id/add"
+            android:text="cancel" />
+
+        <Button
+            android:id="@+id/add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="Add" />
+    </RelativeLayout>
+</LinearLayout>

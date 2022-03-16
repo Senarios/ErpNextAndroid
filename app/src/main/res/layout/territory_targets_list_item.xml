@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="@dimen/_5sdp"
+    android:layout_marginRight="@dimen/_5sdp"
+    android:layout_marginBottom="@dimen/_5sdp"
+    android:elevation="@dimen/_1sdp"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/cross"
+        android:layout_width="@dimen/_12sdp"
+        android:layout_height="@dimen/_12sdp"
+        android:layout_alignParentRight="true"
+        android:layout_marginStart="@dimen/_3sdp"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:layout_marginEnd="@dimen/_3sdp"
+        android:layout_marginBottom="@dimen/_3sdp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/cross" />
+
+    <LinearLayout
+        android:id="@+id/mainlayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/cross"
+        android:layout_marginVertical="@dimen/_5sdp"
+        android:orientation="horizontal">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="10">
+
+            <TextView
+                android:id="@+id/item_group"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_gravity="center_vertical"
+                android:layout_toLeftOf="@id/price"
+                android:layout_weight="2"
+                android:singleLine="true"
+                android:text="Item Group"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_8sdp" />
+
+            <TextView
+                android:id="@+id/fiscal_year"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:singleLine="true"
+                android:text="2020-2021"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_8sdp" />
+
+            <TextView
+                android:id="@+id/target_qty"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_gravity="center"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:singleLine="true"
+                android:text="5"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_8sdp" />
+
+            <TextView
+                android:id="@+id/target_amount"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_gravity="center"
+
+                android:layout_weight="2"
+                android:gravity="center"
+                android:singleLine="true"
+                android:text="9.0"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_8sdp" />
+
+            <TextView
+                android:id="@+id/target_distribution"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_gravity="center"
+                android:layout_marginLeft="@dimen/_3sdp"
+                android:layout_marginRight="@dimen/_3sdp"
+                android:layout_weight="2"
+                android:gravity="right"
+                android:singleLine="true"
+                android:text="test_distribution"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_8sdp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_below="@+id/mainlayout"
+        android:background="@color/newGrey" />
+</RelativeLayout>

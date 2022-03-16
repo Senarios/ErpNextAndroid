@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/edit_field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/_5sdp"
+        android:layout_marginRight="@dimen/_5sdp"
+        android:padding="@dimen/_10sdp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/field_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Name"
+            android:textColor="@color/newGrey" />
+
+        <TextView
+            android:id="@+id/required"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/_5sdp"
+            android:layout_toRightOf="@id/field_label"
+            android:text="*"
+            android:textColor="@color/red"
+            android:visibility="gone" />
+
+        <AutoCompleteTextView
+            android:id="@+id/autoCompleteEdit"
+            style="@style/editTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_35sdp"
+            android:layout_below="@+id/field_label"
+            android:completionThreshold="0"
+            android:textSize="@dimen/_12sdp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/text_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/_10sdp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/field_label_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Name"
+            android:textColor="@color/newGrey" />
+
+        <TextView
+            android:id="@+id/required_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/_5sdp"
+            android:layout_toRightOf="@id/field_label_text"
+            android:text="*"
+            android:textColor="@color/red"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/autoCompleteEdit_text"
+            style="@style/editTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_35sdp"
+            android:layout_below="@+id/field_label_text"
+            android:completionThreshold="0"
+            android:gravity="center_vertical"
+            android:textSize="@dimen/_12sdp" />
+    </RelativeLayout>
+</RelativeLayout>

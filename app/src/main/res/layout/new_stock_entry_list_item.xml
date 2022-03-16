@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_2sdp"
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/_10sdp"
+        android:weightSum="6">
+
+        <TextView
+            android:id="@+id/number"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".20"
+            android:singleLine="true"
+            android:text="1" />
+
+        <TextView
+            android:id="@+id/source_warehouse"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:singleLine="true"
+            android:text="Source Warehouse" />
+
+        <TextView
+            android:id="@+id/target_warehouse"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:singleLine="true"
+            android:text="Target Warehouse" />
+
+        <TextView
+            android:id="@+id/item_code"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:singleLine="true"
+            android:text="Item Code" />
+
+        <TextView
+            android:id="@+id/qty"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:gravity="right"
+            android:singleLine="true"
+            android:text="Qty" />
+
+        <ImageView
+            android:id="@+id/cross"
+            android:layout_width="@dimen/_12sdp"
+            android:layout_height="@dimen/_12sdp"
+            android:layout_alignParentRight="true"
+            android:layout_margin="@dimen/_2sdp"
+            android:layout_weight="0.2"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/cross" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/newGrey" />
+</LinearLayout>

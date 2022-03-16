@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:orientation="vertical"
+    android:padding="@dimen/_8sdp">
+
+    <TextView
+        android:id="@+id/profileName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="name"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_13sdp" />
+
+    <TextView
+        android:id="@+id/opening_entry"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="name" />
+</LinearLayout>

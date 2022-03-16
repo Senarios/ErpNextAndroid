@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "337180300105",
+    "project_id": "erpchat-adc66",
+    "storage_bucket": "erpchat-adc66.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:337180300105:android:3e8530c9de20f5cac70098",
+        "android_client_info": {
+          "package_name": "com.example.erpnext"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "337180300105-49392bh8994c4q901072rq9tbpsloedb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBHjNJZBlPUzOo3Nyal_NkLQvdA8rN8EzY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "337180300105-49392bh8994c4q901072rq9tbpsloedb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
