@@ -13,29 +13,6 @@
         android:orientation="vertical"
         android:padding="@dimen/_5sdp">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-
-
-            <TextView
-                android:id="@+id/name1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/_5sdp"
-                android:fontFamily="@font/roboto"
-                android:singleLine="true"
-                android:text="shop name"
-                android:textColor="@color/black"
-                android:textSize="@dimen/_12sdp"
-                android:visibility="gone" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -63,19 +40,6 @@
                     android:src="@drawable/bc_ic_menu_overflow_material" />
             </LinearLayout>
 
-            <ImageView
-                android:id="@+id/log_more_tasts"
-                android:layout_width="@dimen/_22sdp"
-                android:layout_height="@dimen/_22sdp"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:visibility="gone"
-                android:layout_centerVertical="true"
-                android:layout_marginTop="@dimen/_10sdp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/bc_ic_menu_overflow_material" />
-        </RelativeLayout>
-
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -96,57 +60,6 @@
                 android:singleLine="true"
                 android:text="Enabled"
                 android:textSize="@dimen/_11sdp" />
-
-            <TextView
-                android:id="@+id/noOfReplys"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/_15sdp"
-                android:drawableLeft="@drawable/ic_baseline_message_24"
-                android:drawablePadding="@dimen/_5sdp"
-                android:singleLine="true"
-                android:text="0"
-                android:textColor="@color/light_grey"
-                android:textSize="@dimen/_10sdp"
-                android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/noOfLikes"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/_15sdp"
-                android:drawableLeft="@drawable/ic_heart"
-                android:drawablePadding="@dimen/_5sdp"
-                android:singleLine="true"
-                android:text="0"
-                android:textColor="@color/newGrey"
-                android:textSize="@dimen/_12sdp"
-                android:visibility="gone" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/linlay"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_8sdp"
-            android:layout_marginBottom="@dimen/_5sdp"
-            android:orientation="horizontal"
-            android:visibility="gone">
-
-            <TextView
-                android:id="@+id/show_comment"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/round_bg_dull"
-                android:paddingLeft="@dimen/_8sdp"
-                android:paddingTop="@dimen/_3sdp"
-                android:paddingRight="@dimen/_8sdp"
-                android:paddingBottom="@dimen/_3sdp"
-                android:singleLine="true"
-                android:text="Comment asnakn"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/_11sdp" />
-
         </LinearLayout>
 
     </LinearLayout>
