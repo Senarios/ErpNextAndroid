@@ -17,7 +17,9 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.erpnext.R;
+import com.example.erpnext.adapters.LogsAddCustomerAdapter;
 import com.example.erpnext.adapters.LogsInvoiceAdapter;
+import com.example.erpnext.adapters.LogsStockEntryAdapter;
 import com.example.erpnext.adapters.LogsTasksAdapter;
 import com.example.erpnext.app.MainApp;
 import com.example.erpnext.databinding.FragmentLogsBinding;
@@ -35,7 +37,9 @@ import com.example.erpnext.network.serializers.response.BaseResponse;
 import com.example.erpnext.utils.Notify;
 import com.example.erpnext.utils.RequestCodes;
 import com.example.erpnext.utils.Utils;
+import com.google.gson.Gson;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -59,7 +63,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Use the {@link LogsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class LogsFragment extends Fragment implements LogsTasksAdapter.LogTaskUpdate, OnNetworkResponse {
+public class LogsFragment extends Fragment implements LogsTasksAdapter.LogTaskUpdate, LogsStockEntryAdapter.LogStockEntryUpdate, LogsAddCustomerAdapter.LogCustomerUpdate, OnNetworkResponse {
     private FragmentLogsBinding binding;
     private LogsViewModel mViewModel;
     List<MyTaskOfflineModel> tasks = new ArrayList<>();
@@ -121,33 +125,33 @@ public class LogsFragment extends Fragment implements LogsTasksAdapter.LogTaskUp
     private void setStockEntriesAdapter() {
         stockEntries = MainApp.database.stockEntryDao().getEntries();
         if (stockEntries.size() > 0) {
-            Log.wtf("addcustomers", stockEntries.toString());
+            LogsStockEntryAdapter adapter = new LogsStockEntryAdapter(stockEntries, requireContext(),LogsFragment.this);
+            binding.stockRV.setLayoutManager(new LinearLayoutManager(requireContext()));
+            binding.stockRV.setAdapter(adapter);
         } else {
-            Log.wtf("showcustomers", stockEntries.toString());
+
         }
     }
 
     private void setCustomerAdapter() {
         customers = MainApp.database.addCustomerDao().getCustomers();
         if (customers.size() > 0) {
-            Log.wtf("addcustomers", customers.toString());
+            LogsAddCustomerAdapter adapter = new LogsAddCustomerAdapter(customers, requireContext(),LogsFragment.this);
+            binding.customerRV.setLayoutManager(new LinearLayoutManager(requireContext()));
+            binding.customerRV.setAdapter(adapter);
         } else {
-            Log.wtf("showcustomers", customers.toString());
+
         }
     }
 
     private void setTasksAdapter() {
         tasks = MainApp.database.myTaskDao().getOrders();
         if (tasks.size() > 0) {
-            binding.noDataOfflineTV.setVisibility(View.GONE);
-            binding.tasksRV.setVisibility(View.VISIBLE);
-            binding.taskTV.setVisibility(View.VISIBLE);
             LogsTasksAdapter adapter = new LogsTasksAdapter(tasks, requireContext(),LogsFragment.this);
             binding.tasksRV.setLayoutManager(new LinearLayoutManager(requireContext()));
             binding.tasksRV.setAdapter(adapter);
         } else {
-            binding.tasksRV.setVisibility(View.GONE);
-            binding.taskTV.setVisibility(View.GONE);
+
         }
     }
 
@@ -161,16 +165,11 @@ public class LogsFragment extends Fragment implements LogsTasksAdapter.LogTaskUp
     private void setInvoicesAdapter() {
         List<PendingOrder> pendingOrders = MainApp.database.pendingOrderDao().getOrders();
         if (pendingOrders.size() > 0) {
-            binding.noDataOfflineTV.setVisibility(View.GONE);
-            binding.invoiceRV.setVisibility(View.VISIBLE);
-            binding.invoicesTV.setVisibility(View.VISIBLE);
             LogsInvoiceAdapter adapter = new LogsInvoiceAdapter(requireContext(), pendingOrders);
             binding.invoiceRV.setLayoutManager(new LinearLayoutManager(requireContext()));
             binding.invoiceRV.setAdapter(adapter);
         } else {
-            binding.noDataOfflineTV.setVisibility(View.VISIBLE);
-            binding.invoiceRV.setVisibility(View.GONE);
-            binding.invoicesTV.setVisibility(View.GONE);
+
         }
     }
 
@@ -219,21 +218,38 @@ public class LogsFragment extends Fragment implements LogsTasksAdapter.LogTaskUp
     public void taskToUpdate(View view, int position) {
         PopupMenu popupMenu = new PopupMenu(getActivity(), view);
         popupMenu.inflate(R.menu.sync_log_menu);
-        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.sync:
-                        if (tasks.size() > 0 && position < tasks.size()) {
-                            selectedTask = tasks.get(position);
-                            updateTaskApi(selectedTask.getEmailName(), selectedTask.getTaskName(), selectedTask.getShopName(), selectedTask.getShopStat(), selectedTask.getComment());
-                        } else {
-                            Toast.makeText(getContext(), "No Logs Found", Toast.LENGTH_SHORT).show();
-                        }
-                        break;
-                }
-                return true;
+        popupMenu.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.sync:
+                    if (tasks.size() > 0 && position < tasks.size()) {
+                        selectedTask = tasks.get(position);
+                        updateTaskApi(selectedTask.getEmailName(), selectedTask.getTaskName(), selectedTask.getShopName(), selectedTask.getShopStat(), selectedTask.getComment());
+                    } else {
+                        Toast.makeText(getContext(), "No Logs Found", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
             }
+            return true;
+        });
+        popupMenu.show();
+    }
+
+    @Override
+    public void customerdoupdate(View view, int position) {
+        PopupMenu popupMenu = new PopupMenu(getActivity(), view);
+        popupMenu.inflate(R.menu.sync_log_menu);
+        popupMenu.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.sync:
+                    if (customers.size() > 0 && position < customers.size()) {
+                        selectedCustomer = customers.get(position);
+                        syncCustomer(selectedCustomer);
+                    } else {
+                        Toast.makeText(getContext(), "No Logs Found", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+            }
+            return true;
         });
         popupMenu.show();
     }
@@ -265,16 +281,14 @@ public class LogsFragment extends Fragment implements LogsTasksAdapter.LogTaskUp
             @Override
             public void onResponse(Call<AddCustomerRes> call, Response<AddCustomerRes> response) {
                 if (response.isSuccessful()) {
+                    Utils.dismiss();
                     if (response.body().getStatus().toString().equals("200")) {
-                        Utils.dismiss();
                         Toast.makeText(requireContext(), "Customer Added", Toast.LENGTH_SHORT).show();
-                        MainApp.database.addCustomerDao().deleteCustomer(selectedCustomer);
-                        setCustomerAdapter();
-//                        onBackPressed();
                     } else {
-                        Utils.dismiss();
                         Toast.makeText(requireContext(), "Customer already exist", Toast.LENGTH_SHORT).show();
                     }
+                    MainApp.database.addCustomerDao().deleteCustomer(selectedCustomer);
+                    setCustomerAdapter();
                 } else {
                     Utils.dismiss();
                     Toast.makeText(requireContext(), "Process Failed", Toast.LENGTH_SHORT).show();
@@ -287,6 +301,32 @@ public class LogsFragment extends Fragment implements LogsTasksAdapter.LogTaskUp
                 Toast.makeText(requireContext(), t.toString(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @Override
+    public void updateStockEntry(View view, int position) {
+        PopupMenu popupMenu = new PopupMenu(getActivity(), view);
+        popupMenu.inflate(R.menu.sync_log_menu);
+        popupMenu.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.sync:
+                    if (tasks.size() > 0 && position < tasks.size()) {
+                        selectedStockEntry = stockEntries.get(position);
+                        try {
+                            JSONObject jsonObject = new JSONObject(selectedStockEntry.getData());
+                            syncStockEntry(jsonObject);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    } else {
+                        Toast.makeText(getContext(), "No Logs Found", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+            }
+            return true;
+        });
+        popupMenu.show();
     }
 
     private void syncStockEntry(JSONObject jsonObject) {
@@ -313,4 +353,24 @@ public class LogsFragment extends Fragment implements LogsTasksAdapter.LogTaskUp
     public void onFailure(Call call, BaseResponse response, Object tag) {
         Notify.Toast(response.getServerMessages());
     }
+
+    private void setViews(){
+        if(tasks == null || tasks.size() <= 0) {
+            binding.taskLinear.setVisibility(View.GONE);
+        } else {
+            binding.taskLinear.setVisibility(View.VISIBLE);
+        }
+        if(customers == null || customers.size() <= 0) {
+            binding.customerLinear.setVisibility(View.GONE);
+        } else {
+            binding.customerLinear.setVisibility(View.VISIBLE);
+        }
+        if(stockEntries == null || stockEntries.size() <= 0) {
+            binding.stockLinear.setVisibility(View.GONE);
+        } else {
+            binding.stockLinear.setVisibility(View.VISIBLE);
+        }
+        
+    }
+
 }

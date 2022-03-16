@@ -28,7 +28,7 @@ public class LogsStockEntryAdapter extends RecyclerView.Adapter<LogsStockEntryAd
     }
 
     public interface LogStockEntryUpdate {
-        void stockentrydoupdate(View view,int position);
+        void updateStockEntry(View view,int position);
     }
 
     @NonNull
@@ -43,7 +43,7 @@ public class LogsStockEntryAdapter extends RecyclerView.Adapter<LogsStockEntryAd
 
         holder.name.setText("Your " + arrayList.get(position).getData() + " task is failed to update");
         holder.menu.setOnClickListener(v -> {
-            logStockEntryUpdate.stockentrydoupdate(holder.menu,holder.getAdapterPosition());
+            logStockEntryUpdate.updateStockEntry(holder.menu,holder.getAdapterPosition());
         });
     }
 

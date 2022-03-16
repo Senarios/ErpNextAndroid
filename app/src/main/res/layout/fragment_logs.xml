@@ -85,6 +85,7 @@
                 </LinearLayout>
 
                 <View
+                    android:id="@+id/invoiceView"
                     android:layout_width="match_parent"
                     android:layout_height="0.5dp"
                     android:layout_below="@+id/task_linear"
@@ -102,12 +103,12 @@
                         android:id="@+id/invoicesTV"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/sync_invoices"
                         android:padding="@dimen/_5sdp"
-                        android:textStyle="bold"
-                        android:visibility="visible"
+                        android:text="@string/sync_invoices"
                         android:textColor="@color/black"
-                        android:textSize="18sp" />
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:visibility="visible" />
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/invoiceRV"
@@ -118,6 +119,7 @@
                 </LinearLayout>
 
                 <View
+                    android:id="@+id/customerView"
                     android:layout_width="match_parent"
                     android:layout_height="0.5dp"
                     android:layout_below="@+id/task_linear"
@@ -150,6 +152,7 @@
                 </LinearLayout>
 
                 <View
+                    android:id="@+id/stockView"
                     android:layout_width="match_parent"
                     android:layout_height="0.5dp"
                     android:layout_below="@+id/task_linear"
