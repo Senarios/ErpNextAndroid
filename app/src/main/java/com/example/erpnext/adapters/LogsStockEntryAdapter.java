@@ -13,6 +13,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.erpnext.R;
 import com.example.erpnext.models.StockEntryOfflineModel;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +23,7 @@ public class LogsStockEntryAdapter extends RecyclerView.Adapter<LogsStockEntryAd
     private List<StockEntryOfflineModel> arrayList = new ArrayList();
     private Context context;
     private LogStockEntryUpdate logStockEntryUpdate;
+    String seName,swarehouse,twarehouse;
 
     public LogsStockEntryAdapter(List<StockEntryOfflineModel> arrayList, Context context, LogStockEntryUpdate logStockEntryUpdate) {
         this.arrayList = arrayList;
@@ -40,8 +44,18 @@ public class LogsStockEntryAdapter extends RecyclerView.Adapter<LogsStockEntryAd
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-
-        holder.name.setText("Your " + arrayList.get(position).getData() + " task is failed to update");
+        JSONObject jresponse = null;
+        try {
+            jresponse = new JSONObject(arrayList.get(position).getData());
+            seName = jresponse.getString("name");
+            swarehouse = jresponse.getString("posting_time");
+            twarehouse = jresponse.getString("t_warehouse");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        holder.name.setText("Your " + arrayList.get(position).getData() + " is failed to add");
+        holder.swarehouse.setText("Posting Time: " + swarehouse);
+        holder.twarehouse.setText("Target Warehouse:  " + twarehouse);
         holder.menu.setOnClickListener(v -> {
             logStockEntryUpdate.stockentrydoupdate(holder.menu,holder.getAdapterPosition());
         });
@@ -53,12 +67,14 @@ public class LogsStockEntryAdapter extends RecyclerView.Adapter<LogsStockEntryAd
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView name, status;
+        TextView name, status,swarehouse,twarehouse;
         ImageView menu;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.namelog);
+            swarehouse = itemView.findViewById(R.id.swarehouse);
+            twarehouse = itemView.findViewById(R.id.twarehouse);
             status = itemView.findViewById(R.id.status);
             menu = itemView.findViewById(R.id.log_menu_tasts);
 
