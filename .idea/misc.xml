@@ -3,11 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/ukash/AndroidStudioProjects/ErpNextLatest/app/src/main/res/layout/activity_add_customer.xml" value="0.16770833333333332" />
-        <entry key="..\:/Users/ukash/AndroidStudioProjects/ErpNextLatest/app/src/main/res/layout/activity_add_stock_entry.xml" value="0.16770833333333332" />
-        <entry key="..\:/Users/ukash/AndroidStudioProjects/ErpNextLatest/app/src/main/res/layout/log_addcustomer_item.xml" value="0.16770833333333332" />
-        <entry key="..\:/Users/ukash/AndroidStudioProjects/ErpNextLatest/app/src/main/res/layout/log_mytasks_item.xml" value="0.16770833333333332" />
-        <entry key="..\:/Users/ukash/AndroidStudioProjects/ErpNextLatest/app/src/main/res/layout/log_stockentry_item.xml" value="0.16770833333333332" />
+        <entry key="..\:/Projects/ErpNextAndroid/app/src/main/res/layout/activity_add_stock_entry.xml" value="0.21" />
+        <entry key="..\:/Projects/ErpNextAndroid/app/src/main/res/layout/fragment_logs.xml" value="0.25" />
+        <entry key="..\:/Projects/ErpNextAndroid/app/src/main/res/layout/stock_entry_fragment.xml" value="0.22" />
+        <entry key="..\:/Projects/ErpNextAndroid/app/src/main/res/layout/stock_entry_list_item.xml" value="0.19519927536231885" />
       </map>
     </option>
   </component>

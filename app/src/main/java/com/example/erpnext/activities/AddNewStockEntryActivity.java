@@ -354,7 +354,7 @@ public class AddNewStockEntryActivity extends AppCompatActivity implements View.
             StockEntryOfflineModel model = new StockEntryOfflineModel();
             model.setEntryId(offlineId);
             model.setData(offlineObject.toString());
-            MainApp.database.StockEntryDao().insertStockEntry(model);
+            MainApp.database.stockEntryDao().insertStockEntry(model);
             Intent intent = new Intent();
             intent.putExtra("saveStockEntry", false);
             setResult(RESULT_OK, intent);

@@ -49,74 +49,155 @@
 
         </RelativeLayout>
 
-        <LinearLayout
-            android:id="@+id/task_linear"
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/appBar"
-            android:orientation="vertical"
-            android:padding="@dimen/_10sdp">
+            android:layout_below="@id/appBar">
 
-            <TextView
-                android:id="@+id/taskTV"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/my_tasks"
-                android:padding="@dimen/_5sdp"
-                android:textStyle="bold"
-                android:visibility="gone"
-                android:textColor="@color/black"
-                android:textSize="18sp" />
+                android:orientation="vertical">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/tasksRV"
-                android:layout_width="match_parent"
-                android:visibility="gone"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="parent" />
-        </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/task_linear"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/_10sdp">
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:layout_below="@+id/task_linear"
-            android:background="@color/newGrey" />
+                    <TextView
+                        android:id="@+id/taskTV"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/_5sdp"
+                        android:text="@string/sync_my_tasks"
+                        android:textColor="@color/black"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:visibility="visible" />
 
-        <LinearLayout
-            android:id="@+id/invoice_linear"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/task_linear"
-            android:orientation="vertical"
-            android:padding="@dimen/_10sdp">
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/tasksRV"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </LinearLayout>
 
-            <TextView
-                android:id="@+id/invoicesTV"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Invoices"
-                android:textStyle="bold"
-                android:textColor="@color/black"
-                android:textSize="16sp" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_below="@+id/task_linear"
+                    android:background="@color/newGrey" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/invoiceRV"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/task_linear"
-                app:layout_constraintTop_toTopOf="parent" />
-        </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/invoice_linear"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/task_linear"
+                    android:orientation="vertical"
+                    android:padding="@dimen/_10sdp">
 
-        <TextView
-            android:id="@+id/noDataOfflineTV"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/no_data_offline"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+                    <TextView
+                        android:id="@+id/invoicesTV"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/sync_invoices"
+                        android:padding="@dimen/_5sdp"
+                        android:textStyle="bold"
+                        android:visibility="visible"
+                        android:textColor="@color/black"
+                        android:textSize="18sp" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/invoiceRV"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_below="@+id/task_linear"
+                    android:background="@color/newGrey" />
+
+                <LinearLayout
+                    android:id="@+id/customer_linear"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/_10sdp">
+
+                    <TextView
+                        android:id="@+id/customerTV"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/sync_customers"
+                        android:padding="@dimen/_5sdp"
+                        android:textStyle="bold"
+                        android:visibility="visible"
+                        android:textColor="@color/black"
+                        android:textSize="18sp" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/customerRV"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_below="@+id/task_linear"
+                    android:background="@color/newGrey" />
+
+                <LinearLayout
+                    android:id="@+id/stock_linear"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/task_linear"
+                    android:orientation="vertical"
+                    android:padding="@dimen/_10sdp">
+
+                    <TextView
+                        android:id="@+id/stockTV"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/sync_stock_entries"
+                        android:padding="@dimen/_5sdp"
+                        android:textStyle="bold"
+                        android:visibility="visible"
+                        android:textColor="@color/black"
+                        android:textSize="18sp" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/stockRV"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/noDataOfflineTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/no_data_offline"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </LinearLayout>
+
+        </ScrollView>
+
+
 
     </RelativeLayout>
 </layout>
