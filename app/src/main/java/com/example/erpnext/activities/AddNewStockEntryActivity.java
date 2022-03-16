@@ -23,10 +23,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.erpnext.R;
 import com.example.erpnext.adapters.StockEntryItemsAdapter;
+import com.example.erpnext.app.MainApp;
 import com.example.erpnext.callbacks.StockEntryCallback;
 import com.example.erpnext.databinding.ActivityAddStockEntryBinding;
 import com.example.erpnext.models.SearchResult;
 import com.example.erpnext.models.StockEntryItem;
+import com.example.erpnext.models.StockEntryOfflineModel;
 import com.example.erpnext.network.Network;
 import com.example.erpnext.network.NetworkCall;
 import com.example.erpnext.network.OnNetworkResponse;
@@ -50,6 +52,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -66,6 +69,8 @@ public class AddNewStockEntryActivity extends AppCompatActivity implements View.
     private Dialog dialog;
     private AutoCompleteTextView sourceWarehouseLink, targetWarehouseLink, itemCodeLink;
     private Button add;
+    private JSONObject offlineObject;
+    private String offlineId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +79,7 @@ public class AddNewStockEntryActivity extends AppCompatActivity implements View.
         setClickListeners();
         setTextViews();
         setItemsAdapter(stockEntryItemsList);
+        offlineId = String.valueOf(new Random().nextInt());
     }
 
     private void setTextViews() {
@@ -255,6 +261,7 @@ public class AddNewStockEntryActivity extends AppCompatActivity implements View.
     }
 
     private void saveDoc(JSONObject jsonObject) {
+        offlineObject = jsonObject;
         NetworkCall.make()
                 .setCallback(this)
                 .setTag(RequestCodes.API.SAVE_DOC)
@@ -340,7 +347,19 @@ public class AddNewStockEntryActivity extends AppCompatActivity implements View.
 //        } catch (JSONException e) {
 //            e.printStackTrace();
 //        }
-        Notify.Toast(response.getServerMessages());
+        if (response.getCode() != 0) {
+            Notify.Toast(response.getServerMessages());
+        } else {
+            Notify.Toast("Saved offline. You can sync from logs");
+            StockEntryOfflineModel model = new StockEntryOfflineModel();
+            model.setEntryId(offlineId);
+            model.setData(offlineObject.toString());
+            MainApp.database.StockEntryDao().insertStockEntry(model);
+            Intent intent = new Intent();
+            intent.putExtra("saveStockEntry", false);
+            setResult(RESULT_OK, intent);
+            finish();
+        }
     }
 
     @Override
