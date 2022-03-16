@@ -246,6 +246,7 @@ public class MyTasksFragment extends Fragment implements View.OnClickListener, P
 
     public void saveTaskForOffline(String email, String taskName, String shopName, String shopStatus,String comment) {
         MyTaskOfflineModel myTask = new MyTaskOfflineModel();
+        myTask.setTaskId(taskName +" at "+ shopName);
         myTask.setEmailName(email);
         myTask.setTaskName(taskName);
         myTask.setShopName(shopName);

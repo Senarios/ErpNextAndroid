@@ -15,10 +15,13 @@ public class MyTaskOfflineModel {
     @SerializedName("emailName")
     @Expose
     private String emailName;
-    @SerializedName("taskName")
+    @SerializedName("taskId")
     @Expose
     @NonNull
     @PrimaryKey
+    private String taskId;
+    @SerializedName("taskName")
+    @Expose
     private String taskName;
     @SerializedName("shopName")
     @Expose
@@ -68,5 +71,14 @@ public class MyTaskOfflineModel {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    @NonNull
+    public String getTaskId() {
+        return taskId;
+    }
+
+    public void setTaskId(@NonNull String taskId) {
+        this.taskId = taskId;
     }
 }

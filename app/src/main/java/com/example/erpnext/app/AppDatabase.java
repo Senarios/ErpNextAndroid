@@ -12,6 +12,7 @@ import com.example.erpnext.models.PendingInvoiceAction;
 import com.example.erpnext.models.PendingLoyalty;
 import com.example.erpnext.models.PendingOPE;
 import com.example.erpnext.models.PendingOrder;
+import com.example.erpnext.models.StockEntryOfflineModel;
 import com.example.erpnext.network.serializers.response.CheckOpeningEntryResponse;
 import com.example.erpnext.network.serializers.response.DocDetailResponse;
 import com.example.erpnext.network.serializers.response.DocTypeResponse;
@@ -38,6 +39,7 @@ import com.example.erpnext.roomDB.Dao.PendingOrderDao;
 import com.example.erpnext.roomDB.Dao.ProfileDocDetailDao;
 import com.example.erpnext.roomDB.Dao.ReportViewDao;
 import com.example.erpnext.roomDB.Dao.SearchLinkDao;
+import com.example.erpnext.roomDB.Dao.StockEntryDao;
 import com.example.erpnext.utils.Constants;
 
 @Database(entities = {MenuResponse.class, ItemResponse.class,
@@ -46,8 +48,8 @@ import com.example.erpnext.utils.Constants;
         GetItemsResponse.class, SearchLinkResponse.class,
         PendingOrder.class, PendingOPE.class, PendingLoyalty.class,
         DocDetailResponse.class, PendingEditPOS.class,
-        PendingInvoiceAction.class, MyTaskOfflineModel.class, GetItemDetailResponse.class}
-        , version = 2, exportSchema = false)
+        PendingInvoiceAction.class, MyTaskOfflineModel.class, StockEntryOfflineModel.class, GetItemDetailResponse.class}
+        , version = 3, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     private static AppDatabase INSTANCE;
 
@@ -99,4 +101,6 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract ItemDetailsDao itemDetailsDao();
 
     public abstract MyTaskDao myTaskDao();
+
+    public abstract StockEntryDao StockEntryDao();
 }
