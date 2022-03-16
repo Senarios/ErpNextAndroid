@@ -29,7 +29,7 @@ public class LogsTasksAdapter extends RecyclerView.Adapter<LogsTasksAdapter.View
     }
 
     public interface LogTaskUpdate {
-        void taskdoupdate(View view);
+        void taskToUpdate(View view, int position);
     }
     @NonNull
     @Override
@@ -44,7 +44,7 @@ public class LogsTasksAdapter extends RecyclerView.Adapter<LogsTasksAdapter.View
         holder.name.setText("Your "+arrayList.get(position).getTaskName()+" task is failed to update");
         holder.status.setText(arrayList.get(position).getShopStat());
         holder.menu.setOnClickListener(v->{
-            taskUpdate.taskdoupdate(holder.menu);
+            taskUpdate.taskToUpdate(holder.menu, holder.getAdapterPosition());
         });
     }
 

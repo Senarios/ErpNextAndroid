@@ -555,6 +555,10 @@
     <string name="no_purchase">No Purchase</string>
     <string name="add_note">Add Note</string>
     <string name="logs">Logs</string>
+    <string name="sync_customers">Sync Customers</string>
+    <string name="sync_stock_entries">Sync Stock Entries</string>
+    <string name="sync_invoices">Sync Invoices</string>
+    <string name="sync_my_tasks">Sync My Tasks</string>
 
     <string-array name="itenms">
         <item>Point of Sale</item>

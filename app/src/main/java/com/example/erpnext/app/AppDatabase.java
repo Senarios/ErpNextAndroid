@@ -105,7 +105,7 @@ public abstract class AppDatabase extends RoomDatabase {
 
     public abstract MyTaskDao myTaskDao();
 
-    public abstract StockEntryDao StockEntryDao();
+    public abstract StockEntryDao stockEntryDao();
 
     public abstract AddCustomerDao addCustomerDao();
 }

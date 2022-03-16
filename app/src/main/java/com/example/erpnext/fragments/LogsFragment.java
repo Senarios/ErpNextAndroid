@@ -1,6 +1,7 @@
 package com.example.erpnext.fragments;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,17 +22,32 @@ import com.example.erpnext.adapters.LogsTasksAdapter;
 import com.example.erpnext.app.MainApp;
 import com.example.erpnext.databinding.FragmentLogsBinding;
 import com.example.erpnext.models.AddCustomerOfflineModel;
+import com.example.erpnext.models.AddCustomerRes;
 import com.example.erpnext.models.MyTaskOfflineModel;
 import com.example.erpnext.models.MyTaskUpdateRes;
 import com.example.erpnext.models.PendingOrder;
+import com.example.erpnext.models.StockEntryOfflineModel;
 import com.example.erpnext.network.ApiServices;
+import com.example.erpnext.network.Network;
+import com.example.erpnext.network.NetworkCall;
+import com.example.erpnext.network.OnNetworkResponse;
+import com.example.erpnext.network.serializers.response.BaseResponse;
+import com.example.erpnext.utils.Notify;
+import com.example.erpnext.utils.RequestCodes;
 import com.example.erpnext.utils.Utils;
 
+import org.json.JSONObject;
+
+import java.io.File;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -43,11 +59,15 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Use the {@link LogsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class LogsFragment extends Fragment implements LogsTasksAdapter.LogTaskUpdate {
+public class LogsFragment extends Fragment implements LogsTasksAdapter.LogTaskUpdate, OnNetworkResponse {
     private FragmentLogsBinding binding;
     private LogsViewModel mViewModel;
     List<MyTaskOfflineModel> tasks = new ArrayList<>();
     List<AddCustomerOfflineModel> customers = new ArrayList<>();
+    List<StockEntryOfflineModel> stockEntries = new ArrayList<>();
+    private MyTaskOfflineModel selectedTask;
+    private StockEntryOfflineModel selectedStockEntry;
+    private AddCustomerOfflineModel selectedCustomer;
 
     public LogsFragment() {
         // Required empty public constructor
@@ -68,8 +88,7 @@ public class LogsFragment extends Fragment implements LogsTasksAdapter.LogTaskUp
             getActivity().onBackPressed();
         });
 
-
-
+        setStockEntriesAdapter();
         setCustomerAdapter();
         setTasksAdapter();
         setInvoicesAdapter();
@@ -97,6 +116,15 @@ public class LogsFragment extends Fragment implements LogsTasksAdapter.LogTaskUp
 //        });
 
         return binding.getRoot();
+    }
+
+    private void setStockEntriesAdapter() {
+        stockEntries = MainApp.database.stockEntryDao().getEntries();
+        if (stockEntries.size() > 0) {
+            Log.wtf("addcustomers", stockEntries.toString());
+        } else {
+            Log.wtf("showcustomers", stockEntries.toString());
+        }
     }
 
     private void setCustomerAdapter() {
@@ -158,7 +186,7 @@ public class LogsFragment extends Fragment implements LogsTasksAdapter.LogTaskUp
             public void onResponse(Call<MyTaskUpdateRes> call, Response<MyTaskUpdateRes> response) {
                 if (response.isSuccessful()) {
                     if (response.body().getStatus().toString().equals("200")) {
-                        MainApp.database.myTaskDao().deleteTask(tasks.get(0));
+                        MainApp.database.myTaskDao().deleteTask(selectedTask);
                         setTasksAdapter();
                         Utils.dismiss();
                         Toast.makeText(getContext(), getString(R.string.updated), Toast.LENGTH_SHORT).show();
@@ -188,7 +216,7 @@ public class LogsFragment extends Fragment implements LogsTasksAdapter.LogTaskUp
     }
 
     @Override
-    public void taskdoupdate(View view) {
+    public void taskToUpdate(View view, int position) {
         PopupMenu popupMenu = new PopupMenu(getActivity(), view);
         popupMenu.inflate(R.menu.sync_log_menu);
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -196,9 +224,9 @@ public class LogsFragment extends Fragment implements LogsTasksAdapter.LogTaskUp
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.sync:
-                        if (tasks.size() > 0) {
-                            MyTaskOfflineModel task = tasks.get(0);
-                            updateTaskApi(task.getEmailName(), task.getTaskName(), task.getShopName(), task.getShopStat(), task.getComment());
+                        if (tasks.size() > 0 && position < tasks.size()) {
+                            selectedTask = tasks.get(position);
+                            updateTaskApi(selectedTask.getEmailName(), selectedTask.getTaskName(), selectedTask.getShopName(), selectedTask.getShopStat(), selectedTask.getComment());
                         } else {
                             Toast.makeText(getContext(), "No Logs Found", Toast.LENGTH_SHORT).show();
                         }
@@ -208,5 +236,81 @@ public class LogsFragment extends Fragment implements LogsTasksAdapter.LogTaskUp
             }
         });
         popupMenu.show();
+    }
+
+    private void syncCustomer(AddCustomerOfflineModel customerModel){
+        Utils.showLoading(requireActivity());
+        Retrofit retrofit = new Retrofit.Builder().baseUrl("http://75.119.143.175:8080/ErpNext/")
+                .addConverterFactory(GsonConverterFactory.create()).build();
+
+        File file = new File(customerModel.getImage());
+        RequestBody requestFile =
+                RequestBody.create(MediaType.parse("multipart/form-data"), file);
+        MultipartBody.Part body =
+                MultipartBody.Part.createFormData("image", file.getName(), requestFile);
+
+        RequestBody cusFullName =
+                RequestBody.create(MediaType.parse("multipart/form-data"), customerModel.getCustomerName());
+        RequestBody cusPhone =
+                RequestBody.create(MediaType.parse("multipart/form-data"), customerModel.getPhoneNo());
+        RequestBody cusReference =
+                RequestBody.create(MediaType.parse("multipart/form-data"), customerModel.getReference());
+        RequestBody cusLat =
+                RequestBody.create(MediaType.parse("multipart/form-data"), String.valueOf(customerModel.getLattitude()));
+        RequestBody cusLng =
+                RequestBody.create(MediaType.parse("multipart/form-data"), String.valueOf(customerModel.getLongitude()));
+        ApiServices apiServices = retrofit.create(ApiServices.class);
+        Call<AddCustomerRes> call = apiServices.addCustomer(body, cusFullName, cusPhone, cusReference, cusLat, cusLng);
+        call.enqueue(new Callback<AddCustomerRes>() {
+            @Override
+            public void onResponse(Call<AddCustomerRes> call, Response<AddCustomerRes> response) {
+                if (response.isSuccessful()) {
+                    if (response.body().getStatus().toString().equals("200")) {
+                        Utils.dismiss();
+                        Toast.makeText(requireContext(), "Customer Added", Toast.LENGTH_SHORT).show();
+                        MainApp.database.addCustomerDao().deleteCustomer(selectedCustomer);
+                        setCustomerAdapter();
+//                        onBackPressed();
+                    } else {
+                        Utils.dismiss();
+                        Toast.makeText(requireContext(), "Customer already exist", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Utils.dismiss();
+                    Toast.makeText(requireContext(), "Process Failed", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<AddCustomerRes> call, Throwable t) {
+                Utils.dismiss();
+                Toast.makeText(requireContext(), t.toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void syncStockEntry(JSONObject jsonObject) {
+        NetworkCall.make()
+                .setCallback(this)
+                .setTag(RequestCodes.API.SAVE_DOC)
+                .autoLoadingCancel(Utils.getLoading(requireActivity(), "Please wait..."))
+                .enque(Network.apis().saveDoc(jsonObject, "Submit"))
+                .execute();
+    }
+
+    @Override
+    public void onSuccess(Call call, Response response, Object tag) throws ParseException {
+        if (response.code() == 200) {
+            Notify.Toast(getString(R.string.successfully_created));
+            MainApp.database.stockEntryDao().deleteStockEntry(selectedStockEntry);
+            setStockEntriesAdapter();
+        } else {
+            Notify.Toast(response.message());
+        }
+    }
+
+    @Override
+    public void onFailure(Call call, BaseResponse response, Object tag) {
+        Notify.Toast(response.getServerMessages());
     }
 }
