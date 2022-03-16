@@ -310,7 +310,7 @@ public class LogsFragment extends Fragment implements LogsTasksAdapter.LogTaskUp
         popupMenu.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
                 case R.id.sync:
-                    if (tasks.size() > 0 && position < tasks.size()) {
+                    if (stockEntries.size() > 0 && position < stockEntries.size()) {
                         selectedStockEntry = stockEntries.get(position);
                         try {
                             JSONObject jsonObject = new JSONObject(selectedStockEntry.getData());
