@@ -128,9 +128,8 @@ public class LogsFragment extends Fragment implements LogsTasksAdapter.LogTaskUp
             LogsStockEntryAdapter adapter = new LogsStockEntryAdapter(stockEntries, requireContext(),LogsFragment.this);
             binding.stockRV.setLayoutManager(new LinearLayoutManager(requireContext()));
             binding.stockRV.setAdapter(adapter);
-        } else {
-
         }
+        setViews();
     }
 
     private void setCustomerAdapter() {
@@ -139,9 +138,8 @@ public class LogsFragment extends Fragment implements LogsTasksAdapter.LogTaskUp
             LogsAddCustomerAdapter adapter = new LogsAddCustomerAdapter(customers, requireContext(),LogsFragment.this);
             binding.customerRV.setLayoutManager(new LinearLayoutManager(requireContext()));
             binding.customerRV.setAdapter(adapter);
-        } else {
-
         }
+        setViews();
     }
 
     private void setTasksAdapter() {
@@ -150,9 +148,8 @@ public class LogsFragment extends Fragment implements LogsTasksAdapter.LogTaskUp
             LogsTasksAdapter adapter = new LogsTasksAdapter(tasks, requireContext(),LogsFragment.this);
             binding.tasksRV.setLayoutManager(new LinearLayoutManager(requireContext()));
             binding.tasksRV.setAdapter(adapter);
-        } else {
-
         }
+        setViews();
     }
 
     @Override
@@ -165,12 +162,14 @@ public class LogsFragment extends Fragment implements LogsTasksAdapter.LogTaskUp
     private void setInvoicesAdapter() {
         List<PendingOrder> pendingOrders = MainApp.database.pendingOrderDao().getOrders();
         if (pendingOrders.size() > 0) {
+            binding.invoiceLinear.setVisibility(View.VISIBLE);
             LogsInvoiceAdapter adapter = new LogsInvoiceAdapter(requireContext(), pendingOrders);
             binding.invoiceRV.setLayoutManager(new LinearLayoutManager(requireContext()));
             binding.invoiceRV.setAdapter(adapter);
         } else {
-
+            binding.invoiceLinear.setVisibility(View.GONE);
         }
+        setViews();
     }
 
     public void updateTaskApi(String email, String taskName, String shopName, String shopStatus, String comment) {
@@ -370,7 +369,13 @@ public class LogsFragment extends Fragment implements LogsTasksAdapter.LogTaskUp
         } else {
             binding.stockLinear.setVisibility(View.VISIBLE);
         }
-        
+
+        if(binding.invoiceLinear.getVisibility() == View.GONE && binding.taskLinear.getVisibility() == View.GONE
+            && binding.customerLinear.getVisibility() == View.GONE && binding.stockLinear.getVisibility() == View.GONE ){
+            binding.noDataOfflineTV.setVisibility(View.VISIBLE);
+        } else {
+            binding.noDataOfflineTV.setVisibility(View.GONE);
+        }
     }
 
 }
