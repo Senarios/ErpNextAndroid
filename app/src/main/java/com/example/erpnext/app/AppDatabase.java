@@ -6,6 +6,7 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
+import com.example.erpnext.models.AddCustomerOfflineModel;
 import com.example.erpnext.models.MyTaskOfflineModel;
 import com.example.erpnext.models.PendingEditPOS;
 import com.example.erpnext.models.PendingInvoiceAction;
@@ -23,6 +24,7 @@ import com.example.erpnext.network.serializers.response.ItemResponse;
 import com.example.erpnext.network.serializers.response.MenuResponse;
 import com.example.erpnext.network.serializers.response.ReportViewResponse;
 import com.example.erpnext.network.serializers.response.SearchLinkResponse;
+import com.example.erpnext.roomDB.Dao.AddCustomerDao;
 import com.example.erpnext.roomDB.Dao.CheckOPEDao;
 import com.example.erpnext.roomDB.Dao.DocProfileDao;
 import com.example.erpnext.roomDB.Dao.DoctypeDao;
@@ -48,7 +50,8 @@ import com.example.erpnext.utils.Constants;
         GetItemsResponse.class, SearchLinkResponse.class,
         PendingOrder.class, PendingOPE.class, PendingLoyalty.class,
         DocDetailResponse.class, PendingEditPOS.class,
-        PendingInvoiceAction.class, MyTaskOfflineModel.class, StockEntryOfflineModel.class, GetItemDetailResponse.class}
+        PendingInvoiceAction.class, MyTaskOfflineModel.class,
+        AddCustomerOfflineModel.class,StockEntryOfflineModel.class, GetItemDetailResponse.class}
         , version = 3, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     private static AppDatabase INSTANCE;
@@ -103,4 +106,6 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract MyTaskDao myTaskDao();
 
     public abstract StockEntryDao StockEntryDao();
+
+    public abstract AddCustomerDao addCustomerDao();
 }

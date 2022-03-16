@@ -68,13 +68,9 @@ public class LogsFragment extends Fragment implements LogsTasksAdapter.LogTaskUp
             getActivity().onBackPressed();
         });
 
-//        customers = MainApp.database.addCustomerDao().getCustomers();
-//        if (customers.size() > 0) {
-//            Log.wtf("addcustomers", customers.toString());
-//        } else {
-//            Log.wtf("showcustomers", customers.toString());
-//        }
 
+
+        setCustomerAdapter();
         setTasksAdapter();
         setInvoicesAdapter();
 
@@ -101,6 +97,15 @@ public class LogsFragment extends Fragment implements LogsTasksAdapter.LogTaskUp
 //        });
 
         return binding.getRoot();
+    }
+
+    private void setCustomerAdapter() {
+        customers = MainApp.database.addCustomerDao().getCustomers();
+        if (customers.size() > 0) {
+            Log.wtf("addcustomers", customers.toString());
+        } else {
+            Log.wtf("showcustomers", customers.toString());
+        }
     }
 
     private void setTasksAdapter() {
