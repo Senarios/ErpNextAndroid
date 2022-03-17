@@ -53,7 +53,7 @@ public class LogsStockEntryAdapter extends RecyclerView.Adapter<LogsStockEntryAd
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        holder.name.setText("Your " + seName + " is failed to add");
+        holder.name.setText(seName + context.getString(R.string.failed_to_add));
         holder.swarehouse.setText("Posting Time: " + swarehouse);
         holder.twarehouse.setText("Target Warehouse:  " + twarehouse);
         holder.menu.setOnClickListener(v -> {

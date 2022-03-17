@@ -561,6 +561,7 @@
     <string name="sync_my_tasks">Sync My Tasks</string>
     <string name="allusers">All Users</string>
     <string name="failed_to_add"> is failed to add</string>
+    <string name="task_failed_to_add"> task is failed to update</string>
 
     <string-array name="itenms">
         <item>Point of Sale</item>
