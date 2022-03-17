@@ -1,5 +1,6 @@
 package com.example.erpnext.adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,10 +39,11 @@ public class LogsAddCustomerAdapter extends RecyclerView.Adapter<LogsAddCustomer
         return new ViewHolder(view);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
-        holder.name.setText(arrayList.get(position).getCustomerName()+" is failed to add");
+        holder.name.setText(arrayList.get(position).getCustomerName()+R.string.failed_to_add);
         holder.menu.setOnClickListener(v->{
             customerUpdate.customerdoupdate(holder.menu,holder.getAdapterPosition());
         });

@@ -559,6 +559,8 @@
     <string name="sync_stock_entries">Sync Stock Entries</string>
     <string name="sync_invoices">Sync Invoices</string>
     <string name="sync_my_tasks">Sync My Tasks</string>
+    <string name="allusers">All Users</string>
+    <string name="failed_to_add"> is failed to add</string>
 
     <string-array name="itenms">
         <item>Point of Sale</item>
