@@ -121,7 +121,7 @@ public class PointOfSaleFragment extends Fragment implements View.OnClickListene
     String searchDoctype = "", query = "", filters = "", baseTotal, changeAmount = "0", outstandingAmount = "0", paidAmount = "0";
     GetItemsResponse getItemsResponse;
     CompleteOrderRequestBody completedOrder;
-    private ImageView back,qrScanner;
+    private ImageView back, qrScanner;
     private ProfileDoc profileDoc;
     private RecyclerView itemsRV, cartItemsRV;
     private ItemsAdapter itemsAdapter;
@@ -485,6 +485,7 @@ public class PointOfSaleFragment extends Fragment implements View.OnClickListene
         } else {
             PendingOrder pendingOrder = new PendingOrder();
             pendingOrder.setOreder(completeOrderRequestBody);
+            pendingOrder.setItem_group(item_group);
             MainApp.database.pendingOrderDao().insertOrder(pendingOrder);
             updateStokeFromDB();
             dialog.dismiss();
@@ -499,7 +500,7 @@ public class PointOfSaleFragment extends Fragment implements View.OnClickListene
 
     private void updateStokeFromDB() {
         GetItemsResponse response = MainApp.database.itemsDao().getItemResponse(item_group);
-        if(response != null){
+        if (response != null) {
             int id = MainApp.database.itemsDao().getItemResponse(item_group).uid;
             String itemGroup = MainApp.database.itemsDao().getItemResponse(item_group).itemGroup;
             response.uid = (id);
@@ -1101,7 +1102,7 @@ public class PointOfSaleFragment extends Fragment implements View.OnClickListene
                 R.string.yes,
                 (dialog, id) -> {
                     dialog.cancel();
-                    showNoteDialog(invoice, isUnpaid);
+                        showNoteDialog(invoice, isUnpaid);
                 });
 
         builder1.setNegativeButton(
@@ -1146,7 +1147,11 @@ public class PointOfSaleFragment extends Fragment implements View.OnClickListene
         });
         cancel.setOnClickListener(v -> {
             dialog.dismiss();
-            showInvoiceDialog(invoice, null);
+            if (Utils.isNetworkAvailable()) {
+                showInvoiceDialog(invoice, null);
+            } else {
+                showLocalInvoiceDialog(null, isUnpaid);
+            }
         });
 
     }
@@ -1200,7 +1205,7 @@ public class PointOfSaleFragment extends Fragment implements View.OnClickListene
     @Override
     public void onPause() {
         super.onPause();
-        contents="";
+        contents = "";
     }
 
     private void scan_qr() {

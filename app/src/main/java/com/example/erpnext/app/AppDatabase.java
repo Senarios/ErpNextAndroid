@@ -52,7 +52,7 @@ import com.example.erpnext.utils.Constants;
         DocDetailResponse.class, PendingEditPOS.class,
         PendingInvoiceAction.class, MyTaskOfflineModel.class,
         AddCustomerOfflineModel.class,StockEntryOfflineModel.class, GetItemDetailResponse.class}
-        , version = 5, exportSchema = false)
+        , version = 6, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     private static AppDatabase INSTANCE;
 
