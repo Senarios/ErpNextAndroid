@@ -320,7 +320,7 @@ public class AddCustomerActivity extends AppCompatActivity implements View.OnCli
         addCustomerOfflineModel.setReference(reference);
         addCustomerOfflineModel.setLattitude(lat);
         addCustomerOfflineModel.setLongitude(lng);
-//        MainApp.database.addCustomerDao().insertCustomer(addCustomerOfflineModel);
+        MainApp.database.addCustomerDao().insertCustomer(addCustomerOfflineModel);
         Toast.makeText(AddCustomerActivity.this, getString(R.string.mytask_logs), Toast.LENGTH_SHORT).show();
     }
 
