@@ -33,6 +33,7 @@ public class LogsInvoiceAdapter extends RecyclerView.Adapter<LogsInvoiceViewHold
 
     @Override
     public void onBindViewHolder(@NonNull LogsInvoiceViewHolder holder, int position) {
+        holder.name.setText(orderList.get(position).getItem_group());
         holder.setData(context, orderList.get(position).getOreder());
     }
 
