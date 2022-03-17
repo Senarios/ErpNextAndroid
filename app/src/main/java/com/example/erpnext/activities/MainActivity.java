@@ -174,6 +174,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     navView.getMenu().add(message.getName());
                 }
             }
+            navView.getMenu().add(getString(R.string.logs));
         }
 
     }
