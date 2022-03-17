@@ -61,7 +61,7 @@ public class LogsAddCustomerAdapter extends RecyclerView.Adapter<LogsAddCustomer
             super(itemView);
             name = itemView.findViewById(R.id.namelog);
             status = itemView.findViewById(R.id.status);
-            menu = itemView.findViewById(R.id.log_menu_tasts);
+            menu = itemView.findViewById(R.id.log_menu_customers);
 
         }
     }
