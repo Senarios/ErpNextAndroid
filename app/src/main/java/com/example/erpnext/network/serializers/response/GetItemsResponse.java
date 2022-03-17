@@ -17,6 +17,9 @@ public class GetItemsResponse {
     public String itemGroup;
     @ColumnInfo(name = "pos_profile")
     public String posProfile;
+    @ColumnInfo(name = "customer")
+    @Expose
+    public String customer;
     @SerializedName("message")
     @Expose
     @Embedded

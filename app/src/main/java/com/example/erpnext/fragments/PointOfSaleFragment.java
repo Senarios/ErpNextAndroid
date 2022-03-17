@@ -59,6 +59,7 @@ import com.example.erpnext.models.CompleteOrderPayment;
 import com.example.erpnext.models.Invoice;
 import com.example.erpnext.models.InvoiceItem;
 import com.example.erpnext.models.ItemDetail;
+import com.example.erpnext.models.ItemMessage;
 import com.example.erpnext.models.PendingOrder;
 import com.example.erpnext.models.ProfileDoc;
 import com.example.erpnext.models.SPLocHisDatum;
@@ -498,14 +499,21 @@ public class PointOfSaleFragment extends Fragment implements View.OnClickListene
 
     private void updateStokeFromDB() {
         GetItemsResponse response = MainApp.database.itemsDao().getItemResponse(item_group);
-        int id = MainApp.database.itemsDao().getItemResponse(item_group).uid;
-        String itemGroup = MainApp.database.itemsDao().getItemResponse(item_group).itemGroup;
+        if(response != null){
+            int id = MainApp.database.itemsDao().getItemResponse(item_group).uid;
+            String itemGroup = MainApp.database.itemsDao().getItemResponse(item_group).itemGroup;
+            response.uid = (id);
+            response.itemGroup = itemGroup;
+        } else {
+            response = new GetItemsResponse();
+            response.itemGroup = item_group;
+            ItemMessage itemMessage = new ItemMessage();
+            response.setItemMessage(itemMessage);
+        }
+        response.customer = selectedCustomer;
         List<CartItem> cartItemList = itemsAdapter.getAllItems();
         response.getItemMessage().setCartItemList(cartItemList);
-        response.uid = (id);
-        response.itemGroup = itemGroup;
         MainApp.database.itemsDao().insertGetItemResponse(response);
-
     }
 
     private void showItemDetailDialog(ItemDetail cartItem) {
