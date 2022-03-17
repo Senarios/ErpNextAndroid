@@ -2,6 +2,7 @@ package com.example.erpnext.fragments;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -250,6 +251,7 @@ public class HomeFragment extends BaseFragment implements AdapterView.OnItemSele
         if (checkOpeningEntryList != null && !checkOpeningEntryList.isEmpty()) {
             setOPEAdapter(checkOpeningEntryList, enteriesRV);
         }
+        dialog.setOnCancelListener(dialog -> homeFeatures());
     }
 
     private void setOPEAdapter(List<CheckOpeningEntry> itemList, RecyclerView recyclerView) {

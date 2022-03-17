@@ -51,6 +51,16 @@ public class HomeItemsAdapter extends RecyclerView.Adapter<HomeItemsAdapter.View
         return homeItemsModelArrayList.size();
     }
 
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return position;
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView itemName;
         ImageView itemImage;

@@ -351,6 +351,10 @@ public class LogsFragment extends Fragment implements LogsTasksAdapter.LogTaskUp
     @Override
     public void onFailure(Call call, BaseResponse response, Object tag) {
         Notify.Toast(response.getServerMessages());
+        if (response.getCode() != 0) {
+            MainApp.database.stockEntryDao().deleteStockEntry(selectedStockEntry);
+            setStockEntriesAdapter();
+        }
     }
 
     private void setViews(){

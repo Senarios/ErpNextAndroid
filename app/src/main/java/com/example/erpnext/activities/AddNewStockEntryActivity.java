@@ -349,7 +349,7 @@ public class AddNewStockEntryActivity extends AppCompatActivity implements View.
 //        }
         if (response.getCode() != 0) {
             Notify.Toast(response.getServerMessages());
-        } else {
+        } else if((int) tag == RequestCodes.API.SAVE_DOC){
             Notify.Toast(getString(R.string.offline_save));
             StockEntryOfflineModel model = new StockEntryOfflineModel();
             model.setEntryId(offlineId);

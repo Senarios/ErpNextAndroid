@@ -565,6 +565,7 @@
     <string name="task_failed_to_add"> task is failed to update</string>
     <string name="swarehouse">Source Warehouse: </string>
     <string name="twarehouse">Target Warehouse: </string>
+    <string name="sync_now">Sync Now</string>
 
     <string-array name="itenms">
         <item>Point of Sale</item>
