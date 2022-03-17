@@ -322,6 +322,7 @@ public class AddCustomerActivity extends AppCompatActivity implements View.OnCli
         addCustomerOfflineModel.setLongitude(lng);
         MainApp.database.addCustomerDao().insertCustomer(addCustomerOfflineModel);
         Toast.makeText(AddCustomerActivity.this, getString(R.string.offline_save), Toast.LENGTH_SHORT).show();
+        onBackPressed();
     }
 
     private void addCustomer(String cus_name, String phone, String reference, double lat, double lng) {
@@ -374,7 +375,7 @@ public class AddCustomerActivity extends AppCompatActivity implements View.OnCli
             public void onFailure(Call<AddCustomerRes> call, Throwable t) {
                 Utils.dismiss();
                 saveCustomerForOffline(path,cus_name,phone,reference,lat,lng);
-                Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_SHORT).show();
             }
         });
     }

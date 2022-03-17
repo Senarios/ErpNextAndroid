@@ -29,7 +29,9 @@ public class LogsInvoiceViewHolder extends RecyclerView.ViewHolder{
 
     public void setData(Context context, CompleteOrderRequestBody order){
 //        name.setText(order.getName());
+        noOfReply.setVisibility(View.GONE);
+        status.setVisibility(View.GONE);
         name2.setText(context.getString(R.string.customer)+": "+order.getCustomer());
-        daysAgo.setText(order.getPostingDate() + " | " + order.getPostingTime());
+        daysAgo.setText(order.getPostingDate());
     }
 }

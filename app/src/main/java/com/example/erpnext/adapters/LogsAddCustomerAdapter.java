@@ -44,6 +44,7 @@ public class LogsAddCustomerAdapter extends RecyclerView.Adapter<LogsAddCustomer
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
         holder.name.setText(arrayList.get(position).getCustomerName()+" "+context.getString(R.string.failed_to_add));
+        holder.status.setText(arrayList.get(position).getPhoneNo());
         holder.menu.setOnClickListener(v->{
             customerUpdate.customerdoupdate(holder.menu,holder.getAdapterPosition());
         });
