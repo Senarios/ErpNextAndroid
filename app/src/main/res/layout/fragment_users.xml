@@ -6,25 +6,39 @@
     android:background="@color/colorPrimary"
     tools:context=".fragments.UsersFragment">
 
-
-
-    <EditText
+    <TextView
+        android:id="@+id/allusers"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/_10sdp"
-        android:layout_margin="10dp"
+        android:text="@string/allusers"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:gravity="center_horizontal"/>
+
+    <EditText
+        android:id="@+id/search_users"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:visibility="gone"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/edittext_bg"
         android:drawableLeft="@drawable/search_bg"
         android:drawablePadding="5dp"
-        android:background="@drawable/edittext_bg"
-        android:textSize="16sp"
-        android:textCursorDrawable="@null"
-        android:textColorHint="@color/grey"
-        android:textColor="@color/grey"
         android:hint="Search user by name..."
-        android:id="@+id/search_users"/>
+        android:padding="@dimen/_10sdp"
+        android:textColor="@color/grey"
+        android:textColorHint="@color/grey"
+        android:textCursorDrawable="@null"
+        android:textSize="16sp" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:layout_below="@id/search_users"
+        android:layout_below="@id/allusers"
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

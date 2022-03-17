@@ -562,6 +562,12 @@
     <string name="no_purchase">بدون خرید</string>
     <string name="add_note">یادداشت را اضافه کنید</string>
     <string name="logs">Logs</string>
+    <string name="sync_customers">همگام سازی مشتریان</string>
+    <string name="sync_stock_entries">همگام سازی ورودی های سهام</string>
+    <string name="sync_invoices">همگام سازی فاکتورها</string>
+    <string name="sync_my_tasks">همگام سازی وظایف من</string>
+    <string name="allusers">تمام کاربران</string>
+    <string name="failed_to_add"> is failed to add</string>
 
     <string-array name="itenms">
         <item>نقطه فروش / پی او ایس</item>
