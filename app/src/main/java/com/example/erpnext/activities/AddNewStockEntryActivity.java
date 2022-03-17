@@ -350,7 +350,7 @@ public class AddNewStockEntryActivity extends AppCompatActivity implements View.
         if (response.getCode() != 0) {
             Notify.Toast(response.getServerMessages());
         } else {
-            Notify.Toast("Saved offline. You can sync from logs");
+            Notify.Toast(getString(R.string.offline_save));
             StockEntryOfflineModel model = new StockEntryOfflineModel();
             model.setEntryId(offlineId);
             model.setData(offlineObject.toString());

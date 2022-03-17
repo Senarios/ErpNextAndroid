@@ -1,6 +1,7 @@
 package com.example.erpnext.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.erpnext.R;
 import com.example.erpnext.models.StockEntryOfflineModel;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -24,6 +26,7 @@ public class LogsStockEntryAdapter extends RecyclerView.Adapter<LogsStockEntryAd
     private Context context;
     private LogStockEntryUpdate logStockEntryUpdate;
     String seName,swarehouse,twarehouse;
+    JSONArray jsonArray;
 
     public LogsStockEntryAdapter(List<StockEntryOfflineModel> arrayList, Context context, LogStockEntryUpdate logStockEntryUpdate) {
         this.arrayList = arrayList;
@@ -48,14 +51,17 @@ public class LogsStockEntryAdapter extends RecyclerView.Adapter<LogsStockEntryAd
         try {
             jresponse = new JSONObject(arrayList.get(position).getData());
             seName = jresponse.getString("name");
-            swarehouse = jresponse.getString("posting_time");
-            twarehouse = jresponse.getString("t_warehouse");
+            JSONArray jsonArray = jresponse.getJSONArray("items");
+            for(int i=0;i<jsonArray.length();i++){
+                swarehouse = jsonArray.getJSONObject(i).getString("s_warehouse");
+                twarehouse = jsonArray.getJSONObject(i).getString("t_warehouse");
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        holder.name.setText(seName + context.getString(R.string.failed_to_add));
-        holder.swarehouse.setText("Posting Time: " + swarehouse);
-        holder.twarehouse.setText("Target Warehouse:  " + twarehouse);
+        holder.name.setText(seName +" "+ context.getString(R.string.failed_to_add));
+        holder.swarehouse.setText(context.getString(R.string.swarehouse)+" "+ swarehouse);
+        holder.twarehouse.setText(context.getString(R.string.twarehouse)+" " + twarehouse);
         holder.menu.setOnClickListener(v -> {
             logStockEntryUpdate.updateStockEntry(holder.menu,holder.getAdapterPosition());
         });

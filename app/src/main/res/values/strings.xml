@@ -453,6 +453,7 @@
     <string name="require_permission">App requires some permissions to function properly</string>
     <string name="select_one_assignee">Please select at least one assignee to continue</string>
     <string name="offline_mode">You are in offline mode</string>
+    <string name="offline_save">Saved offline. You can sync from logs</string>
     <string name="mytask_logs">Your task is failed to update, you can sync your task from Logs</string>
     <string name="write_comment">please write comment to post comment</string>
     <string name="profile_updated">Your profile will be updated automatically when internet will be available</string>
@@ -562,6 +563,8 @@
     <string name="allusers">All Users</string>
     <string name="failed_to_add"> is failed to add</string>
     <string name="task_failed_to_add"> task is failed to update</string>
+    <string name="swarehouse">Source Warehouse: </string>
+    <string name="twarehouse">Target Warehouse: </string>
 
     <string-array name="itenms">
         <item>Point of Sale</item>

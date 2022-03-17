@@ -567,8 +567,11 @@
     <string name="sync_invoices">همگام سازی فاکتورها</string>
     <string name="sync_my_tasks">همگام سازی وظایف من</string>
     <string name="allusers">تمام کاربران</string>
-    <string name="failed_to_add"> is failed to add</string>
-    <string name="task_failed_to_add"> task is failed to update</string>
+    <string name="failed_to_add">is failed to add</string>
+    <string name="task_failed_to_add">task is failed to update</string>
+    <string name="swarehouse">Source Warehouse:</string>
+    <string name="twarehouse">Target Warehouse:</string>
+    <string name="offline_save">آفلاین ذخیره شد. می توانید از گزارش ها همگام سازی کنید</string>
 
     <string-array name="itenms">
         <item>نقطه فروش / پی او ایس</item>

@@ -41,7 +41,7 @@ public class LogsTasksAdapter extends RecyclerView.Adapter<LogsTasksAdapter.View
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
-        holder.name.setText(arrayList.get(position).getTaskName()+context.getString(R.string.task_failed_to_add));
+        holder.name.setText(arrayList.get(position).getTaskName()+" "+context.getString(R.string.task_failed_to_add));
         holder.status.setText(arrayList.get(position).getShopStat());
         holder.menu.setOnClickListener(v->{
             taskUpdate.taskToUpdate(holder.menu, holder.getAdapterPosition());
