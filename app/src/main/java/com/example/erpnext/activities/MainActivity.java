@@ -170,8 +170,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             getMenu();
         } else if (MainApp.database.menuDao().getMenu() != null) {
             for (MenuMessage message : MainApp.database.menuDao().getMenu().getMessage()) {
-                if (message.getName().equalsIgnoreCase("Retail") || message.getName().equalsIgnoreCase("CRM")) {
-                    navView.getMenu().add(message.getName());
+                if (message.getName().equalsIgnoreCase("Retail")){
+                    navView.getMenu().add(getString(R.string.retail));
+                } else if(message.getName().equalsIgnoreCase("CRM")) {
+                    navView.getMenu().add(getString(R.string.crm));
                 }
             }
             navView.getMenu().add(getString(R.string.logs));

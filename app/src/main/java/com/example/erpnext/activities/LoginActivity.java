@@ -51,6 +51,7 @@ import com.example.erpnext.network.serializers.requestbody.LoginRequest;
 import com.example.erpnext.network.serializers.response.BaseResponse;
 import com.example.erpnext.network.serializers.response.LoginResponse;
 import com.example.erpnext.utils.Constants;
+import com.example.erpnext.utils.Loading;
 import com.example.erpnext.utils.Notify;
 import com.example.erpnext.utils.RequestCodes;
 import com.example.erpnext.utils.Utils;
@@ -84,6 +85,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private String email, password, network;
     private EditText edit_email, edit_password;
     public static final String MAIN_ACT = "main";
+    private Loading loading;
     FusedLocationProviderClient fusedLocationProviderClient;
     FirebaseAuth auth;
     DatabaseReference reference;
@@ -117,6 +119,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 if (!isFieldErrorExist()) {
                     if (checkPermission()) {
                         if (isServicesOK()) {
+                            loading = Utils.getLoading(this, "Signing in...");
                             getCurrLoc();
                             loginWithFirebase(edit_email.getText().toString(), edit_password.getText().toString());
 
@@ -239,13 +242,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             NetworkCall.make()
                     .setCallback(this)
                     .setTag(RequestCodes.API.LOGIN)
-                    .autoLoadingCancel(Utils.getLoading(this, "Signing in..."))
+                    .autoLoadingCancel(null)
                     .enque(Network.apis().login(new LoginRequest(email, password)))
                     .execute();
         } else {
             Notify.Toast(getString(R.string.no_internet_avail));
         }
-
     }
 
     public boolean isServicesOK() {
@@ -286,14 +288,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
-
-
+                cancelLoading();
             }
         }
     }
 
     @Override
     public void onFailure(Call call, BaseResponse response, Object tag) {
+        cancelLoading();
         Notify.Toast(response.getMessage());
     }
 
@@ -390,6 +392,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             }
                         });
                     } else {
+                        cancelLoading();
 //                            Toast.makeText(LoginActivity.this, "You can't register with this email or password", Toast.LENGTH_SHORT).show();
                     }
                 }).addOnFailureListener(e -> {
@@ -399,13 +402,23 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()){
                                     login();
+                                } else {
+                                    cancelLoading();
                                 }
                             }
-                        }).addOnFailureListener(e1 -> Toast.makeText(getApplicationContext(), e1.toString(), Toast.LENGTH_SHORT).show());
+                        }).addOnFailureListener(e1 -> {
+                            cancelLoading();
+                            Toast.makeText(getApplicationContext(), e1.toString(), Toast.LENGTH_SHORT).show();
+                        });
                     }
     //                Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
 
                 });
+    }
+
+    public void cancelLoading() {
+        if (loading != null && loading.isVisible())
+            loading.cancel();
     }
 
 }
