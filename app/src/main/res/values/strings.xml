@@ -566,6 +566,9 @@
     <string name="swarehouse">Source Warehouse: </string>
     <string name="twarehouse">Target Warehouse: </string>
     <string name="sync_now">Sync Now</string>
+    <string name="pos_invoices">POS Invoices</string>
+    <string name="login">Login</string>
+    <string name="password">Password</string>
 
     <string-array name="itenms">
         <item>Point of Sale</item>

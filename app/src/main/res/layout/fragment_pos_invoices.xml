@@ -31,7 +31,7 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="@dimen/_10sdp"
             android:layout_toRightOf="@+id/back"
-            android:text="POS Invoices"
+            android:text="@string/pos_invoices"
             android:textColor="@color/black"
             android:textSize="@dimen/_14sdp"
             android:textStyle="bold" />

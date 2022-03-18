@@ -260,6 +260,8 @@
     <string name="total_quantity">تعداد کل</string>
     <string name="select_invoice">انتخاب فاکتور / انوایس</string>
     <string name="pos_invoice">فاکتور/ انوایس پی او ایس</string>
+    <string name="login">وارد شدن</string>
+    <string name="password">کلمه عبور</string>
 
     <!--    retail-->
 
@@ -573,6 +575,7 @@
     <string name="twarehouse">انبار هدف</string>
     <string name="offline_save">آفلاین ذخیره شد. می توانید از گزارش ها همگام سازی کنید</string>
     <string name="sync_now">اکنون همگام سازی کنید</string>
+    <string name="pos_invoices">فاکتورهای POS</string>
 
     <string-array name="itenms">
         <item>نقطه فروش / پی او ایس</item>
