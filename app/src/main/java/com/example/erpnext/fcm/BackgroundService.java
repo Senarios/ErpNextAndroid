@@ -90,31 +90,33 @@ public class BackgroundService extends Service {
                 @Override
                 public void onComplete(@NonNull Task<Location> task) {
                     Location location = task.getResult();
-                    Retrofit retrofit = new Retrofit.Builder().baseUrl("http://75.119.143.175:8080/ErpNext/")
-                            .addConverterFactory(GsonConverterFactory.create()).build();
-                    ApiServices apiServices = retrofit.create(ApiServices.class);
-                    Call<SalesPersonLocRes> call = apiServices.sendSalesPersonLoc(AppSession.get("email"), location.getLatitude(), location.getLongitude());
-                    call.enqueue(new Callback<SalesPersonLocRes>() {
-                        @SuppressLint("NotifyDataSetChanged")
-                        @Override
-                        public void onResponse(Call<SalesPersonLocRes> call, Response<SalesPersonLocRes> response) {
-                            if (response.isSuccessful()) {
-                                if (response.body().getStatus().toString().equals("200")) {
+                    if (location != null) {
+                        Retrofit retrofit = new Retrofit.Builder().baseUrl("http://75.119.143.175:8080/ErpNext/")
+                                .addConverterFactory(GsonConverterFactory.create()).build();
+                        ApiServices apiServices = retrofit.create(ApiServices.class);
+                        Call<SalesPersonLocRes> call = apiServices.sendSalesPersonLoc(AppSession.get("email"), location.getLatitude(), location.getLongitude());
+                        call.enqueue(new Callback<SalesPersonLocRes>() {
+                            @SuppressLint("NotifyDataSetChanged")
+                            @Override
+                            public void onResponse(Call<SalesPersonLocRes> call, Response<SalesPersonLocRes> response) {
+                                if (response.isSuccessful()) {
+                                    if (response.body().getStatus().toString().equals("200")) {
 //                                    Toast.makeText(getApplicationContext(), "Loc Sent", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(getApplicationContext(), "Process Failed", Toast.LENGTH_SHORT).show();
+                                    }
                                 } else {
                                     Toast.makeText(getApplicationContext(), "Process Failed", Toast.LENGTH_SHORT).show();
                                 }
-                            } else {
-                                Toast.makeText(getApplicationContext(), "Process Failed", Toast.LENGTH_SHORT).show();
                             }
-                        }
 
-                        @Override
-                        public void onFailure(Call<SalesPersonLocRes> call, Throwable t) {
-                            Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_SHORT).show();
-                        }
+                            @Override
+                            public void onFailure(Call<SalesPersonLocRes> call, Throwable t) {
+                                Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_SHORT).show();
+                            }
 
-                    });
+                        });
+                    }
                 }
             });
         }

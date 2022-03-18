@@ -105,22 +105,23 @@ public class BgServiceForSPLoc extends Service {
                     near_location.setLatitude(Double.parseDouble(lat));
                     near_location.setLongitude(Double.parseDouble(lon));
 
-                    Location start_location = new Location("");
-                    start_location.setLatitude(location.getLatitude());
-                    start_location.setLongitude(location.getLongitude());
-                    SharedPreferences.Editor editor = getSharedPreferences(MAIN_ACT, Context.MODE_PRIVATE).edit();
-                    editor.putString("lati", String.valueOf(location.getLatitude()));
-                    editor.putString("longi", String.valueOf(location.getLongitude()));
-                    editor.commit();
+                    if (location != null) {
 
-                    if (start_location.distanceTo(near_location) <= 20) {
+                        Location start_location = new Location("");
+                        start_location.setLatitude(location.getLatitude());
+                        start_location.setLongitude(location.getLongitude());
+                        SharedPreferences.Editor editor = getSharedPreferences(MAIN_ACT, Context.MODE_PRIVATE).edit();
+                        editor.putString("lati", String.valueOf(location.getLatitude()));
+                        editor.putString("longi", String.valueOf(location.getLongitude()));
+                        editor.commit();
+
+                        if (start_location.distanceTo(near_location) <= 20) {
 //                        Notify.Toast("You are not moving");
-                        sendNotification();
-                    } else {
+                            sendNotification();
+                        } else {
 //                        Notify.Toast("You are moving");
+                        }
                     }
-
-
                 }
             });
         }
