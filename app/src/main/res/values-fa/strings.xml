@@ -576,6 +576,8 @@
     <string name="offline_save">آفلاین ذخیره شد. می توانید از گزارش ها همگام سازی کنید</string>
     <string name="sync_now">اکنون همگام سازی کنید</string>
     <string name="pos_invoices">فاکتورهای POS</string>
+    <string name="profile">مشخصات</string>
+    <string name="logout">خروج</string>
 
     <string-array name="itenms">
         <item>نقطه فروش / پی او ایس</item>

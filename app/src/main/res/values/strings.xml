@@ -561,14 +561,16 @@
     <string name="sync_invoices">Sync Invoices</string>
     <string name="sync_my_tasks">Sync My Tasks</string>
     <string name="allusers">All Users</string>
-    <string name="failed_to_add"> is failed to add</string>
-    <string name="task_failed_to_add"> task is failed to update</string>
+    <string name="failed_to_add">is failed to add</string>
+    <string name="task_failed_to_add">task is failed to update</string>
     <string name="swarehouse">Source Warehouse: </string>
     <string name="twarehouse">Target Warehouse: </string>
     <string name="sync_now">Sync Now</string>
     <string name="pos_invoices">POS Invoices</string>
     <string name="login">Login</string>
     <string name="password">Password</string>
+    <string name="profile">Profile</string>
+    <string name="logout">Logout</string>
 
     <string-array name="itenms">
         <item>Point of Sale</item>
