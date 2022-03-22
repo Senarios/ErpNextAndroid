@@ -1,6 +1,7 @@
 package com.example.erpnext.fragments;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Context;
@@ -43,6 +44,9 @@ public class SettingsFragment extends Fragment {
         binding.language.setOnClickListener(v -> {
             selectLang();
         });
+        binding.logs.setOnClickListener(v-> {
+            fragmentTrx(LogsFragment.newInstance(), null, "LogsFragment");
+        });
         binding.back.setOnClickListener(v ->{
             getActivity().onBackPressed();
         });
@@ -82,7 +86,13 @@ public class SettingsFragment extends Fragment {
         AlertDialog alert = alertDialog.create();
         alert.show();
     }
-
+    public void fragmentTrx(Fragment fragment, Bundle bundle, String tag) {
+        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragmentContainer, fragment, tag);
+        fragment.setArguments(bundle);
+        transaction.addToBackStack(fragment.getTag());
+        transaction.commitAllowingStateLoss();
+    }
     private void setLocale(String lang) {
 
         Locale locale = new Locale(lang);

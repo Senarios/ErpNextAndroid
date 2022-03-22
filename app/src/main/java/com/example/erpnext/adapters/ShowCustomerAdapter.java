@@ -19,10 +19,16 @@ import java.util.ArrayList;
 public class ShowCustomerAdapter extends RecyclerView.Adapter<ShowCustomerAdapter.ViewHolder> {
     private ArrayList<ShowCustomerDatum> showCustomerData = new ArrayList<>();
     private Context context;
+    private CustomerClick customerClick;
 
-    public ShowCustomerAdapter(ArrayList<ShowCustomerDatum> myTaskitemArrayList, Context context) {
-        this.showCustomerData = myTaskitemArrayList;
+    public ShowCustomerAdapter(ArrayList<ShowCustomerDatum> showCustomerData, Context context, CustomerClick customerClick) {
+        this.showCustomerData = showCustomerData;
         this.context = context;
+        this.customerClick = customerClick;
+    }
+
+    public interface CustomerClick {
+        void doClick(String name,String phone,String ref,String image);
     }
 
     @NonNull
@@ -40,7 +46,10 @@ public class ShowCustomerAdapter extends RecyclerView.Adapter<ShowCustomerAdapte
         holder.comment.setText(showCustomerData.get(position).getReference());
         holder.menu_more.setVisibility(View.GONE);
         holder.dayAgo.setVisibility(View.GONE);
-
+        holder.itemView.setOnClickListener(v ->{
+            customerClick.doClick(showCustomerData.get(position).getName(),showCustomerData.get(position).getPhoneNumber()
+            ,showCustomerData.get(position).getReference(),showCustomerData.get(position).getImage());
+        });
     }
 
     @Override

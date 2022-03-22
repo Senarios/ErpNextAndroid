@@ -176,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     navView.getMenu().add(getString(R.string.crm));
                 }
             }
-            navView.getMenu().add(getString(R.string.logs));
+            navView.getMenu().add(getString(R.string.settings));
         }
 
     }
@@ -303,9 +303,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         else if (menuItem.getTitle().equals(getString(R.string.chatroom))) {
             fragmentTrx(ChatRoomFragment.newInstance(), null, "ChatRoomFragment");
         }
-        else if (menuItem.getTitle().equals(getString(R.string.logs))) {
-            fragmentTrx(LogsFragment.newInstance(), null, "LogsFragment");
-        }
+//        else if (menuItem.getTitle().equals(getString(R.string.logs))) {
+//            fragmentTrx(LogsFragment.newInstance(), null, "LogsFragment");
+//        }
         else if (menuItem.getTitle().equals(getString(R.string.settings))) {
             fragmentTrx(SettingsFragment.newInstance(), null, "SettingsFragment");
         }
@@ -476,7 +476,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 navView.getMenu().add(getString(R.string.my_tasks));
                 navView.getMenu().add(getString(R.string.locationhistory));
                 navView.getMenu().add(getString(R.string.chatroom));
-                navView.getMenu().add(getString(R.string.logs));
+//                navView.getMenu().add(getString(R.string.logs));
                 navView.getMenu().add(getString(R.string.settings));
                 if (navView.getMenu().hasVisibleItems()) {
 //                    getItem(navView.getMenu().getItem(0).getTitle());

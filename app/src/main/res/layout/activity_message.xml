@@ -72,14 +72,14 @@
             android:layout_centerVertical="true"/>
 
         <ImageButton
+            android:id="@+id/btn_send"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="@dimen/_10sdp"
-            android:background="@drawable/ic_send"
+            android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:id="@+id/btn_send"
+            android:background="@drawable/ic_send"
             android:backgroundTint="@color/colorPrimary"
-            android:layout_alignParentRight="true" />
+            android:padding="@dimen/_10sdp" />
 
     </RelativeLayout>
 </RelativeLayout>

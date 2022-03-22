@@ -173,6 +173,7 @@
     <string name="grand_total">Grand Total</string>
     <string name="checkout">Checkout</string>
     <string name="search_by_customer_name_phone_email">Search by customer name, phone, email</string>
+    <string name="search_by_customer_name">Search by customer name</string>
     <string name="select_item_group">Select item group</string>
     <string name="search_by_item_code_serial_number_bar">Search by item code, serial number, bar</string>
     <string name="payment">Payment</string>

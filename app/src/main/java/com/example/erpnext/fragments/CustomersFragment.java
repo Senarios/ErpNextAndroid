@@ -2,11 +2,20 @@ package com.example.erpnext.fragments;
 
 import static android.app.Activity.RESULT_OK;
 
+import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -16,17 +25,18 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.example.erpnext.R;
 import com.example.erpnext.activities.AddCustomerActivity;
-import com.example.erpnext.adapters.MyTaskAdapter;
 import com.example.erpnext.adapters.ShowCustomerAdapter;
 import com.example.erpnext.adapters.StockListsAdapter;
-import com.example.erpnext.app.AppSession;
 import com.example.erpnext.app.MainApp;
 import com.example.erpnext.callbacks.ProfilesCallback;
 import com.example.erpnext.databinding.CustomerFragmentBinding;
-import com.example.erpnext.models.Info;
-import com.example.erpnext.models.MyTaskRes;
 import com.example.erpnext.models.ShowCustomerDatum;
 import com.example.erpnext.models.ShowCustomerRes;
 import com.example.erpnext.network.ApiServices;
@@ -44,13 +54,14 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class CustomersFragment extends Fragment implements View.OnClickListener, ProfilesCallback {
+public class CustomersFragment extends Fragment implements View.OnClickListener, ProfilesCallback, ShowCustomerAdapter.CustomerClick {
 
     public boolean isItemsEnded = false;
     String doctype = "Customer";
     CustomerFragmentBinding binding;
     private StockListsAdapter stockListsAdapter;
     private int limitStart = 0;
+    Dialog dialog;
     private CustomersViewModel mViewModel;
     ShowCustomerAdapter showCustomerAdapter;
 
@@ -179,7 +190,7 @@ public class CustomersFragment extends Fragment implements View.OnClickListener,
                     Utils.dismiss();
                     ShowCustomerRes resObj = response.body();
                     List<ShowCustomerDatum> list = resObj.getData();
-                    showCustomerAdapter = new ShowCustomerAdapter((ArrayList<ShowCustomerDatum>) list, getContext());
+                    showCustomerAdapter = new ShowCustomerAdapter((ArrayList<ShowCustomerDatum>) list, getContext(),CustomersFragment.this);
                     LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false);
                     binding.listRv.setLayoutManager(layoutManager);
                     binding.listRv.setAdapter(showCustomerAdapter);
@@ -199,5 +210,53 @@ public class CustomersFragment extends Fragment implements View.OnClickListener,
         });
     }
 
+    @Override
+    public void doClick(String name, String phone, String ref, String image) {
+        showCustomerDialog(name,phone,ref,image);
+    }
+
+    private void showCustomerDialog(String name, String phone, String ref,String image) {
+        dialog = new Dialog(getActivity());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.show_customer_layout);
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        Window window = dialog.getWindow();
+        dialog.setCancelable(false);
+        WindowManager.LayoutParams wlp = window.getAttributes();
+        wlp.gravity = Gravity.CENTER;
+        wlp.flags &= ~WindowManager.LayoutParams.FLAG_BLUR_BEHIND;
+        window.setAttributes(wlp);
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.show();
+        ProgressBar progressBar = dialog.findViewById(R.id.customerProgress);
+        ImageView customer_image = dialog.findViewById(R.id.show_image);
+        TextView tvname = dialog.findViewById(R.id.show_cus_name);
+        TextView tvphone = dialog.findViewById(R.id.show_phone_no);
+        TextView tvrefernce = dialog.findViewById(R.id.show_reference);
+        Button cancel = dialog.findViewById(R.id.cancel);
+        tvname.setText(name);
+        tvphone.setText(phone);
+        tvrefernce.setText(ref);
+        progressBar.setVisibility(View.VISIBLE);
+        Glide.with(getContext()).load("http://75.119.143.175:8080/ErpNext/" + image)
+                .placeholder(R.drawable.logo)
+                .addListener(new RequestListener<Drawable>() {
+                    @Override
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                        progressBar.setVisibility(View.GONE);
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                        progressBar.setVisibility(View.GONE);
+                        return false;
+                    }
+                })
+                .into(customer_image);
+        cancel.setOnClickListener(v -> {
+            dialog.dismiss();
+        });
+    }
 
 }
