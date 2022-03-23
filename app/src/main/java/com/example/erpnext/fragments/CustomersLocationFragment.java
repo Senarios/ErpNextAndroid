@@ -11,7 +11,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -31,6 +36,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
@@ -38,15 +44,13 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.bumptech.glide.Glide;
 import com.example.erpnext.R;
 import com.example.erpnext.adapters.MyTaskAdapter;
-import com.example.erpnext.app.AppSession;
 import com.example.erpnext.app.MainApp;
 import com.example.erpnext.databinding.CustomersLocationFragmentBinding;
 import com.example.erpnext.models.CustomerInfo;
 import com.example.erpnext.models.CustomerRes;
-import com.example.erpnext.models.Info;
-import com.example.erpnext.models.MyTaskRes;
 import com.example.erpnext.network.ApiServices;
 import com.example.erpnext.utils.Constants;
 import com.example.erpnext.utils.Utils;
@@ -54,6 +58,7 @@ import com.example.erpnext.viewmodels.CustomersLocationViewModel;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -61,6 +66,7 @@ import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -86,7 +92,7 @@ public class CustomersLocationFragment extends Fragment implements OnMapReadyCal
     private CustomersLocationFragmentBinding binding;
     private Location currentLocation;
     private GoogleMap mGoogleMap;
-    private TextView name;
+    String shopImage;
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private View liveButtonView;
     private RelativeLayout drawerToggle, findParking;
@@ -180,15 +186,22 @@ public class CustomersLocationFragment extends Fragment implements OnMapReadyCal
                         latLngArrayList.add(latLng);
                         locationNameArraylist.add(shopname);
                         locationReferenceArraylist.add(shopreference);
+                        LatLngBounds.Builder builder = new LatLngBounds.Builder();
                         for (int j = 0; j < latLngArrayList.size(); j++) {
 
                             // adding marker to each location on google maps
                             mGoogleMap.addMarker(new MarkerOptions().position(latLngArrayList.get(j)).title("Shop name: " + locationNameArraylist.get(i))
-                                    .snippet("Shop refernce: " + locationReferenceArraylist.get(i)));
-
-                            // below line is use to move camera.
-                            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                                    .snippet("Shop refernce: " + locationReferenceArraylist.get(i))
+                            .icon(BitmapDescriptorFactory.fromBitmap(getMarkerBitmapFromView(R.drawable.shopowner))));
+//                            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
                         }
+                        builder.include(latLngArrayList.get(i));
+                        LatLngBounds bounds = builder.build();
+                        int width = getResources().getDisplayMetrics().widthPixels;
+                        int height = getResources().getDisplayMetrics().heightPixels;
+                        int padding = (int) (width * 0.15);
+                        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
+                        mGoogleMap.animateCamera(cu);
                     }
 
                 } else {
@@ -208,6 +221,29 @@ public class CustomersLocationFragment extends Fragment implements OnMapReadyCal
         mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
+//                mGoogleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+//                    @Override
+//                    public View getInfoWindow(Marker marker) {
+//                        return null;
+//                    }
+//
+//                    @Override
+//                    public View getInfoContents(Marker marker) {
+////                      YourModelClassName detailDto = (YourModelClassName ) marker.getTag();
+//                        View v = View.inflate(getContext(), R.layout.customer_info_window, null);
+//                        // set widget of your custom_layout like below
+//                        TextView txtResourceName = v.findViewById(R.id.title);
+//                        TextView txtResourceAddress = v.findViewById(R.id.snippet);
+//                        ImageView imageViewPic = v.findViewById(R.id.infoWindowImage);
+//                        for (int i = 0; i < list.size(); i++) {
+//                            txtResourceName.setText(list.get(i).getName());
+//                            txtResourceAddress.setText("snippett");
+//                            Glide.with(getContext()).load("http://75.119.143.175:8080/ErpNext/" + "image").into(imageViewPic);
+//                        }
+//                        return v;
+//                    }
+//                });
+//                Toast.makeText(getContext(), "dsds", Toast.LENGTH_SHORT).show();
                 // on marker click we are getting the title of our marker
                 // which is clicked and displaying it in a toast message.
                 String markerName = marker.getTitle();
@@ -215,10 +251,6 @@ public class CustomersLocationFragment extends Fragment implements OnMapReadyCal
                 return false;
             }
         });
-
-//            centerMarker = mGoogleMap.addMarker(new MarkerOptions().position(mGoogleMap.getCameraPosition().target)
-//                    .title("Center of Map")
-//                    .icon(BitmapDescriptorFactory.fromBitmap(Converters.getBitmapFromVectorDrawable(getContext(), R.drawable.ic_placeholder))));
     }
 
     @Override
@@ -430,7 +462,22 @@ public class CustomersLocationFragment extends Fragment implements OnMapReadyCal
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     }
 
-    private void showToast(String message) {
-        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+    private Bitmap getMarkerBitmapFromView(@DrawableRes int resId) {
+
+        View customMarkerView = ((LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.view_customer_marker, null);
+        ImageView markerImageView = (ImageView) customMarkerView.findViewById(R.id.profile_image);
+        markerImageView.setImageResource(resId);
+        customMarkerView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        customMarkerView.layout(0, 0, customMarkerView.getMeasuredWidth(), customMarkerView.getMeasuredHeight());
+        customMarkerView.buildDrawingCache();
+        Bitmap returnedBitmap = Bitmap.createBitmap(customMarkerView.getMeasuredWidth(), customMarkerView.getMeasuredHeight(),
+                Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(returnedBitmap);
+        canvas.drawColor(Color.WHITE, PorterDuff.Mode.SRC_IN);
+        Drawable drawable = customMarkerView.getBackground();
+        if (drawable != null)
+            drawable.draw(canvas);
+        customMarkerView.draw(canvas);
+        return returnedBitmap;
     }
 }

@@ -504,6 +504,7 @@
     <!--    extra-->
     <string name="chatroom">Chat Room</string>
     <string name="locationhistory">Location History</string>
+    <string name="location">Location</string>
     <string name="customerlocation">Customers Location</string>
     <string name="stock">Stock</string>
     <string name="quickaccess">Quick Access</string>

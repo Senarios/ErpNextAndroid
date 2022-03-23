@@ -6,12 +6,14 @@ import static com.example.erpnext.adapters.MyTaskAdapter.MY_PREF;
 
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
@@ -22,14 +24,21 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.constraintlayout.widget.Constraints;
@@ -39,6 +48,11 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.example.erpnext.R;
 import com.example.erpnext.app.AppSession;
 import com.example.erpnext.app.MainApp;
@@ -128,6 +142,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ImageView drawerToggle;
     private String itemName;
     private Spinner homeSpinner;
+    private Dialog dialog;
 
     public static void closeDrawer() {
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -293,13 +308,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //                getItem(menuItem.getTitle());
 //            }
         }
-        else if (menuItem.getTitle().equals(getString(R.string.customerlocation))) {
-            fragmentTrx(CustomersLocationFragment.newInstance(), null, "CustomersLocationFragment");
-        } else if (menuItem.getTitle().equals(getString(R.string.my_tasks))) {
+//        else if (menuItem.getTitle().equals(getString(R.string.customerlocation))) {
+//            fragmentTrx(CustomersLocationFragment.newInstance(), null, "CustomersLocationFragment");
+//        }
+        else if (menuItem.getTitle().equals(getString(R.string.my_tasks))) {
             fragmentTrx(MyTasksFragment.newInstance(), null, "MyTasksFragment");
-        } else if (menuItem.getTitle().equals(getString(R.string.locationhistory))) {
-            fragmentTrx(LocationHistoryFragment.newInstance(), null, "LocationHistoryFragment");
+        } else if (menuItem.getTitle().equals(getString(R.string.location))) {
+            openLocationScreens();
+//            fragmentTrx(MyTasksFragment.newInstance(), null, "MyTasksFragment");
         }
+//        else if (menuItem.getTitle().equals(getString(R.string.locationhistory))) {
+//            fragmentTrx(LocationHistoryFragment.newInstance(), null, "LocationHistoryFragment");
+//        }
         else if (menuItem.getTitle().equals(getString(R.string.chatroom))) {
             fragmentTrx(ChatRoomFragment.newInstance(), null, "ChatRoomFragment");
         }
@@ -312,6 +332,31 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void openLocationScreens() {
+        dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.show_location_screen);
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        Window window = dialog.getWindow();
+        dialog.setCancelable(false);
+        WindowManager.LayoutParams wlp = window.getAttributes();
+        wlp.gravity = Gravity.CENTER;
+        wlp.flags &= ~WindowManager.LayoutParams.FLAG_BLUR_BEHIND;
+        window.setAttributes(wlp);
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.show();
+        RelativeLayout cus_location = dialog.findViewById(R.id.cus_locations);
+        RelativeLayout sp_loc_history = dialog.findViewById(R.id.sp_loc_history);
+        cus_location.setOnClickListener(v -> {
+            dialog.dismiss();
+            fragmentTrx(CustomersLocationFragment.newInstance(), null, "CustomersLocationFragment");
+        });
+        sp_loc_history.setOnClickListener(v -> {
+            dialog.dismiss();
+            fragmentTrx(LocationHistoryFragment.newInstance(), null, "LocationHistoryFragment");
+        });
     }
 
     private void onBottomNavClick() {
@@ -472,9 +517,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 navView.getMenu().add(getString(R.string.crm));
                 navView.getMenu().add(getString(R.string.retail));
                 navView.getMenu().add(getString(R.string.stock));
-                navView.getMenu().add(getString(R.string.customerlocation));
+                navView.getMenu().add(getString(R.string.location));
+//                navView.getMenu().add(getString(R.string.customerlocation));
                 navView.getMenu().add(getString(R.string.my_tasks));
-                navView.getMenu().add(getString(R.string.locationhistory));
+//                navView.getMenu().add(getString(R.string.locationhistory));
                 navView.getMenu().add(getString(R.string.chatroom));
 //                navView.getMenu().add(getString(R.string.logs));
                 navView.getMenu().add(getString(R.string.settings));
