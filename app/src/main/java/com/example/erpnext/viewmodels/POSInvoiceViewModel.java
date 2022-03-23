@@ -18,6 +18,11 @@ public class POSInvoiceViewModel extends ViewModel {
         repo.getInvoices(docType, pageLength, isCommentCount, orderBy, limitStart);
     }
 
+    public void searchInvoicesApi(String docType, int pageLength, boolean isCommentCount, String orderBy, int limitStart, String date) {
+        repo = POSInvoicesRepo.getInstance();
+        repo.searchInvoices(docType, pageLength, isCommentCount, orderBy, limitStart, date);
+    }
+
     public void getInvoiceDetails(String docType, String invoiceNo) {
         repo = POSInvoicesRepo.getInstance();
         repo.getInvoiceDetail(docType, invoiceNo);
@@ -30,6 +35,10 @@ public class POSInvoiceViewModel extends ViewModel {
 
     public LiveData<List<List<String>>> getInvoices() {
         return repo.getInvoicesList();
+    }
+
+    public LiveData<List<List<String>>> searchInvoices() {
+        return repo.searchInvoicesList();
     }
 
     public LiveData<PosInvoiceResponse> getInvoice() {

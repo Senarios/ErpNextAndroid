@@ -35,8 +35,10 @@ public class POSInvoicesRepo implements OnNetworkResponse {
     private static POSInvoicesRepo instance;
     public MutableLiveData<Boolean> invoiceStatus = new MutableLiveData<>();
     public MutableLiveData<List<List<String>>> posInvoices = new MutableLiveData<>();
+    public MutableLiveData<List<List<String>>> searchInvoices = new MutableLiveData<>();
     public MutableLiveData<PosInvoiceResponse> posInvoiceResponseMutableLiveData = new MutableLiveData<>();
     int limitSet;
+    int searchLimitSet;
 
     public static POSInvoicesRepo getInstance() {
         if (instance == null) {
@@ -53,6 +55,11 @@ public class POSInvoicesRepo implements OnNetworkResponse {
     public void getInvoices(String docType, int pageLength, boolean isCommentCount, String orderBy, int limitStart) {
         this.limitSet = (limitStart);
         getReportView(docType, new Gson().toJson(getFieldsPOSInvoices(docType)), pageLength, isCommentCount, orderBy, limitStart);
+    }
+
+    public void searchInvoices(String docType, int pageLength, boolean isCommentCount, String orderBy, int limitStart, String date) {
+        this.searchLimitSet = (limitStart);
+        searchReportView(docType, new Gson().toJson(getFieldsPOSInvoices(docType)), pageLength, isCommentCount, orderBy, limitStart, date);
     }
 
     public void changeInvoiceStatus(String doctype, String names, String action) {
@@ -73,6 +80,10 @@ public class POSInvoicesRepo implements OnNetworkResponse {
         return posInvoices;
     }
 
+    public LiveData<List<List<String>>> searchInvoicesList() {
+        return searchInvoices;
+    }
+
     public LiveData<PosInvoiceResponse> getInvoice() {
         return posInvoiceResponseMutableLiveData;
     }
@@ -83,6 +94,15 @@ public class POSInvoicesRepo implements OnNetworkResponse {
                 .setTag(RequestCodes.API.REPORT_VIEW)
                 .autoLoadingCancel(Utils.getLoading(MainApp.INSTANCE.getCurrentActivity(), "Loading..."))
                 .enque(Network.apis().getReportView(docType, fields, "[[\"POS Invoice\",\"owner\",\"=\",\"" + AppSession.get("email") + "\"]]", pageLength, isCommentCount, orderBy, limitSet))
+                .execute();
+    }
+
+    private void searchReportView(String docType, String fields, int pageLength, boolean isCommentCount, String orderBy, int limitStart, String date) {
+        NetworkCall.make()
+                .setCallback(this)
+                .setTag(RequestCodes.API.SEARCH_REPORT_VIEW)
+                .autoLoadingCancel(Utils.getLoading(MainApp.INSTANCE.getCurrentActivity(), "Loading..."))
+                .enque(Network.apis().getReportView(docType, fields, "[[\"POS Invoice\",\"owner\",\"=\",\"" + AppSession.get("email") + "\"],[\"POS Invoice\",\"posting_date\",\"=\",\"" + date + "\"]]", pageLength, isCommentCount, orderBy, searchLimitSet))
                 .execute();
     }
 
@@ -137,6 +157,24 @@ public class POSInvoicesRepo implements OnNetworkResponse {
                             list.addAll(res.getReportViewMessage().getValues());
                             posInvoices.setValue(list);
                             Room.saveMoreReportView(res, "POS Invoice");
+                        }
+                    }
+                }
+            }
+        } else if ((int) tag == RequestCodes.API.SEARCH_REPORT_VIEW) {
+            ReportViewResponse res = (ReportViewResponse) response.body();
+            if (res != null && res.getReportViewMessage() != null) {
+                if (!res.getReportViewMessage().getValues().isEmpty()) {
+                    if (searchLimitSet == 0) {
+                        searchInvoices.setValue(res.getReportViewMessage().getValues());
+//                        Room.saveReportView(res, "POS Invoice");
+                    } else {
+                        List<List<String>> list = new ArrayList<>();
+                        list = searchInvoices.getValue();
+                        if (res.getReportViewMessage().getValues() != null && !res.getReportViewMessage().getValues().isEmpty()) {
+                            list.addAll(res.getReportViewMessage().getValues());
+                            searchInvoices.setValue(list);
+//                            Room.saveMoreReportView(res, "POS Invoice");
                         }
                     }
                 }

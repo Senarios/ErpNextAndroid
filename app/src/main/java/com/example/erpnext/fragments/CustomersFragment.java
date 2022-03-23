@@ -2,16 +2,21 @@ package com.example.erpnext.fragments;
 
 import static android.app.Activity.RESULT_OK;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -20,6 +25,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -37,16 +43,20 @@ import com.example.erpnext.adapters.StockListsAdapter;
 import com.example.erpnext.app.MainApp;
 import com.example.erpnext.callbacks.ProfilesCallback;
 import com.example.erpnext.databinding.CustomerFragmentBinding;
+import com.example.erpnext.models.SearchResult;
 import com.example.erpnext.models.ShowCustomerDatum;
 import com.example.erpnext.models.ShowCustomerRes;
 import com.example.erpnext.network.ApiServices;
+import com.example.erpnext.network.serializers.response.SearchLinkResponse;
 import com.example.erpnext.repositories.CustomersRepo;
 import com.example.erpnext.utils.RequestCodes;
 import com.example.erpnext.utils.Utils;
 import com.example.erpnext.viewmodels.CustomersViewModel;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -64,6 +74,8 @@ public class CustomersFragment extends Fragment implements View.OnClickListener,
     Dialog dialog;
     private CustomersViewModel mViewModel;
     ShowCustomerAdapter showCustomerAdapter;
+    private List<ShowCustomerDatum> list = new ArrayList<>();
+    boolean clear = true;
 
     public static CustomersFragment newInstance() {
         return new CustomersFragment();
@@ -78,6 +90,24 @@ public class CustomersFragment extends Fragment implements View.OnClickListener,
 
         setClickListeners();
         enlistCustomers();
+        binding.filterTV.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    binding.search.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_search_24));
+                    clear = true;
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+//        setSearchAdapter(getActivity(), binding.filterTV, list);
 //        getItems();
 //        setObservers();
 //        binding.listRv.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -121,6 +151,7 @@ public class CustomersFragment extends Fragment implements View.OnClickListener,
     private void setClickListeners() {
         binding.back.setOnClickListener(this);
         binding.addNew.setOnClickListener(this);
+        binding.search.setOnClickListener(this);
     }
 
     private void setItemsAdapter(List<List<String>> profilesList) {
@@ -140,7 +171,34 @@ public class CustomersFragment extends Fragment implements View.OnClickListener,
             case R.id.add_new:
                 startActivityForResult(new Intent(getActivity(), AddCustomerActivity.class), RequestCodes.ADD_CUSTOMER);
                 break;
+            case R.id.search:
+                if (clear) {
+                    if (!binding.filterTV.getText().toString().trim().isEmpty()) {
+                        binding.search.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_close_24));
+                        clear = false;
+                        List<ShowCustomerDatum> filteredList = filteredList(binding.filterTV.getText().toString().trim());
+                        setCustomerAdapter(filteredList);
+                    }
+                } else {
+                    binding.search.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_search_24));
+                    clear = true;
+                    binding.filterTV.setText("");
+                    setCustomerAdapter(list);
+                }
+                break;
         }
+    }
+
+    private List<ShowCustomerDatum> filteredList(String trim) {
+        trim = trim.toLowerCase(Locale.ROOT);
+        List<ShowCustomerDatum> newList = new ArrayList<>();
+        if(!trim.isEmpty()){
+            for(ShowCustomerDatum customer: list){
+                if(customer.getName().toLowerCase(Locale.ROOT).contains(trim))
+                    newList.add(customer);
+            }
+        }
+        return newList;
     }
 
     @Override
@@ -189,12 +247,10 @@ public class CustomersFragment extends Fragment implements View.OnClickListener,
                 if (response.isSuccessful()) {
                     Utils.dismiss();
                     ShowCustomerRes resObj = response.body();
-                    List<ShowCustomerDatum> list = resObj.getData();
-                    showCustomerAdapter = new ShowCustomerAdapter((ArrayList<ShowCustomerDatum>) list, getContext(),CustomersFragment.this);
-                    LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false);
-                    binding.listRv.setLayoutManager(layoutManager);
-                    binding.listRv.setAdapter(showCustomerAdapter);
-                    showCustomerAdapter.notifyDataSetChanged();
+                    list = new ArrayList<>();
+                    list = resObj.getData();
+                    setCustomerAdapter(list);
+//                    setSearchAdapter(getActivity(), binding.filterTV, list);
 
                 } else {
                     Utils.dismiss();
@@ -212,10 +268,10 @@ public class CustomersFragment extends Fragment implements View.OnClickListener,
 
     @Override
     public void doClick(String name, String phone, String ref, String image) {
-        showCustomerDialog(name,phone,ref,image);
+        showCustomerDialog(name, phone, ref, image);
     }
 
-    private void showCustomerDialog(String name, String phone, String ref,String image) {
+    private void showCustomerDialog(String name, String phone, String ref, String image) {
         dialog = new Dialog(getActivity());
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.show_customer_layout);
@@ -256,6 +312,35 @@ public class CustomersFragment extends Fragment implements View.OnClickListener,
                 .into(customer_image);
         cancel.setOnClickListener(v -> {
             dialog.dismiss();
+        });
+    }
+
+    private void setCustomerAdapter(List<ShowCustomerDatum> list){
+        Collections.reverse(list);
+        showCustomerAdapter = new ShowCustomerAdapter((ArrayList<ShowCustomerDatum>) list, getContext(), CustomersFragment.this);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false);
+        binding.listRv.setLayoutManager(layoutManager);
+        binding.listRv.setAdapter(showCustomerAdapter);
+        showCustomerAdapter.notifyDataSetChanged();
+    }
+
+    private void setSearchAdapter(Activity activity, AutoCompleteTextView textView, List<ShowCustomerDatum> list) {
+        List<String> list2 = new ArrayList<>();
+        for (ShowCustomerDatum searchResult : list) {
+            list2.add(searchResult.getName());
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(activity,
+                android.R.layout.simple_list_item_1, list2);
+        textView.setAdapter(adapter);
+        textView.showDropDown();
+
+        binding.filterTV.setOnItemClickListener((parent, view12, position, id) -> {
+//            item_group = (String) parent.getItemAtPosition(position);
+//            limitSet = 0;
+//            isItemsEnded = false;
+//            if (Utils.isNetworkAvailable()) getItems(binding.filterWarehouse.getText().toString());
+//            else loadFromLoacal();
         });
     }
 

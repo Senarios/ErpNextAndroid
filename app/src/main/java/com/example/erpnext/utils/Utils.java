@@ -3,6 +3,7 @@ package com.example.erpnext.utils;
 import static com.example.erpnext.utils.RequestCodes.TWO_MINUTES;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.app.DownloadManager;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -26,6 +27,7 @@ import android.util.Patterns;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.DatePicker;
 import android.widget.ImageView;
 
 import androidx.core.content.ContextCompat;
@@ -34,6 +36,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.erpnext.R;
 import com.example.erpnext.app.MainApp;
+import com.example.erpnext.callbacks.DateCallBack;
 import com.example.erpnext.models.SearchResult;
 import com.example.erpnext.network.serializers.response.SearchLinkResponse;
 import com.itextpdf.text.Document;
@@ -45,6 +48,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
 import java.util.regex.Matcher;
@@ -149,6 +153,39 @@ public class Utils {
         textView.setAdapter(adapter);
         textView.showDropDown();
     }
+
+    public static void pickDate(Context context, DateCallBack callBack) {
+        final Calendar c = Calendar.getInstance();
+        int mYear = c.get(Calendar.YEAR);
+        int mMonth = c.get(Calendar.MONTH);
+        int mDay = c.get(Calendar.DAY_OF_MONTH);
+
+        // Launch Date Picker Dialog
+        DatePickerDialog dpd = new DatePickerDialog(context,
+                new DatePickerDialog.OnDateSetListener() {
+
+                    @Override
+                    public void onDateSet(DatePicker view, int year,
+                                          int monthOfYear, int dayOfMonth) {
+                        // Display Selected date in textbox
+                        String month,day;
+                        if((monthOfYear+1) < 10)
+                            month = "0" + (monthOfYear+1);
+                        else
+                            month = "" + (monthOfYear+1);
+
+                        if(dayOfMonth < 10)
+                            day  = "0" + dayOfMonth ;
+                        else
+                            day  = "" + dayOfMonth ;
+                        callBack.onSelect( year + "-"
+                                + month + "-" + day);
+
+                    }
+                }, mYear, mMonth, mDay);
+        dpd.show();
+    }
+
     public static File convertToPDF(Bitmap bitmap, File imageFile) {
         File myPath = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + Environment.DIRECTORY_DOWNLOADS + "/" + R.string.app_name + System.currentTimeMillis() + ".pdf");
 

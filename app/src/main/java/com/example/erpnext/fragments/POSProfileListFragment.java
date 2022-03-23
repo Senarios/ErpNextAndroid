@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,6 +28,7 @@ import com.example.erpnext.app.AppSession;
 import com.example.erpnext.app.MainApp;
 import com.example.erpnext.callbacks.ProfilesCallback;
 import com.example.erpnext.models.Doc;
+import com.example.erpnext.models.Info;
 import com.example.erpnext.models.Profile;
 import com.example.erpnext.network.Network;
 import com.example.erpnext.network.NetworkCall;
@@ -64,11 +66,15 @@ public class POSProfileListFragment extends Fragment implements ProfilesCallback
     private RecyclerView profilesRv;
     private PosProfileListAdapter profilesAdapter;
     private ImageView back;
+    private ImageView search;
     private ImageView addNewPOSProfile_btn;
     private boolean isProfilesEnded = false;
     private String docType;
+    private String fields;
     private TextView title;
     private DocTypeResponse docTypeResponse = new DocTypeResponse();
+    private String pickedDate = "";
+    private boolean clear = true;
 
     public POSProfileListFragment() {
         // Required empty public constructor
@@ -181,7 +187,12 @@ public class POSProfileListFragment extends Fragment implements ProfilesCallback
                                 jsonString = gson.toJson(getFieldsLoyaltyProgram(docType));
                             }
                             limitSet = limitSet + 10;
-                            getReportView(docType, jsonString.trim(), 10, true, "`tab" + docType + "`.`modified` desc", limitSet);
+                            if(!pickedDate.isEmpty()) {
+                                searchReportView(docType, fields, 10, true, "`tab" + docType + "`.`modified` desc", limitSet, pickedDate);
+                            } else {
+                                getReportView(docType, fields, 10, true, "`tab" + docType + "`.`modified` desc", limitSet);
+                            }
+//                            getReportView(docType, jsonString.trim(), 10, true, "`tab" + docType + "`.`modified` desc", limitSet);
                         }
                     }
                 }
@@ -207,7 +218,7 @@ public class POSProfileListFragment extends Fragment implements ProfilesCallback
     private void setClickisteners() {
         back.setOnClickListener(this);
         addNewPOSProfile_btn.setOnClickListener(this);
-
+        search.setOnClickListener(this);
     }
 
     private void initViews(View view) {
@@ -215,7 +226,7 @@ public class POSProfileListFragment extends Fragment implements ProfilesCallback
         back = view.findViewById(R.id.back);
         title = view.findViewById(R.id.title);
         addNewPOSProfile_btn = view.findViewById(R.id.add_new);
-
+        search = view.findViewById(R.id.search);
     }
 
     private void setProfilesAdapter(List<List<String>> profilesList) {
@@ -284,9 +295,26 @@ public class POSProfileListFragment extends Fragment implements ProfilesCallback
                 } else if (docs != null && docs.getName().equalsIgnoreCase("Loyalty Program")) {
                     String responseToJsonString = gson.toJson(docs);
                     startActivityForResult(new Intent(getContext(), AddNewLoyaltyProgramActivity.class).putExtra("doc", responseToJsonString), RequestCodes.CREATE_NEW_LOYALTY_PROGRAM);
-
-                    break;
                 }
+                break;
+            case R.id.search:
+                if (clear) {
+                    Utils.pickDate(requireContext(), date -> {
+                        //filterTasks(date);
+                        pickedDate = date;
+                        search.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_close_24));
+                        clear = false;
+                        limitSet = 0;
+                        searchReportView(docType, fields, 10, true, "`tab" + docType + "`.`modified` desc", limitSet, date);
+                    });
+                } else {
+                    search.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_search_24));
+                    clear = true;
+                    limitSet = 0;
+                    pickedDate = "";
+                    getReportView(docType, fields, 10, true, "`tab" + docType + "`.`modified` desc", limitSet);
+                }
+                break;
         }
     }
 
@@ -300,11 +328,22 @@ public class POSProfileListFragment extends Fragment implements ProfilesCallback
     }
 
     private void getReportView(String docType, String fields, int pageLength, boolean isCommentCount, String orderBy, int limitStart) {
+        this.fields = fields;
+        this.docType = docType;
         NetworkCall.make()
                 .setCallback(this)
                 .setTag(RequestCodes.API.REPORT_VIEW)
                 .autoLoadingCancel(Utils.getLoading(getActivity(), "Loading"))
                 .enque(Network.apis().getReportView(docType, fields, pageLength, isCommentCount, orderBy, limitStart))
+                .execute();
+    }
+
+    private void searchReportView(String docType, String fields, int pageLength, boolean isCommentCount, String orderBy, int limitStart, String filterDate) {
+        NetworkCall.make()
+                .setCallback(this)
+                .setTag(RequestCodes.API.REPORT_VIEW)
+                .autoLoadingCancel(Utils.getLoading(getActivity(), "Loading"))
+                .enque(Network.apis().getReportView(docType, fields, "[[\""+docType+"\",\"period_start_date\",\"=\",\"" + filterDate + " 00:00:00" + "\"]]", pageLength, isCommentCount, orderBy, limitStart))
                 .execute();
     }
 
