@@ -44,7 +44,7 @@
         android:layout_marginRight="@dimen/_5sdp"
         android:orientation="vertical"
         android:padding="@dimen/_5sdp">
-        <EditText
+        <AutoCompleteTextView
             android:id="@+id/search_pos_invoice"
             style="@style/editTextStyle"
             android:layout_width="match_parent"

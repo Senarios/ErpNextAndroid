@@ -13,6 +13,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -33,10 +35,20 @@ import com.example.erpnext.callbacks.ProfilesCallback;
 import com.example.erpnext.models.Invoice;
 import com.example.erpnext.models.InvoiceItem;
 import com.example.erpnext.models.Profile;
+import com.example.erpnext.models.ProfileDoc;
+import com.example.erpnext.models.SearchResult;
+import com.example.erpnext.network.Network;
+import com.example.erpnext.network.NetworkCall;
+import com.example.erpnext.network.OnNetworkResponse;
+import com.example.erpnext.network.serializers.requestbody.SearchLinkWithFiltersRequestBody;
+import com.example.erpnext.network.serializers.response.BaseResponse;
+import com.example.erpnext.network.serializers.response.SearchLinkResponse;
 import com.example.erpnext.repositories.POSInvoicesRepo;
+import com.example.erpnext.roomDB.data.DBSearchLink;
 import com.example.erpnext.roomDB.data.Room;
 import com.example.erpnext.utils.DateTime;
 import com.example.erpnext.utils.Notify;
+import com.example.erpnext.utils.RequestCodes;
 import com.example.erpnext.utils.Utils;
 import com.example.erpnext.viewmodels.POSInvoiceViewModel;
 import com.google.gson.Gson;
@@ -44,27 +56,35 @@ import com.google.gson.Gson;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import retrofit2.Call;
+import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link PosInvoicesFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class PosInvoicesFragment extends BaseFragment implements View.OnClickListener, ProfilesCallback {
+public class PosInvoicesFragment extends BaseFragment implements View.OnClickListener, ProfilesCallback, OnNetworkResponse {
     private final List<Profile> profileList = new ArrayList<>();
     public boolean isProfilesEnded = false;
     public boolean isActionPerformed = false;
     List<List<String>> profilesList = new ArrayList<>();
     int limitStart = 0;
+    private String selectedCustomer = "";
+    private ProfileDoc profileDoc;
+    String searchDoctype = "", query = "", filters = "", baseTotal, changeAmount = "0", outstandingAmount = "0", paidAmount = "0";
     String doctype = "POS Invoice";
     Dialog dialog;
     private RecyclerView posInvoicesRv;
     private PosProfileListAdapter posInvoiceAdapter;
     private POSInvoiceViewModel posInvoiceViewModel;
     private ImageView back;
+    private AutoCompleteTextView searchCustomerInvoice;
 
     public PosInvoicesFragment() {
         // Required empty public constructor
@@ -122,14 +142,47 @@ public class PosInvoicesFragment extends BaseFragment implements View.OnClickLis
 
     private void initViews(View view) {
         posInvoicesRv = view.findViewById(R.id.pos_invoice_rv);
+        searchCustomerInvoice = view.findViewById(R.id.search_pos_invoice);
         back = view.findViewById(R.id.back);
-
+        searchCustomerInvoice.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) {
+                if (Utils.isNetworkAvailable())
+                    getLinkSearch(RequestCodes.API.LINK_SEARCH_CUSTOMER);
+                else {
+                    DBSearchLink.load(getContext(), "Customer", "erpnext.controllers.queries.customer_query", searchCustomerInvoice);
+                }
+            }
+        });
+        searchCustomerInvoice.setOnItemClickListener((parent, view1, position, id) -> {
+            selectedCustomer = (String) parent.getItemAtPosition(position);
+        });
     }
 
     private void setClickListeners() {
         back.setOnClickListener(this);
     }
+    private void getLinkSearch(int requestCode) {
 
+        if (requestCode == RequestCodes.API.LINK_SEARCH_CUSTOMER) {
+            searchDoctype = "Customer";
+            query = "erpnext.controllers.queries.customer_query";
+            filters = null;
+        } else if (requestCode == RequestCodes.API.LINK_SEARCH_ITEM_GROUP) {
+            searchDoctype = "Item Group";
+            query = "erpnext.selling.page.point_of_sale.point_of_sale.item_group_query";
+            filters = "{\"pos_profile\": " + "\"" + profileDoc.getName() + "\"" + "}";
+        } else if (requestCode == RequestCodes.API.LINK_SEARCH_UMO) {
+            searchDoctype = "UOM";
+            query = null;
+            filters = null;
+        }
+        NetworkCall.make()
+                .setCallback(this)
+                .setTag(requestCode)
+                .autoLoadingCancel(Utils.getLoading(getActivity(), "searching"))
+                .enque(Network.apis().getSearchLinkWithFilters(new SearchLinkWithFiltersRequestBody("", searchDoctype, "0", filters, "", query)))
+                .execute();
+    }
     private void setInvoicesAdapter(List<List<String>> profilesList) {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         posInvoiceAdapter = new PosProfileListAdapter(getContext(), profilesList, "POS Invoice", this);
@@ -365,5 +418,28 @@ public class PosInvoicesFragment extends BaseFragment implements View.OnClickLis
         super.onDestroyView();
         POSInvoicesRepo.getInstance().posInvoices.setValue(new ArrayList<>());
         POSInvoicesRepo.getInstance().posInvoiceResponseMutableLiveData.setValue(null);
+    }
+
+    @Override
+    public void onSuccess(Call call, Response response, Object tag) throws ParseException {
+        if ((int) tag == RequestCodes.API.LINK_SEARCH_CUSTOMER) {
+            SearchLinkResponse res = (SearchLinkResponse) response.body();
+            DBSearchLink.save(res, searchDoctype, query);
+            List<String> list = new ArrayList<>();
+            if (res != null && !res.getResults().isEmpty()) {
+                for (SearchResult searchResult : res.getResults()) {
+                    list.add(searchResult.getValue());
+                }
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
+                        android.R.layout.simple_list_item_1, list);
+                searchCustomerInvoice.setAdapter(adapter);
+                searchCustomerInvoice.showDropDown();
+            }
+        }
+    }
+
+    @Override
+    public void onFailure(Call call, BaseResponse response, Object tag) {
+
     }
 }

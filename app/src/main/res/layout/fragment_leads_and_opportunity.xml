@@ -61,6 +61,7 @@
                 android:layout_marginBottom="@dimen/_5sdp"
                 android:text="@string/your_shortcuts"
                 android:textColor="@color/black"
+                android:visibility="gone"
                 android:textSize="@dimen/_13sdp"
                 android:textStyle="bold" />
 
