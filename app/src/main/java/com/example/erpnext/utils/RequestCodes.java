@@ -90,6 +90,7 @@ public class RequestCodes {
         public static final int ITEM_DETAIL = 45;
         public static final int DOCTYPE = 46;
         public static final int REPORT_VIEW = 47;
+        public static final int SEARCH_REPORT_VIEW = 4747;
         public static final int SHARJEEL = 309;
         public static final int LINK_SEARCH = 48;
         public static final int TABLE_SEARCH = 49;

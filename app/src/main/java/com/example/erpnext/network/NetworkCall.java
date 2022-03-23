@@ -1,5 +1,7 @@
 package com.example.erpnext.network;
 
+import android.util.Log;
+
 import com.example.erpnext.R;
 import com.example.erpnext.app.BaseClass;
 import com.example.erpnext.app.MainApp;
@@ -44,6 +46,7 @@ public class NetworkCall extends BaseClass {
 
     public NetworkCall enque(Call call) {
         this.request = call;
+        Log.e("none", "enque: "+call.toString() );
         return this;
     }
 

@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -27,6 +28,7 @@ import com.example.erpnext.adapters.MyTaskAdapter;
 import com.example.erpnext.adapters.StockListsAdapter;
 import com.example.erpnext.app.AppSession;
 import com.example.erpnext.app.MainApp;
+import com.example.erpnext.callbacks.DateCallBack;
 import com.example.erpnext.callbacks.ProfilesCallback;
 import com.example.erpnext.databinding.MyTasksFragmentBinding;
 import com.example.erpnext.models.Info;
@@ -34,6 +36,7 @@ import com.example.erpnext.models.MyTaskOfflineModel;
 import com.example.erpnext.models.MyTaskRes;
 import com.example.erpnext.models.MyTaskUpdateRes;
 import com.example.erpnext.models.Profile;
+import com.example.erpnext.models.ShowCustomerDatum;
 import com.example.erpnext.network.ApiServices;
 import com.example.erpnext.utils.Notify;
 import com.example.erpnext.utils.Utils;
@@ -67,6 +70,8 @@ public class MyTasksFragment extends Fragment implements View.OnClickListener, P
     ArrayList<Info> infoArrayList = new ArrayList<>();
     FusedLocationProviderClient fusedLocationProviderClient;
     Dialog dialog;
+    boolean clear = true;
+    private List<Info> list = new ArrayList<>();
 
     public static MyTasksFragment newInstance() {
         return new MyTasksFragment();
@@ -128,6 +133,7 @@ public class MyTasksFragment extends Fragment implements View.OnClickListener, P
 
     private void setClickListeners() {
         binding.back.setOnClickListener(this);
+        binding.search.setOnClickListener(this);
 
     }
 
@@ -142,8 +148,30 @@ public class MyTasksFragment extends Fragment implements View.OnClickListener, P
             case R.id.back:
                 getActivity().onBackPressed();
                 break;
-
+            case R.id.search:
+                if (clear) {
+                    Utils.pickDate(requireContext(), date -> {
+                        //filterTasks(date);
+                        binding.search.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_close_24));
+                        clear = false;
+                        List<Info> filteredList = filterList(date);
+                        setMyTaskAdapter(filteredList);
+                    });
+                } else {
+                    binding.search.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_search_24));
+                    clear = true;
+                    setMyTaskAdapter(list);
+                }
+                break;
         }
+    }
+
+    private List<Info> filterList(String date) {
+        List<Info> newList = new ArrayList<>();
+        for (Info info : list)
+            if (info.getDate().contains(date))
+                newList.add(info);
+        return newList;
     }
 
     @Override
@@ -166,15 +194,13 @@ public class MyTasksFragment extends Fragment implements View.OnClickListener, P
             @Override
             public void onResponse(Call<MyTaskRes> call, Response<MyTaskRes> response) {
                 if (response.isSuccessful()) {
+                    list = new ArrayList<>();
                     Utils.dismiss();
                     MyTaskRes resObj = response.body();
-                    List<Info> list = resObj.getInfo();
-                    myTaskAdapter = new MyTaskAdapter((ArrayList<Info>) list, getContext(), MyTasksFragment.this);
-                    LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false);
-                    binding.listRv.setLayoutManager(layoutManager);
-                    binding.listRv.setAdapter(myTaskAdapter);
-                    myTaskAdapter.notifyDataSetChanged();
-
+                    list = resObj.getInfo();
+                    setMyTaskAdapter(list);
+                    binding.search.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_search_24));
+                    clear = true;
                 } else {
                     Utils.dismiss();
                     Toast.makeText(getContext(), "Process Failed", Toast.LENGTH_SHORT).show();
@@ -200,11 +226,11 @@ public class MyTasksFragment extends Fragment implements View.OnClickListener, P
         String taskName = preferences.getString("taskName", "abc");
         String shopName = preferences.getString("shopName", "bc");
         String comment = preferences.getString("added_comment", "b");
-        getCurrentLocation(AppSession.get("email"), taskName, shopName,comment);
+        getCurrentLocation(AppSession.get("email"), taskName, shopName, comment);
         myTaskAdapter.notifyDataSetChanged();
     }
 
-    public void updateTaskApi(String email, String taskName, String shopName, String shopStatus,String comment) {
+    public void updateTaskApi(String email, String taskName, String shopName, String shopStatus, String comment) {
         Retrofit retrofit = new Retrofit.Builder().baseUrl("http://75.119.143.175:8080/ErpNext/")
                 .addConverterFactory(GsonConverterFactory.create()).build();
         ApiServices apiServices = retrofit.create(ApiServices.class);
@@ -244,9 +270,9 @@ public class MyTasksFragment extends Fragment implements View.OnClickListener, P
         });
     }
 
-    public void saveTaskForOffline(String email, String taskName, String shopName, String shopStatus,String comment) {
+    public void saveTaskForOffline(String email, String taskName, String shopName, String shopStatus, String comment) {
         MyTaskOfflineModel myTask = new MyTaskOfflineModel();
-        myTask.setTaskId(taskName +" at "+ shopName);
+        myTask.setTaskId(taskName + " at " + shopName);
         myTask.setEmailName(email);
         myTask.setTaskName(taskName);
         myTask.setShopName(shopName);
@@ -257,7 +283,7 @@ public class MyTasksFragment extends Fragment implements View.OnClickListener, P
     }
 
     @SuppressLint("MissingPermission")
-    private void getCurrentLocation(String email, String taskName, String shopName,String comment) {
+    private void getCurrentLocation(String email, String taskName, String shopName, String comment) {
         Utils.showLoading(getActivity());
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getContext());
         LocationManager locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
@@ -285,8 +311,8 @@ public class MyTasksFragment extends Fragment implements View.OnClickListener, P
                     String shopStat = preferences1.getString("statusKey", "abc");
 
                     if (location != null && startCurrentPoint.distanceTo(endPoint) <= 50) {
-                        if(Utils.isNetworkAvailable()){
-                            updateTaskApi(email, taskName, shopName, shopStat,comment);
+                        if (Utils.isNetworkAvailable()) {
+                            updateTaskApi(email, taskName, shopName, shopStat, comment);
                         } else {
                             Utils.dismiss();
                             saveTaskForOffline(email, taskName, shopName, shopStat, comment);
@@ -301,4 +327,11 @@ public class MyTasksFragment extends Fragment implements View.OnClickListener, P
         }
     }
 
+    private void setMyTaskAdapter(List<Info> list) {
+        myTaskAdapter = new MyTaskAdapter((ArrayList<Info>) list, getContext(), MyTasksFragment.this);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false);
+        binding.listRv.setLayoutManager(layoutManager);
+        binding.listRv.setAdapter(myTaskAdapter);
+        myTaskAdapter.notifyDataSetChanged();
+    }
 }

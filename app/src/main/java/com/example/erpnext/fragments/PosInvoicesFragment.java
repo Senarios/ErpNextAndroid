@@ -22,6 +22,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -75,16 +76,23 @@ public class PosInvoicesFragment extends BaseFragment implements View.OnClickLis
     public boolean isActionPerformed = false;
     List<List<String>> profilesList = new ArrayList<>();
     int limitStart = 0;
+    int searchLimitStart = 0;
     private String selectedCustomer = "";
     private ProfileDoc profileDoc;
     String searchDoctype = "", query = "", filters = "", baseTotal, changeAmount = "0", outstandingAmount = "0", paidAmount = "0";
     String doctype = "POS Invoice";
+    String pickedDate = "";
     Dialog dialog;
     private RecyclerView posInvoicesRv;
+    private RecyclerView searchInvoicesRv;
     private PosProfileListAdapter posInvoiceAdapter;
+    private PosProfileListAdapter searchInvoiceAdapter;
     private POSInvoiceViewModel posInvoiceViewModel;
     private ImageView back;
-    private AutoCompleteTextView searchCustomerInvoice;
+    private ImageView search;
+    private boolean clear = true;
+    private boolean renew = true;
+//    private AutoCompleteTextView searchCustomerInvoice;
 
     public PosInvoicesFragment() {
         // Required empty public constructor
@@ -136,31 +144,58 @@ public class PosInvoicesFragment extends BaseFragment implements View.OnClickLis
                 super.onScrolled(recyclerView, dx, dy);
             }
         });
+
+        searchInvoicesRv.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                if (Utils.isNetworkAvailable()) {
+                    if (Utils.isLastItemDisplaying(searchInvoicesRv)) {
+                        if (!isProfilesEnded) {
+                            Gson gson = new Gson();
+                            String jsonString = null;
+                            if(searchInvoiceAdapter.getItemCount() >= 20)
+                            searchLimitStart = searchLimitStart + 20;
+                             searchInvoices();
+                        }
+                    }
+                }
+                super.onScrolled(recyclerView, dx, dy);
+            }
+        });
         return view;
     }
 
 
     private void initViews(View view) {
         posInvoicesRv = view.findViewById(R.id.pos_invoice_rv);
-        searchCustomerInvoice = view.findViewById(R.id.search_pos_invoice);
+        searchInvoicesRv = view.findViewById(R.id.search_invoice_rv);
+//        searchCustomerInvoice = view.findViewById(R.id.search_pos_invoice);
         back = view.findViewById(R.id.back);
-        searchCustomerInvoice.setOnFocusChangeListener((v, hasFocus) -> {
-            if (hasFocus) {
-                if (Utils.isNetworkAvailable())
-                    getLinkSearch(RequestCodes.API.LINK_SEARCH_CUSTOMER);
-                else {
-                    DBSearchLink.load(getContext(), "Customer", "erpnext.controllers.queries.customer_query", searchCustomerInvoice);
-                }
-            }
-        });
-        searchCustomerInvoice.setOnItemClickListener((parent, view1, position, id) -> {
-            selectedCustomer = (String) parent.getItemAtPosition(position);
-        });
+        search = view.findViewById(R.id.search);
+//        searchCustomerInvoice.setOnFocusChangeListener((v, hasFocus) -> {
+//            if (hasFocus) {
+//                if (Utils.isNetworkAvailable())
+//                    getLinkSearch(RequestCodes.API.LINK_SEARCH_CUSTOMER);
+//                else {
+//                    DBSearchLink.load(getContext(), "Customer", "erpnext.controllers.queries.customer_query", searchCustomerInvoice);
+//                }
+//            }
+//        });
+//        searchCustomerInvoice.setOnItemClickListener((parent, view1, position, id) -> {
+//            selectedCustomer = (String) parent.getItemAtPosition(position);
+//        });
     }
 
     private void setClickListeners() {
         back.setOnClickListener(this);
+        search.setOnClickListener(this);
     }
+
     private void getLinkSearch(int requestCode) {
 
         if (requestCode == RequestCodes.API.LINK_SEARCH_CUSTOMER) {
@@ -183,11 +218,19 @@ public class PosInvoicesFragment extends BaseFragment implements View.OnClickLis
                 .enque(Network.apis().getSearchLinkWithFilters(new SearchLinkWithFiltersRequestBody("", searchDoctype, "0", filters, "", query)))
                 .execute();
     }
+
     private void setInvoicesAdapter(List<List<String>> profilesList) {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         posInvoiceAdapter = new PosProfileListAdapter(getContext(), profilesList, "POS Invoice", this);
         posInvoicesRv.setLayoutManager(linearLayoutManager);
         posInvoicesRv.setAdapter(posInvoiceAdapter);
+    }
+
+    private void setSearchInvoicesAdapter(List<List<String>> profilesList) {
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        searchInvoiceAdapter = new PosProfileListAdapter(getContext(), profilesList, "POS Invoice", this);
+        searchInvoicesRv.setLayoutManager(linearLayoutManager);
+        searchInvoicesRv.setAdapter(searchInvoiceAdapter);
     }
 
     private void setInvoiceAdapter(RecyclerView recyclerView, List<InvoiceItem> itemList) {
@@ -202,11 +245,35 @@ public class PosInvoicesFragment extends BaseFragment implements View.OnClickLis
         switch (v.getId()) {
             case R.id.back:
                 getActivity().onBackPressed();
+                break;
+            case R.id.search:
+                if (clear) {
+                    Utils.pickDate(requireContext(), date -> {
+                        //filterTasks(date);
+                        pickedDate = date;
+                        search.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_close_24));
+                        clear = false;
+                        renew = true;
+                        searchInvoices();
+
+                    });
+                } else {
+                    search.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_search_24));
+                    clear = true;
+                    pickedDate = "";
+                    searchInvoicesRv.setVisibility(View.GONE);
+                    posInvoicesRv.setVisibility(View.VISIBLE);
+
+//                    getInvoices();
+                }
+                break;
         }
     }
 
     private void setObservers() {
         posInvoiceViewModel.getInvoices().observe(getActivity(), lists -> {
+            searchInvoicesRv.setVisibility(View.GONE);
+            posInvoicesRv.setVisibility(View.VISIBLE);
             if (isActionPerformed) {
                 setInvoicesAdapter(lists);
                 isActionPerformed = false;
@@ -215,6 +282,16 @@ public class PosInvoicesFragment extends BaseFragment implements View.OnClickLis
                 setInvoicesAdapter(lists);
             } else posInvoiceAdapter.notifyItemRangeChanged(0, lists.size());
         });
+
+        posInvoiceViewModel.searchInvoices().observe(getActivity(), lists -> {
+            searchInvoicesRv.setVisibility(View.VISIBLE);
+            posInvoicesRv.setVisibility(View.GONE);
+                if (searchInvoiceAdapter == null || searchInvoiceAdapter.getAllItems() == null || searchInvoiceAdapter.getAllItems().isEmpty() || renew) {
+                    setSearchInvoicesAdapter(lists);
+                    renew = false;
+                } else searchInvoiceAdapter.notifyItemRangeChanged(0, lists.size());
+        });
+
         posInvoiceViewModel.getInvoiceStatus().observe(getActivity(), isChanged -> {
             if (isChanged) {
                 limitStart = 0;
@@ -235,6 +312,15 @@ public class PosInvoicesFragment extends BaseFragment implements View.OnClickLis
                 true,
                 "`tabPOS Invoice`.`modified` desc",
                 limitStart);
+    }
+
+    private void searchInvoices() {
+        posInvoiceViewModel.searchInvoicesApi(doctype,
+                20,
+                true,
+                "`tabPOS Invoice`.`modified` desc",
+                searchLimitStart,
+                pickedDate);
     }
 
     @Override
@@ -425,16 +511,16 @@ public class PosInvoicesFragment extends BaseFragment implements View.OnClickLis
         if ((int) tag == RequestCodes.API.LINK_SEARCH_CUSTOMER) {
             SearchLinkResponse res = (SearchLinkResponse) response.body();
             DBSearchLink.save(res, searchDoctype, query);
-            List<String> list = new ArrayList<>();
-            if (res != null && !res.getResults().isEmpty()) {
-                for (SearchResult searchResult : res.getResults()) {
-                    list.add(searchResult.getValue());
-                }
-                ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
-                        android.R.layout.simple_list_item_1, list);
-                searchCustomerInvoice.setAdapter(adapter);
-                searchCustomerInvoice.showDropDown();
-            }
+//            List<String> list = new ArrayList<>();
+//            if (res != null && !res.getResults().isEmpty()) {
+//                for (SearchResult searchResult : res.getResults()) {
+//                    list.add(searchResult.getValue());
+//                }
+//                ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
+//                        android.R.layout.simple_list_item_1, list);
+//                searchCustomerInvoice.setAdapter(adapter);
+//                searchCustomerInvoice.showDropDown();
+//            }
         }
     }
 
