@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -115,6 +116,8 @@ public class PosInvoicesFragment extends BaseFragment implements View.OnClickLis
 
         initViews(view);
         setClickListeners();
+        searchInvoicesRv.setVisibility(View.GONE);
+        posInvoicesRv.setVisibility(View.VISIBLE);
         if (posInvoiceViewModel != null) {
             Objects.requireNonNull(posInvoiceViewModel.getInvoices().getValue()).clear();
         } else
@@ -158,9 +161,9 @@ public class PosInvoicesFragment extends BaseFragment implements View.OnClickLis
                         if (!isProfilesEnded) {
                             Gson gson = new Gson();
                             String jsonString = null;
-                            if(searchInvoiceAdapter.getItemCount() >= 20)
-                            searchLimitStart = searchLimitStart + 20;
-                             searchInvoices();
+                            if (searchInvoiceAdapter.getItemCount() >= 20)
+                                searchLimitStart = searchLimitStart + 20;
+                            searchInvoices();
                         }
                     }
                 }
@@ -261,6 +264,7 @@ public class PosInvoicesFragment extends BaseFragment implements View.OnClickLis
                     search.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_search_24));
                     clear = true;
                     pickedDate = "";
+                    searchLimitStart = 0;
                     searchInvoicesRv.setVisibility(View.GONE);
                     posInvoicesRv.setVisibility(View.VISIBLE);
 
@@ -286,10 +290,10 @@ public class PosInvoicesFragment extends BaseFragment implements View.OnClickLis
         posInvoiceViewModel.searchInvoices().observe(getActivity(), lists -> {
             searchInvoicesRv.setVisibility(View.VISIBLE);
             posInvoicesRv.setVisibility(View.GONE);
-                if (searchInvoiceAdapter == null || searchInvoiceAdapter.getAllItems() == null || searchInvoiceAdapter.getAllItems().isEmpty() || renew) {
-                    setSearchInvoicesAdapter(lists);
-                    renew = false;
-                } else searchInvoiceAdapter.notifyItemRangeChanged(0, lists.size());
+            if (searchInvoiceAdapter == null || searchInvoiceAdapter.getAllItems() == null || searchInvoiceAdapter.getAllItems().isEmpty() || renew) {
+                setSearchInvoicesAdapter(lists);
+                renew = false;
+            } else searchInvoiceAdapter.notifyItemRangeChanged(0, lists.size());
         });
 
         posInvoiceViewModel.getInvoiceStatus().observe(getActivity(), isChanged -> {
@@ -377,49 +381,50 @@ public class PosInvoicesFragment extends BaseFragment implements View.OnClickLis
     }
 
     private void showInvoiceDialog(Invoice invoice, String note) {
-        dialog = new Dialog(getActivity());
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.pos_invoice_layout);
-        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-        Window window = dialog.getWindow();
-        dialog.setCancelable(false);
-        WindowManager.LayoutParams wlp = window.getAttributes();
-        wlp.gravity = Gravity.CENTER;
-        wlp.flags &= ~WindowManager.LayoutParams.FLAG_BLUR_BEHIND;
-        window.setAttributes(wlp);
-        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        dialog.show();
-        TextView name = dialog.findViewById(R.id.name);
-        TextView price = dialog.findViewById(R.id.price);
-        TextView net_total = dialog.findViewById(R.id.net_total);
-        TextView grand_total = dialog.findViewById(R.id.grand_total);
-        TextView invoice_number = dialog.findViewById(R.id.invoice_name);
-        TextView status = dialog.findViewById(R.id.status);
-        TextView sold_by = dialog.findViewById(R.id.sold_by);
-        RecyclerView itemsRV = dialog.findViewById(R.id.items_RV);
-        TextView cash = dialog.findViewById(R.id.cash);
-        TextView created_at = dialog.findViewById(R.id.created_at);
-        TextView noteText = dialog.findViewById(R.id.note);
-        LinearLayout noteLayout = dialog.findViewById(R.id.noteLayout);
-        RelativeLayout discountLayout = dialog.findViewById(R.id.discountLayout);
-        RelativeLayout changeAmountLayout = dialog.findViewById(R.id.change_amount_layout);
-        RelativeLayout outstandingAmountLayout = dialog.findViewById(R.id.outstanding_amount_layout);
-        TextView paidAmount = dialog.findViewById(R.id.paid_amount);
-        TextView changeAmount = dialog.findViewById(R.id.change_amount);
-        TextView outstandingAmount = dialog.findViewById(R.id.outstanding_amount);
-        TextView discountPercent = dialog.findViewById(R.id.discount);
-        TextView discountedAmount = dialog.findViewById(R.id.discounted_amount);
-        TextView modeOfPayment = dialog.findViewById(R.id.mode_ofPayment);
-        Button cancel = dialog.findViewById(R.id.cancel);
-        Button print = dialog.findViewById(R.id.print);
-        grand_total.setText("$ " + invoice.getGrandTotal());
-        name.setText(invoice.getCustomerName());
-        price.setText("$ " + invoice.getGrandTotal());
-        net_total.setText("$ " + invoice.getNetTotal());
-        invoice_number.setText(invoice.getName());
-        sold_by.setText(invoice.getOwner());
-        status.setText(invoice.getStatus());
-        paidAmount.setText("$ " + invoice.getBaseGrandTotal().toString());
+        if (isAdded()) {
+            dialog = new Dialog(requireActivity());
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.setContentView(R.layout.pos_invoice_layout);
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+            Window window = dialog.getWindow();
+            dialog.setCancelable(false);
+            WindowManager.LayoutParams wlp = window.getAttributes();
+            wlp.gravity = Gravity.CENTER;
+            wlp.flags &= ~WindowManager.LayoutParams.FLAG_BLUR_BEHIND;
+            window.setAttributes(wlp);
+            dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            dialog.show();
+            TextView name = dialog.findViewById(R.id.name);
+            TextView price = dialog.findViewById(R.id.price);
+            TextView net_total = dialog.findViewById(R.id.net_total);
+            TextView grand_total = dialog.findViewById(R.id.grand_total);
+            TextView invoice_number = dialog.findViewById(R.id.invoice_name);
+            TextView status = dialog.findViewById(R.id.status);
+            TextView sold_by = dialog.findViewById(R.id.sold_by);
+            RecyclerView itemsRV = dialog.findViewById(R.id.items_RV);
+            TextView cash = dialog.findViewById(R.id.cash);
+            TextView created_at = dialog.findViewById(R.id.created_at);
+            TextView noteText = dialog.findViewById(R.id.note);
+            LinearLayout noteLayout = dialog.findViewById(R.id.noteLayout);
+            RelativeLayout discountLayout = dialog.findViewById(R.id.discountLayout);
+            RelativeLayout changeAmountLayout = dialog.findViewById(R.id.change_amount_layout);
+            RelativeLayout outstandingAmountLayout = dialog.findViewById(R.id.outstanding_amount_layout);
+            TextView paidAmount = dialog.findViewById(R.id.paid_amount);
+            TextView changeAmount = dialog.findViewById(R.id.change_amount);
+            TextView outstandingAmount = dialog.findViewById(R.id.outstanding_amount);
+            TextView discountPercent = dialog.findViewById(R.id.discount);
+            TextView discountedAmount = dialog.findViewById(R.id.discounted_amount);
+            TextView modeOfPayment = dialog.findViewById(R.id.mode_ofPayment);
+            Button cancel = dialog.findViewById(R.id.cancel);
+            Button print = dialog.findViewById(R.id.print);
+            grand_total.setText("$ " + invoice.getGrandTotal());
+            name.setText(invoice.getCustomerName());
+            price.setText("$ " + invoice.getGrandTotal());
+            net_total.setText("$ " + invoice.getNetTotal());
+            invoice_number.setText(invoice.getName());
+            sold_by.setText(invoice.getOwner());
+            status.setText(invoice.getStatus());
+            paidAmount.setText("$ " + invoice.getBaseGrandTotal().toString());
 //        if (!this.changeAmount.equalsIgnoreCase("0") && !this.changeAmount.equalsIgnoreCase("")) {
 //            changeAmountLayout.setVisibility(View.VISIBLE);
 //            changeAmount.setText("$ " + this.changeAmount);
@@ -428,31 +433,31 @@ public class PosInvoicesFragment extends BaseFragment implements View.OnClickLis
 //            outstandingAmountLayout.setVisibility(View.VISIBLE);
 //            outstandingAmount.setText("$ " + this.outstandingAmount);
 //        }
-        cash.setText(invoice.getPayments().get(0).getModeOfPayment());
-        modeOfPayment.setText(invoice.getPayments().get(0).getModeOfPayment());
-        created_at.setText(DateTime.getFormatedDateTimeString(invoice.getCreation()));
-        setInvoiceAdapter(itemsRV, invoice.getItems());
-        Double discountAmount = 0.0;
-        for (InvoiceItem item : invoice.getItems()) {
-            discountAmount = discountAmount + item.getDiscountAmount() * item.getQty();
-        }
-        if (discountAmount > 0) {
-            discountLayout.setVisibility(View.VISIBLE);
+            cash.setText(invoice.getPayments().get(0).getModeOfPayment());
+            modeOfPayment.setText(invoice.getPayments().get(0).getModeOfPayment());
+            created_at.setText(DateTime.getFormatedDateTimeString(invoice.getCreation()));
+            setInvoiceAdapter(itemsRV, invoice.getItems());
+            Double discountAmount = 0.0;
+            for (InvoiceItem item : invoice.getItems()) {
+                discountAmount = discountAmount + item.getDiscountAmount() * item.getQty();
+            }
+            if (discountAmount > 0) {
+                discountLayout.setVisibility(View.VISIBLE);
 //            discountPercent.setVisibility(View.GONE);
 //            discountPercent.setText("Discount " + invoice.getAdditionalDiscountPercentage() + "%");
-            discountedAmount.setText("$ " + discountAmount.floatValue());
+                discountedAmount.setText("$ " + discountAmount.floatValue());
+            }
+            if (note != null) {
+                noteLayout.setVisibility(View.VISIBLE);
+                noteText.setText(note);
+            } else noteLayout.setVisibility(View.GONE);
+            cancel.setOnClickListener(v -> {
+                dialog.dismiss();
+            });
+            print.setOnClickListener(v -> {
+                saveReceipt();
+            });
         }
-        if (note != null) {
-            noteLayout.setVisibility(View.VISIBLE);
-            noteText.setText(note);
-        } else noteLayout.setVisibility(View.GONE);
-        cancel.setOnClickListener(v -> {
-            dialog.dismiss();
-        });
-        print.setOnClickListener(v -> {
-            saveReceipt();
-        });
-
     }
 
     private void saveReceipt() {
@@ -527,5 +532,13 @@ public class PosInvoicesFragment extends BaseFragment implements View.OnClickLis
     @Override
     public void onFailure(Call call, BaseResponse response, Object tag) {
 
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        searchInvoicesRv.setVisibility(View.GONE);
+        posInvoicesRv.setVisibility(View.VISIBLE);
+        Log.e("none", "onDetach: ");
     }
 }

@@ -25,7 +25,9 @@ public class OpportunitiesRepo implements OnNetworkResponse {
 
     private static OpportunitiesRepo instance;
     public MutableLiveData<List<List<String>>> items = new MutableLiveData<>();
+    public MutableLiveData<List<List<String>>> searchedItems = new MutableLiveData<>();
     int limitSet;
+    int searchLimitSet;
 
     public static OpportunitiesRepo getInstance() {
         if (instance == null) {
@@ -39,6 +41,10 @@ public class OpportunitiesRepo implements OnNetworkResponse {
         return items;
     }
 
+    public LiveData<List<List<String>>> getSearchedItems() {
+        return searchedItems;
+    }
+
     public void getItemsApi(String docType, int pageLength, boolean isCommentCount, String orderBy, int limitStart) {
         limitSet = limitStart;
         String fields = "[\"`tabOpportunity`.`name`\",\"`tabOpportunity`.`owner`\",\"`tabOpportunity`.`creation`\",\"`tabOpportunity`.`modified`\",\"`tabOpportunity`.`modified_by`\",\"`tabOpportunity`.`_user_tags`\",\"`tabOpportunity`.`_comments`\",\"`tabOpportunity`.`_assign`\",\"`tabOpportunity`.`_liked_by`\",\"`tabOpportunity`.`docstatus`\",\"`tabOpportunity`.`parent`\",\"`tabOpportunity`.`parenttype`\",\"`tabOpportunity`.`parentfield`\",\"`tabOpportunity`.`idx`\",\"`tabOpportunity`.`naming_series`\",\"`tabOpportunity`.`opportunity_from`\",\"`tabOpportunity`.`opportunity_type`\",\"`tabOpportunity`.`status`\",\"`tabOpportunity`.`opportunity_amount`\",\"`tabOpportunity`.`title`\",\"`tabOpportunity`.`customer_name`\",\"`tabOpportunity`.`_seen`\",\"`tabOpportunity`.`currency`\"]";
@@ -47,6 +53,17 @@ public class OpportunitiesRepo implements OnNetworkResponse {
                 .setTag(RequestCodes.API.REPORT_VIEW)
                 .autoLoadingCancel(Utils.getLoading(MainApp.INSTANCE.getCurrentActivity(), "Loading..."))
                 .enque(Network.apis().getReportView(docType, fields, "[[\"Opportunity\",\"owner\",\"=\",\"" + AppSession.get("email") + "\"]]", pageLength, isCommentCount, orderBy, limitSet))
+                .execute();
+    }
+
+    public void searchItemsApi(String docType, int pageLength, boolean isCommentCount, String orderBy, int limitStart, String date) {
+        searchLimitSet = limitStart;
+        String fields = "[\"`tabOpportunity`.`name`\",\"`tabOpportunity`.`owner`\",\"`tabOpportunity`.`creation`\",\"`tabOpportunity`.`modified`\",\"`tabOpportunity`.`modified_by`\",\"`tabOpportunity`.`_user_tags`\",\"`tabOpportunity`.`_comments`\",\"`tabOpportunity`.`_assign`\",\"`tabOpportunity`.`_liked_by`\",\"`tabOpportunity`.`docstatus`\",\"`tabOpportunity`.`parent`\",\"`tabOpportunity`.`parenttype`\",\"`tabOpportunity`.`parentfield`\",\"`tabOpportunity`.`idx`\",\"`tabOpportunity`.`naming_series`\",\"`tabOpportunity`.`opportunity_from`\",\"`tabOpportunity`.`opportunity_type`\",\"`tabOpportunity`.`status`\",\"`tabOpportunity`.`opportunity_amount`\",\"`tabOpportunity`.`title`\",\"`tabOpportunity`.`customer_name`\",\"`tabOpportunity`.`_seen`\",\"`tabOpportunity`.`currency`\"]";
+        NetworkCall.make()
+                .setCallback(this)
+                .setTag(RequestCodes.API.SEARCH_REPORT_VIEW)
+                .autoLoadingCancel(Utils.getLoading(MainApp.INSTANCE.getCurrentActivity(), "Loading..."))
+                .enque(Network.apis().getReportView(docType, fields, "[[\"Opportunity\",\"owner\",\"=\",\"" + AppSession.get("email") + "\"],[\"Opportunity\",\"transaction_date\",\"=\",\"" + date + "\"]]", pageLength, isCommentCount, orderBy, searchLimitSet))
                 .execute();
     }
 
@@ -68,6 +85,28 @@ public class OpportunitiesRepo implements OnNetworkResponse {
                         if (res.getReportViewMessage().getValues() != null && !res.getReportViewMessage().getValues().isEmpty()) {
                             list.addAll(res.getReportViewMessage().getValues());
                             items.setValue(list);
+//                            Room.saveMoreReportView(res, "POS Invoice");
+                        }
+                    }
+                }
+            }
+        } else if ((int) tag == RequestCodes.API.SEARCH_REPORT_VIEW) {
+            ReportViewResponse res = (ReportViewResponse) response.body();
+            if (res != null && res.getReportViewMessage() != null) {
+                if (!res.getReportViewMessage().getValues().isEmpty()) {
+                    if (searchLimitSet == 0) {
+//                        if (searchedItems.getValue() != null && !searchedItems.getValue().isEmpty()) {
+//                            searchedItems.getValue().clear();
+//                        }
+                        searchedItems.setValue(res.getReportViewMessage().getValues());
+//                        searchedItems.setValue(res.getReportViewMessage().getValues());
+//                        Room.saveReportView(res, "POS Invoice");
+                    } else {
+                        List<List<String>> list = new ArrayList<>();
+                        list = searchedItems.getValue();
+                        if (res.getReportViewMessage().getValues() != null && !res.getReportViewMessage().getValues().isEmpty()) {
+                            list.addAll(res.getReportViewMessage().getValues());
+                            searchedItems.setValue(list);
 //                            Room.saveMoreReportView(res, "POS Invoice");
                         }
                     }
