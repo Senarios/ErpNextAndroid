@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -18,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.erpnext.R;
 import com.example.erpnext.activities.AddNewPurchaseReceiptActivity;
 import com.example.erpnext.adapters.StockListsAdapter;
+import com.example.erpnext.app.AppSession;
 import com.example.erpnext.app.MainApp;
 import com.example.erpnext.callbacks.ProfilesCallback;
 import com.example.erpnext.databinding.PurchaseReceiptFragmentBinding;
@@ -37,6 +39,9 @@ public class PurchaseReceiptFragment extends Fragment implements View.OnClickLis
     private PurchaseReceiptFragmentBinding binding;
     private StockListsAdapter stockListsAdapter;
     private int limitStart = 0;
+    private boolean clear = true;
+    private boolean renew = true;
+    String pickedDate = "";
 
     public static PurchaseReceiptFragment newInstance() {
         return new PurchaseReceiptFragment();
@@ -50,7 +55,7 @@ public class PurchaseReceiptFragment extends Fragment implements View.OnClickLis
         binding = PurchaseReceiptFragmentBinding.inflate(inflater, container, false);
 
         setClickListeners();
-        getReceipts();
+        getReceipts("[[\"Purchase Receipt\",\"owner\",\"=\",\"" + AppSession.get("email") + "\"],[\"Purchase Receipt\",\"company\",\"=\",\"Izat Afghan Limited\"]]");
         setObservers();
         binding.purchaseReceiptRv.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -62,9 +67,9 @@ public class PurchaseReceiptFragment extends Fragment implements View.OnClickLis
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 if (Utils.isNetworkAvailable()) {
                     if (Utils.isLastItemDisplaying(binding.purchaseReceiptRv)) {
-                        if (!isProfilesEnded) {
+                        if (!isProfilesEnded&&clear) {
                             limitStart = limitStart + 20;
-                            getReceipts();
+                            getReceipts("[[\"Purchase Receipt\",\"owner\",\"=\",\"" + AppSession.get("email") + "\"],[\"Purchase Receipt\",\"company\",\"=\",\"Izat Afghan Limited\"]]");
                         }
                     }
                 }
@@ -74,8 +79,9 @@ public class PurchaseReceiptFragment extends Fragment implements View.OnClickLis
         return binding.getRoot();
     }
 
-    private void getReceipts() {
+    private void getReceipts(String filter) {
         mViewModel.getPurchaseList(doctype,
+                filter,
                 20,
                 true,
                 "`tabPurchase Receipt`.`modified` desc",
@@ -93,6 +99,7 @@ public class PurchaseReceiptFragment extends Fragment implements View.OnClickLis
     private void setClickListeners() {
         binding.back.setOnClickListener(this);
         binding.addNew.setOnClickListener(this);
+        binding.search.setOnClickListener(this);
     }
 
     private void setPurchaseReceiptAdapter(List<List<String>> profilesList) {
@@ -111,6 +118,23 @@ public class PurchaseReceiptFragment extends Fragment implements View.OnClickLis
                 break;
             case R.id.add_new:
                 startActivityForResult(new Intent(getActivity(), AddNewPurchaseReceiptActivity.class), RequestCodes.CREATE_NEW_PURCHAS_RECEIPT);
+                break;
+            case R.id.search:
+                if (clear) {
+                    Utils.pickDate(requireContext(), date -> {
+                        //filterTasks(date);
+                        pickedDate = date;
+                        binding.search.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_close_24));
+                        clear = false;
+                        renew = true;
+                        getReceipts("[[\"Purchase Receipt\",\"posting_date\",\"=\",\""+pickedDate+"\"],[\"Purchase Receipt\",\"company\",\"=\",\"Izat Afghan Limited\"]]");
+                    });
+                } else {
+                    binding.search.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_search_24));
+                    clear = true;
+//                    pickedDate = "";
+                    getReceipts("[[\"Purchase Receipt\",\"owner\",\"=\",\"" + AppSession.get("email") + "\"],[\"Purchase Receipt\",\"company\",\"=\",\"Izat Afghan Limited\"]]");
+                }
                 break;
         }
     }
@@ -132,7 +156,7 @@ public class PurchaseReceiptFragment extends Fragment implements View.OnClickLis
             if (resultCode == RESULT_OK) {
                 PurchaseReceiptRepo.getInstance().purchaseReceipts.setValue(new ArrayList<>());
                 limitStart = 0;
-                getReceipts();
+                getReceipts("[[\"Purchase Receipt\",\"owner\",\"=\",\"" + AppSession.get("email") + "\"],[\"Purchase Receipt\",\"company\",\"=\",\"Izat Afghan Limited\"]]");
             }
         }
     }

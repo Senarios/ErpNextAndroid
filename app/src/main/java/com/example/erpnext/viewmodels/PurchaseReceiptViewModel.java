@@ -16,8 +16,8 @@ public class PurchaseReceiptViewModel extends ViewModel {
     // TODO: Implement the ViewModel
 
 
-    public void getPurchaseList(String docType, int pageLength, boolean isCommentCount, String orderBy, int limitStart) {
-        repo.getPurchaseReceipts(docType, pageLength, isCommentCount, orderBy, limitStart);
+    public void getPurchaseList(String docType,String filter, int pageLength, boolean isCommentCount, String orderBy, int limitStart) {
+        repo.getPurchaseReceipts(docType, filter,pageLength, isCommentCount, orderBy, limitStart);
     }
 
     public LiveData<List<List<String>>> getPurchaseReceipts() {

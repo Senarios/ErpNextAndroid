@@ -21,8 +21,16 @@ public class DeliveryNoteViewModel extends ViewModel {
         deliveryNoteRepo.getDeliveryNotes(activity, docType, pageLength, isCommentCount, orderBy, limitStart);
     }
 
+    public void searchDeliveryNotesApi(Activity activity, String docType, int pageLength, boolean isCommentCount, String orderBy, int limitStart, String date) {
+        deliveryNoteRepo.searchDeliveryNotes(activity, docType, pageLength, isCommentCount, orderBy, limitStart,date);
+    }
+
     public LiveData<List<List<String>>> getDeliveryNotes() {
         return deliveryNoteRepo.getStockEntriesList();
+    }
+
+    public LiveData<List<List<String>>> searchDeliveryNotes() {
+        return deliveryNoteRepo.getSearchedStockEntriesList();
     }
 
     public void clearList() {
