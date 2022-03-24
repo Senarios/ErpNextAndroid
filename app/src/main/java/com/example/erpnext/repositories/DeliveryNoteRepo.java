@@ -25,7 +25,9 @@ public class DeliveryNoteRepo implements OnNetworkResponse {
 
     private static DeliveryNoteRepo instance;
     public MutableLiveData<List<List<String>>> deliveryNotesList = new MutableLiveData<>();
+    public MutableLiveData<List<List<String>>> searchedDeliveryNotesList = new MutableLiveData<>();
     MutableLiveData<Integer> limitSet = new MutableLiveData<>();
+    MutableLiveData<Integer> searchLimitSet = new MutableLiveData<>();
 
     public static DeliveryNoteRepo getInstance() {
         if (instance == null) {
@@ -39,6 +41,11 @@ public class DeliveryNoteRepo implements OnNetworkResponse {
         getReportView(activity, docType, new Gson().toJson(getFieldsDeliveryNotes(docType)), pageLength, isCommentCount, orderBy, limitStart);
     }
 
+    public void searchDeliveryNotes(Activity activity, String docType, int pageLength, boolean isCommentCount, String orderBy, int limitStart, String date) {
+        this.searchLimitSet.setValue(limitStart);
+        searchReportView(activity, docType, new Gson().toJson(getFieldsDeliveryNotes(docType)), pageLength, isCommentCount, orderBy, limitStart, date);
+    }
+
     private void getReportView(Activity activity, String docType, String fields, int pageLength, boolean isCommentCount, String orderBy, int limitStart) {
         NetworkCall.make()
                 .setCallback(this)
@@ -48,8 +55,21 @@ public class DeliveryNoteRepo implements OnNetworkResponse {
                 .execute();
     }
 
+    private void searchReportView(Activity activity, String docType, String fields, int pageLength, boolean isCommentCount, String orderBy, int limitStart, String date) {
+        NetworkCall.make()
+                .setCallback(this)
+                .setTag(RequestCodes.API.SEARCH_REPORT_VIEW)
+                .autoLoadingCancel(Utils.getLoading(activity, "Loading..."))
+                .enque(Network.apis().getReportView(docType, fields, "[[\"Delivery Note\",\"posting_date\",\"=\",\"" + date + "\"],[\"Delivery Note\",\"company\",\"=\",\"Izat Afghan Limited\"]]", pageLength, isCommentCount, orderBy, searchLimitSet.getValue()))
+                .execute();
+    }
+
     public LiveData<List<List<String>>> getStockEntriesList() {
         return deliveryNotesList;
+    }
+
+    public LiveData<List<List<String>>> getSearchedStockEntriesList() {
+        return searchedDeliveryNotesList;
     }
 
     public void clearList() {
@@ -107,6 +127,24 @@ public class DeliveryNoteRepo implements OnNetworkResponse {
                             list.addAll(res.getReportViewMessage().getValues());
                             deliveryNotesList.setValue(list);
                             // TODO offline
+                        }
+                    }
+                }
+            }
+        } else if ((int) tag == RequestCodes.API.SEARCH_REPORT_VIEW) {
+            ReportViewResponse res = (ReportViewResponse) response.body();
+            if (res != null && res.getReportViewMessage() != null) {
+                if (!res.getReportViewMessage().getValues().isEmpty()) {
+                    if (searchLimitSet.getValue() == 0) {
+                        searchedDeliveryNotesList.setValue(res.getReportViewMessage().getValues());
+//                        Room.saveReportView(res, "POS Invoice");
+                    } else {
+                        List<List<String>> list = new ArrayList<>();
+                        list = searchedDeliveryNotesList.getValue();
+                        if (res.getReportViewMessage().getValues() != null && !res.getReportViewMessage().getValues().isEmpty()) {
+                            list.addAll(res.getReportViewMessage().getValues());
+                            searchedDeliveryNotesList.setValue(list);
+//                            Room.saveMoreReportView(res, "POS Invoice");
                         }
                     }
                 }
