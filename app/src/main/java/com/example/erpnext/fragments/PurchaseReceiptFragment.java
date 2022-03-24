@@ -38,7 +38,9 @@ public class PurchaseReceiptFragment extends Fragment implements View.OnClickLis
     private PurchaseReceiptViewModel mViewModel;
     private PurchaseReceiptFragmentBinding binding;
     private StockListsAdapter stockListsAdapter;
+    private StockListsAdapter searchStockListsAdapter;
     private int limitStart = 0;
+    private int searchLimitStart = 0;
     private boolean clear = true;
     private boolean renew = true;
     String pickedDate = "";
@@ -55,7 +57,7 @@ public class PurchaseReceiptFragment extends Fragment implements View.OnClickLis
         binding = PurchaseReceiptFragmentBinding.inflate(inflater, container, false);
 
         setClickListeners();
-        getReceipts("[[\"Purchase Receipt\",\"owner\",\"=\",\"" + AppSession.get("email") + "\"],[\"Purchase Receipt\",\"company\",\"=\",\"Izat Afghan Limited\"]]");
+        getReceipts();
         setObservers();
         binding.purchaseReceiptRv.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -67,10 +69,30 @@ public class PurchaseReceiptFragment extends Fragment implements View.OnClickLis
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 if (Utils.isNetworkAvailable()) {
                     if (Utils.isLastItemDisplaying(binding.purchaseReceiptRv)) {
-                        if (!isProfilesEnded&&clear) {
+                        if (!isProfilesEnded) {
                             limitStart = limitStart + 20;
-                            getReceipts("[[\"Purchase Receipt\",\"owner\",\"=\",\"" + AppSession.get("email") + "\"],[\"Purchase Receipt\",\"company\",\"=\",\"Izat Afghan Limited\"]]");
+                            getReceipts();
                         }
+                    }
+                }
+                super.onScrolled(recyclerView, dx, dy);
+            }
+        });
+        binding.searchRv.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                if (Utils.isNetworkAvailable()) {
+                    if (Utils.isLastItemDisplaying(binding.searchRv)) {
+                        int tempLimit = searchLimitStart;
+                        if (searchStockListsAdapter.getItemCount() >= 20)
+                            searchLimitStart = searchLimitStart + 20;
+                        if(tempLimit != searchLimitStart)
+                            getSearchReceipts();
                     }
                 }
                 super.onScrolled(recyclerView, dx, dy);
@@ -79,19 +101,39 @@ public class PurchaseReceiptFragment extends Fragment implements View.OnClickLis
         return binding.getRoot();
     }
 
-    private void getReceipts(String filter) {
+    private void getReceipts() {
         mViewModel.getPurchaseList(doctype,
-                filter,
                 20,
                 true,
                 "`tabPurchase Receipt`.`modified` desc",
                 limitStart);
     }
+    private void getSearchReceipts() {
+        mViewModel.getSearchPurchaseList(doctype,
+                20,
+                true,
+                "`tabPurchase Receipt`.`modified` desc",
+                searchLimitStart,
+                pickedDate);
+    }
 
     private void setObservers() {
         mViewModel.getPurchaseReceipts().observe(getActivity(), lists -> {
             if (lists != null) {
+                binding.purchaseReceiptRv.setVisibility(View.VISIBLE);
+                binding.searchRv.setVisibility(View.GONE);
                 setPurchaseReceiptAdapter(lists);
+            }
+        });
+        mViewModel.getSearchPurchaseReceipts().observe(requireActivity(), lists -> {
+            if(lists != null){
+                binding.searchRv.setVisibility(View.VISIBLE);
+                binding.purchaseReceiptRv.setVisibility(View.GONE);
+                if(searchStockListsAdapter == null || searchStockListsAdapter.getAllItems() == null || searchStockListsAdapter.getAllItems().isEmpty() || renew) {
+                    setSearchPurchaseReceiptAdapter(lists);
+                    renew = false;
+                }else searchStockListsAdapter.notifyItemRangeChanged(0, lists.size());
+//                setSearchLeadsAdapter();
             }
         });
     }
@@ -107,6 +149,12 @@ public class PurchaseReceiptFragment extends Fragment implements View.OnClickLis
         stockListsAdapter = new StockListsAdapter(getContext(), profilesList, doctype, this);
         binding.purchaseReceiptRv.setLayoutManager(linearLayoutManager);
         binding.purchaseReceiptRv.setAdapter(stockListsAdapter);
+    }
+    private void setSearchPurchaseReceiptAdapter(List<List<String>> profilesList) {
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        searchStockListsAdapter = new StockListsAdapter(getContext(), profilesList, doctype, this);
+        binding.searchRv.setLayoutManager(linearLayoutManager);
+        binding.searchRv.setAdapter(searchStockListsAdapter);
     }
 
 
@@ -127,13 +175,15 @@ public class PurchaseReceiptFragment extends Fragment implements View.OnClickLis
                         binding.search.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_close_24));
                         clear = false;
                         renew = true;
-                        getReceipts("[[\"Purchase Receipt\",\"posting_date\",\"=\",\""+pickedDate+"\"],[\"Purchase Receipt\",\"company\",\"=\",\"Izat Afghan Limited\"]]");
+                        getSearchReceipts();
                     });
                 } else {
                     binding.search.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_search_24));
                     clear = true;
-//                    pickedDate = "";
-                    getReceipts("[[\"Purchase Receipt\",\"owner\",\"=\",\"" + AppSession.get("email") + "\"],[\"Purchase Receipt\",\"company\",\"=\",\"Izat Afghan Limited\"]]");
+                    pickedDate = "";
+                    searchLimitStart = 0;
+                    binding.purchaseReceiptRv.setVisibility(View.VISIBLE);
+                    binding.searchRv.setVisibility(View.GONE);
                 }
                 break;
         }
@@ -156,7 +206,7 @@ public class PurchaseReceiptFragment extends Fragment implements View.OnClickLis
             if (resultCode == RESULT_OK) {
                 PurchaseReceiptRepo.getInstance().purchaseReceipts.setValue(new ArrayList<>());
                 limitStart = 0;
-                getReceipts("[[\"Purchase Receipt\",\"owner\",\"=\",\"" + AppSession.get("email") + "\"],[\"Purchase Receipt\",\"company\",\"=\",\"Izat Afghan Limited\"]]");
+                getReceipts();
             }
         }
     }

@@ -73,5 +73,12 @@
             android:layout_height="wrap_content"
             android:scrollbarStyle="outsideOverlay"
             android:scrollbars="vertical" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/search_rv"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbarStyle="outsideOverlay"
+            android:scrollbars="vertical" />
     </LinearLayout>
 </layout>

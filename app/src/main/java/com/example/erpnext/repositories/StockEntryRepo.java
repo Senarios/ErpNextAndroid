@@ -25,7 +25,9 @@ public class StockEntryRepo implements OnNetworkResponse {
 
     private static StockEntryRepo instance;
     public MutableLiveData<List<List<String>>> stockEntriesList = new MutableLiveData<>();
+    public MutableLiveData<List<List<String>>> searchstockEntriesList = new MutableLiveData<>();
     private int limitSet;
+    private int searchlimitSet;
 
     public static StockEntryRepo getInstance() {
         if (instance == null) {
@@ -34,13 +36,20 @@ public class StockEntryRepo implements OnNetworkResponse {
         return instance;
     }
 
-    public void getStockEntries(Activity activity, String docType, String filter, int pageLength, boolean isCommentCount, String orderBy, int limitStart) {
+    public void getStockEntries(Activity activity, String docType, int pageLength, boolean isCommentCount, String orderBy, int limitStart) {
         this.limitSet = limitStart;
-        getReportView(activity, docType, new Gson().toJson(getFieldsLeads(docType)),filter, pageLength, isCommentCount, orderBy, limitStart);
+        getReportView(activity, docType, new Gson().toJson(getFieldsLeads(docType)), pageLength, isCommentCount, orderBy, limitStart);
+    }
+    public void getSearchStockEntries(Activity activity, String docType, int pageLength, boolean isCommentCount, String orderBy, int limitStart,String date) {
+        this.searchlimitSet = limitStart;
+        getSearchReportView(activity, docType, new Gson().toJson(getFieldsLeads(docType)), pageLength, isCommentCount, orderBy, limitStart,date);
     }
 
     public LiveData<List<List<String>>> getStockEntriesList() {
         return stockEntriesList;
+    }
+    public LiveData<List<List<String>>> getSearchStockEntriesList() {
+        return searchstockEntriesList;
     }
 
 
@@ -48,12 +57,20 @@ public class StockEntryRepo implements OnNetworkResponse {
         stockEntriesList.setValue(new ArrayList<>());
     }
 
-    private void getReportView(Activity activity, String docType, String fields, String filter,int pageLength, boolean isCommentCount, String orderBy, int limitStart) {
+    private void getReportView(Activity activity, String docType, String fields,int pageLength, boolean isCommentCount, String orderBy, int limitStart) {
         NetworkCall.make()
                 .setCallback(this)
                 .setTag(RequestCodes.API.REPORT_VIEW)
                 .autoLoadingCancel(Utils.getLoading(activity, "Loading..."))
-                .enque(Network.apis().getReportView(docType, fields, filter, pageLength, isCommentCount, orderBy, limitSet))
+                .enque(Network.apis().getReportView(docType, fields, "[]", pageLength, isCommentCount, orderBy, limitStart))
+                .execute();
+    }
+    private void getSearchReportView(Activity activity, String docType, String fields,int pageLength, boolean isCommentCount, String orderBy, int limitStart,String date) {
+        NetworkCall.make()
+                .setCallback(this)
+                .setTag(RequestCodes.API.SEARCH_STOCK_REPORT_VIEW)
+                .autoLoadingCancel(Utils.getLoading(activity, "Loading..."))
+                .enque(Network.apis().getReportView(docType, fields, "[[\"Stock Entry\",\"posting_date\",\"=\",\""+date+"\"]]", pageLength, isCommentCount, orderBy, limitStart))
                 .execute();
     }
 
@@ -97,6 +114,24 @@ public class StockEntryRepo implements OnNetworkResponse {
                         if (res.getReportViewMessage().getValues() != null && !res.getReportViewMessage().getValues().isEmpty()) {
                             list.addAll(res.getReportViewMessage().getValues());
                             stockEntriesList.setValue(list);
+                            // TODO offline
+                        }
+                    }
+                }
+            }
+        }else if ((int) tag == RequestCodes.API.SEARCH_STOCK_REPORT_VIEW) {
+            ReportViewResponse res = (ReportViewResponse) response.body();
+            if (res != null && res.getReportViewMessage() != null) {
+                if (!res.getReportViewMessage().getValues().isEmpty()) {
+                    if (searchlimitSet == 0) {
+                        searchstockEntriesList.setValue(res.getReportViewMessage().getValues());
+                        // TODO offline
+                    } else {
+                        List<List<String>> list = new ArrayList<>();
+                        list = searchstockEntriesList.getValue();
+                        if (res.getReportViewMessage().getValues() != null && !res.getReportViewMessage().getValues().isEmpty()) {
+                            list.addAll(res.getReportViewMessage().getValues());
+                            searchstockEntriesList.setValue(list);
                             // TODO offline
                         }
                     }

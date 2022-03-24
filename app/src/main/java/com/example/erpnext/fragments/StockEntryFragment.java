@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.erpnext.R;
 import com.example.erpnext.activities.AddNewStockEntryActivity;
 import com.example.erpnext.adapters.StockEntryAdapter;
+import com.example.erpnext.adapters.StockListsAdapter;
 import com.example.erpnext.app.MainApp;
 import com.example.erpnext.callbacks.ProfilesCallback;
 import com.example.erpnext.databinding.StockEntryFragmentBinding;
@@ -32,7 +33,9 @@ public class StockEntryFragment extends Fragment implements ProfilesCallback, Vi
 
     public boolean isProfilesEnded = false;
     int limitStart = 0;
-    StockEntryAdapter stockEntryAdapter;
+    private int searchLimitStart = 0;
+    private StockEntryAdapter stockEntryAdapter;
+    private StockEntryAdapter searchStockEntryAdapter;
     ActivityResultLauncher<Intent> newStockEntryLauncher;
     private StockEntryViewModel mViewModel;
     private StockEntryFragmentBinding binding;
@@ -55,7 +58,7 @@ public class StockEntryFragment extends Fragment implements ProfilesCallback, Vi
         setClickListeners();
         mViewModel = new ViewModelProvider(requireActivity()).get(StockEntryViewModel.class);
         if (Utils.isNetworkAvailable()) {
-            getStockEntries("[]");
+            getStockEntries();
             setEntriesObserver();
         }
         binding.stockEntryRv.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -63,10 +66,30 @@ public class StockEntryFragment extends Fragment implements ProfilesCallback, Vi
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 if (Utils.isNetworkAvailable()) {
                     if (Utils.isLastItemDisplaying(binding.stockEntryRv)) {
-                        if (!isProfilesEnded&&clear) {
+                        if (!isProfilesEnded) {
                             limitStart = limitStart + 20;
-                            getStockEntries("[]");
+                            getStockEntries();
                         }
+                    }
+                }
+                super.onScrolled(recyclerView, dx, dy);
+            }
+        });
+        binding.searchRv.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                if (Utils.isNetworkAvailable()) {
+                    if (Utils.isLastItemDisplaying(binding.searchRv)) {
+                        int tempLimit = searchLimitStart;
+                        if (searchStockEntryAdapter.getItemCount() >= 20)
+                            searchLimitStart = searchLimitStart + 20;
+                        if(tempLimit != searchLimitStart)
+                            getSearchStockEntries();
                     }
                 }
                 super.onScrolled(recyclerView, dx, dy);
@@ -79,29 +102,50 @@ public class StockEntryFragment extends Fragment implements ProfilesCallback, Vi
                     // There are no request codes
                     Intent data = result.getData();
                     stockEntryAdapter = null; // to get latest list
-                    getStockEntries("[]");
+                    getStockEntries();
                 });
 
         return binding.getRoot();
     }
 
-    private void getStockEntries(String filter) {
+    private void getStockEntries() {
         mViewModel.getStockEntriesApi(getActivity(),
                 "Stock Entry",
-                filter,
                 20,
                 true,
                 "`tabStock Entry`.`modified` desc",
                 limitStart);
     }
+    private void getSearchStockEntries() {
+        mViewModel.getSearchStockEntriesApi(getActivity(),
+                "Stock Entry",
+                20,
+                true,
+                "`tabStock Entry`.`modified` desc",
+                searchLimitStart,
+                pickedDate);
+    }
 
     private void setEntriesObserver() {
         mViewModel.getStockEntries().observe(getActivity(), lists -> {
             if (lists != null) {
+                binding.stockEntryRv.setVisibility(View.VISIBLE);
+                binding.searchRv.setVisibility(View.GONE);
                 setLeadsAdapter(lists);
             } else {
                 stockEntryAdapter.addItems(lists);
                 stockEntryAdapter.notifyDataSetChanged();
+            }
+        });
+        mViewModel.getSearchStockEntries().observe(requireActivity(), lists -> {
+            if(lists != null){
+                binding.searchRv.setVisibility(View.VISIBLE);
+                binding.stockEntryRv.setVisibility(View.GONE);
+                if(searchStockEntryAdapter == null || searchStockEntryAdapter.getAllItems() == null || searchStockEntryAdapter.getAllItems().isEmpty() || renew) {
+                    setSearchLeadsAdapter(lists);
+                    renew = false;
+                }else searchStockEntryAdapter.notifyItemRangeChanged(0, lists.size());
+//                setSearchLeadsAdapter();
             }
         });
     }
@@ -117,6 +161,13 @@ public class StockEntryFragment extends Fragment implements ProfilesCallback, Vi
         stockEntryAdapter = new StockEntryAdapter(getContext(), profilesList, this);
         binding.stockEntryRv.setLayoutManager(linearLayoutManager);
         binding.stockEntryRv.setAdapter(stockEntryAdapter);
+    }
+
+    private void setSearchLeadsAdapter(List<List<String>> profilesList) {
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        searchStockEntryAdapter = new StockEntryAdapter(getContext(), profilesList, this);
+        binding.searchRv.setLayoutManager(linearLayoutManager);
+        binding.searchRv.setAdapter(searchStockEntryAdapter);
     }
 
 
@@ -147,14 +198,18 @@ public class StockEntryFragment extends Fragment implements ProfilesCallback, Vi
                         binding.search.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_close_24));
                         clear = false;
                         renew = true;
-                        getStockEntries("[[\"Stock Entry\",\"posting_date\",\"=\",\""+pickedDate+"\"]]");
+                        getSearchStockEntries();
+//                        getStockEntries("[[\"Stock Entry\",\"posting_date\",\"=\",\""+pickedDate+"\"]]");
 
                     });
                 } else {
                     binding.search.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_search_24));
                     clear = true;
                     pickedDate = "";
-                    getStockEntries("[]");
+                    searchLimitStart = 0;
+                    binding.stockEntryRv.setVisibility(View.VISIBLE);
+                    binding.searchRv.setVisibility(View.GONE);
+//                    getStockEntries("[]");
                 }
                 break;
         }

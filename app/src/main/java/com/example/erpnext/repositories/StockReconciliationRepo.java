@@ -24,7 +24,9 @@ public class StockReconciliationRepo implements OnNetworkResponse {
 
     private static StockReconciliationRepo instance;
     public MutableLiveData<List<List<String>>> items = new MutableLiveData<>();
+    public MutableLiveData<List<List<String>>> searchItems = new MutableLiveData<>();
     int limitSet;
+    int searchlimitSet;
 
     public static StockReconciliationRepo getInstance() {
         if (instance == null) {
@@ -37,15 +39,28 @@ public class StockReconciliationRepo implements OnNetworkResponse {
     public LiveData<List<List<String>>> getItems() {
         return items;
     }
+    public LiveData<List<List<String>>> getSearchItems() {
+        return searchItems;
+    }
 
-    public void getItemsApi(String docType, String filter, int pageLength, boolean isCommentCount, String orderBy, int limitStart) {
+    public void getItemsApi(String docType, int pageLength, boolean isCommentCount, String orderBy, int limitStart) {
         limitSet = limitStart;
         String fields = "[\"`tabStock Reconciliation`.`name`\",\"`tabStock Reconciliation`.`owner`\",\"`tabStock Reconciliation`.`creation`\",\"`tabStock Reconciliation`.`modified`\",\"`tabStock Reconciliation`.`modified_by`\",\"`tabStock Reconciliation`.`_user_tags`\",\"`tabStock Reconciliation`.`_comments`\",\"`tabStock Reconciliation`.`_assign`\",\"`tabStock Reconciliation`.`_liked_by`\",\"`tabStock Reconciliation`.`docstatus`\",\"`tabStock Reconciliation`.`parent`\",\"`tabStock Reconciliation`.`parenttype`\",\"`tabStock Reconciliation`.`parentfield`\",\"`tabStock Reconciliation`.`idx`\",\"`tabStock Reconciliation`.`posting_date`\",\"`tabStock Reconciliation`.`posting_time`\"]";
         NetworkCall.make()
                 .setCallback(this)
                 .setTag(RequestCodes.API.REPORT_VIEW)
                 .autoLoadingCancel(Utils.getLoading(MainApp.INSTANCE.getCurrentActivity(), "Loading..."))
-                .enque(Network.apis().getReportView(docType, fields, filter, pageLength, isCommentCount, orderBy, limitSet))
+                .enque(Network.apis().getReportView(docType, fields,"[[\"Stock Reconciliation\",\"owner\",\"=\",\"" + AppSession.get("email") + "\"]]", pageLength, isCommentCount, orderBy, limitSet))
+                .execute();
+    }
+    public void getSearchItemsApi(String docType, int pageLength, boolean isCommentCount, String orderBy, int limitStart,String date) {
+        searchlimitSet = limitStart;
+        String fields = "[\"`tabStock Reconciliation`.`name`\",\"`tabStock Reconciliation`.`owner`\",\"`tabStock Reconciliation`.`creation`\",\"`tabStock Reconciliation`.`modified`\",\"`tabStock Reconciliation`.`modified_by`\",\"`tabStock Reconciliation`.`_user_tags`\",\"`tabStock Reconciliation`.`_comments`\",\"`tabStock Reconciliation`.`_assign`\",\"`tabStock Reconciliation`.`_liked_by`\",\"`tabStock Reconciliation`.`docstatus`\",\"`tabStock Reconciliation`.`parent`\",\"`tabStock Reconciliation`.`parenttype`\",\"`tabStock Reconciliation`.`parentfield`\",\"`tabStock Reconciliation`.`idx`\",\"`tabStock Reconciliation`.`posting_date`\",\"`tabStock Reconciliation`.`posting_time`\"]";
+        NetworkCall.make()
+                .setCallback(this)
+                .setTag(RequestCodes.API.SEARCH_RECONCILIATION_REPORT_VIEW)
+                .autoLoadingCancel(Utils.getLoading(MainApp.INSTANCE.getCurrentActivity(), "Loading..."))
+                .enque(Network.apis().getReportView(docType, fields,"[[\"Stock Reconciliation\",\"posting_date\",\"=\",\""+date+"\"]]", pageLength, isCommentCount, orderBy, searchlimitSet))
                 .execute();
     }
 
@@ -67,6 +82,27 @@ public class StockReconciliationRepo implements OnNetworkResponse {
                         if (res.getReportViewMessage().getValues() != null && !res.getReportViewMessage().getValues().isEmpty()) {
                             list.addAll(res.getReportViewMessage().getValues());
                             items.setValue(list);
+//                            Room.saveMoreReportView(res, "POS Invoice");
+                        }
+                    }
+                }
+            }
+        }else if ((int) tag == RequestCodes.API.SEARCH_RECONCILIATION_REPORT_VIEW) {
+            ReportViewResponse res = (ReportViewResponse) response.body();
+            if (res != null && res.getReportViewMessage() != null) {
+                if (!res.getReportViewMessage().getValues().isEmpty()) {
+                    if (searchlimitSet == 0) {
+                        if (searchItems.getValue() != null && !searchItems.getValue().isEmpty()) {
+                            searchItems.getValue().clear();
+                            searchItems.setValue(res.getReportViewMessage().getValues());
+                        } else searchItems.setValue(res.getReportViewMessage().getValues());
+//                        Room.saveReportView(res, "POS Invoice");
+                    } else {
+                        List<List<String>> list = new ArrayList<>();
+                        list = searchItems.getValue();
+                        if (res.getReportViewMessage().getValues() != null && !res.getReportViewMessage().getValues().isEmpty()) {
+                            list.addAll(res.getReportViewMessage().getValues());
+                            searchItems.setValue(list);
 //                            Room.saveMoreReportView(res, "POS Invoice");
                         }
                     }

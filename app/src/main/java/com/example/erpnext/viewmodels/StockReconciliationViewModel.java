@@ -16,11 +16,17 @@ public class StockReconciliationViewModel extends ViewModel {
     // TODO: Implement the ViewModel
 
 
-    public void getReconciliationItems(String docType, String filter,int pageLength, boolean isCommentCount, String orderBy, int limitStart) {
-        repo.getItemsApi(docType, filter, pageLength, isCommentCount, orderBy, limitStart);
+    public void getReconciliationItems(String docType ,int pageLength, boolean isCommentCount, String orderBy, int limitStart) {
+        repo.getItemsApi(docType, pageLength, isCommentCount, orderBy, limitStart);
+    }
+    public void getSearchReconciliationItems(String docType ,int pageLength, boolean isCommentCount, String orderBy, int limitStart,String date) {
+        repo.getSearchItemsApi(docType, pageLength, isCommentCount, orderBy, limitStart,date);
     }
 
     public LiveData<List<List<String>>> getItems() {
         return repo.getItems();
+    }
+    public LiveData<List<List<String>>> getSearchItems() {
+        return repo.getSearchItems();
     }
 }

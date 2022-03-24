@@ -25,7 +25,9 @@ public class PurchaseReceiptRepo implements OnNetworkResponse {
 
     private static PurchaseReceiptRepo instance;
     public MutableLiveData<List<List<String>>> purchaseReceipts = new MutableLiveData<>();
+    public MutableLiveData<List<List<String>>> searchPurchaseReceipts = new MutableLiveData<>();
     int limitSet;
+    int searchlimitSet;
 
     public static PurchaseReceiptRepo getInstance() {
         if (instance == null) {
@@ -38,15 +40,28 @@ public class PurchaseReceiptRepo implements OnNetworkResponse {
     public LiveData<List<List<String>>> getPurchaseReceipts() {
         return purchaseReceipts;
     }
+    public LiveData<List<List<String>>> getSearchPurchaseReceipts() {
+        return searchPurchaseReceipts;
+    }
 
-    public void getPurchaseReceipts(String docType, String filter,int pageLength, boolean isCommentCount, String orderBy, int limitStart) {
+    public void getPurchaseReceipts(String docType,int pageLength, boolean isCommentCount, String orderBy, int limitStart) {
         limitSet = limitStart;
         String fields = new Gson().toJson(getFields(docType));
         NetworkCall.make()
                 .setCallback(this)
                 .setTag(RequestCodes.API.REPORT_VIEW)
                 .autoLoadingCancel(Utils.getLoading(MainApp.INSTANCE.getCurrentActivity(), "Loading..."))
-                .enque(Network.apis().getReportView(docType, fields, filter, pageLength, isCommentCount, orderBy, limitSet))
+                .enque(Network.apis().getReportView(docType, fields, pageLength, isCommentCount, orderBy, limitSet))
+                .execute();
+    }
+    public void getSearchPurchaseReceipts(String docType,int pageLength, boolean isCommentCount, String orderBy, int limitStart,String date) {
+        searchlimitSet = limitStart;
+        String fields = new Gson().toJson(getFields(docType));
+        NetworkCall.make()
+                .setCallback(this)
+                .setTag(RequestCodes.API.SEARCH_PURCHASE_REPORT_VIEW)
+                .autoLoadingCancel(Utils.getLoading(MainApp.INSTANCE.getCurrentActivity(), "Loading..."))
+                .enque(Network.apis().getReportView(docType, fields,"[[\"Purchase Receipt\",\"posting_date\",\"=\",\""+date+"\"],[\"Purchase Receipt\",\"company\",\"=\",\"Izat Afghan Limited\"]]", pageLength, isCommentCount, orderBy, searchlimitSet))
                 .execute();
     }
 
@@ -68,6 +83,27 @@ public class PurchaseReceiptRepo implements OnNetworkResponse {
                         if (res.getReportViewMessage().getValues() != null && !res.getReportViewMessage().getValues().isEmpty()) {
                             list.addAll(res.getReportViewMessage().getValues());
                             purchaseReceipts.setValue(list);
+//                            Room.saveMoreReportView(res, "POS Invoice");
+                        }
+                    }
+                }
+            }
+        }else if ((int) tag == RequestCodes.API.SEARCH_PURCHASE_REPORT_VIEW) {
+            ReportViewResponse res = (ReportViewResponse) response.body();
+            if (res != null && res.getReportViewMessage() != null) {
+                if (!res.getReportViewMessage().getValues().isEmpty()) {
+                    if (searchlimitSet == 0) {
+                        if (searchPurchaseReceipts.getValue() != null && !searchPurchaseReceipts.getValue().isEmpty()) {
+                            searchPurchaseReceipts.getValue().clear();
+                            searchPurchaseReceipts.setValue(res.getReportViewMessage().getValues());
+                        } else searchPurchaseReceipts.setValue(res.getReportViewMessage().getValues());
+//                        Room.saveReportView(res, "POS Invoice");
+                    } else {
+                        List<List<String>> list = new ArrayList<>();
+                        list = searchPurchaseReceipts.getValue();
+                        if (res.getReportViewMessage().getValues() != null && !res.getReportViewMessage().getValues().isEmpty()) {
+                            list.addAll(res.getReportViewMessage().getValues());
+                            searchPurchaseReceipts.setValue(list);
 //                            Room.saveMoreReportView(res, "POS Invoice");
                         }
                     }
