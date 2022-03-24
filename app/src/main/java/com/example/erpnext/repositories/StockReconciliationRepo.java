@@ -38,14 +38,14 @@ public class StockReconciliationRepo implements OnNetworkResponse {
         return items;
     }
 
-    public void getItemsApi(String docType, int pageLength, boolean isCommentCount, String orderBy, int limitStart) {
+    public void getItemsApi(String docType, String filter, int pageLength, boolean isCommentCount, String orderBy, int limitStart) {
         limitSet = limitStart;
         String fields = "[\"`tabStock Reconciliation`.`name`\",\"`tabStock Reconciliation`.`owner`\",\"`tabStock Reconciliation`.`creation`\",\"`tabStock Reconciliation`.`modified`\",\"`tabStock Reconciliation`.`modified_by`\",\"`tabStock Reconciliation`.`_user_tags`\",\"`tabStock Reconciliation`.`_comments`\",\"`tabStock Reconciliation`.`_assign`\",\"`tabStock Reconciliation`.`_liked_by`\",\"`tabStock Reconciliation`.`docstatus`\",\"`tabStock Reconciliation`.`parent`\",\"`tabStock Reconciliation`.`parenttype`\",\"`tabStock Reconciliation`.`parentfield`\",\"`tabStock Reconciliation`.`idx`\",\"`tabStock Reconciliation`.`posting_date`\",\"`tabStock Reconciliation`.`posting_time`\"]";
         NetworkCall.make()
                 .setCallback(this)
                 .setTag(RequestCodes.API.REPORT_VIEW)
                 .autoLoadingCancel(Utils.getLoading(MainApp.INSTANCE.getCurrentActivity(), "Loading..."))
-                .enque(Network.apis().getReportView(docType, fields, "[[\"Stock Reconciliation\",\"owner\",\"=\",\"" + AppSession.get("email") + "\"]]", pageLength, isCommentCount, orderBy, limitSet))
+                .enque(Network.apis().getReportView(docType, fields, filter, pageLength, isCommentCount, orderBy, limitSet))
                 .execute();
     }
 

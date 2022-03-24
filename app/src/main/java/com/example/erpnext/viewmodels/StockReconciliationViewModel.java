@@ -16,8 +16,8 @@ public class StockReconciliationViewModel extends ViewModel {
     // TODO: Implement the ViewModel
 
 
-    public void getReconciliationItems(String docType, int pageLength, boolean isCommentCount, String orderBy, int limitStart) {
-        repo.getItemsApi(docType, pageLength, isCommentCount, orderBy, limitStart);
+    public void getReconciliationItems(String docType, String filter,int pageLength, boolean isCommentCount, String orderBy, int limitStart) {
+        repo.getItemsApi(docType, filter, pageLength, isCommentCount, orderBy, limitStart);
     }
 
     public LiveData<List<List<String>>> getItems() {
