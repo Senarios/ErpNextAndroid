@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -34,8 +35,13 @@ public class LandedCostFragment extends Fragment implements View.OnClickListener
     String doctype = "Landed Cost Voucher";
     LandedCostFragmentBinding binding;
     private StockListsAdapter stockListsAdapter;
+    private StockListsAdapter searchStockListsAdapter;
     private int limitStart = 0;
+    private int searchLimitStart = 0;
     private LandedCostViewModel mViewModel;
+    private boolean clear = true;
+    private boolean renew = true;
+    String pickedDate = "";
 
     public static LandedCostFragment newInstance() {
         return new LandedCostFragment();
@@ -51,6 +57,8 @@ public class LandedCostFragment extends Fragment implements View.OnClickListener
         setClickListeners();
         getItems();
         setObservers();
+        binding.listRv.setVisibility(View.VISIBLE);
+        binding.searchRv.setVisibility(View.GONE);
         binding.listRv.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
@@ -70,6 +78,32 @@ public class LandedCostFragment extends Fragment implements View.OnClickListener
                 super.onScrolled(recyclerView, dx, dy);
             }
         });
+
+        binding.searchRv.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                if (Utils.isNetworkAvailable()) {
+                    if (Utils.isLastItemDisplaying(binding.searchRv)) {
+                        if (!isItemsEnded && searchStockListsAdapter != null && searchStockListsAdapter.getAllItems() != null && searchStockListsAdapter.getAllItems().size() > 10) {
+                            int tempLimit = searchLimitStart;
+                            if (searchStockListsAdapter.getItemCount() >= 20)
+                                searchLimitStart = searchLimitStart + 20;
+                            if(tempLimit != searchLimitStart)
+                                searchItems();
+//                            limitStart = limitStart + 20;
+
+                        }
+                    }
+                }
+                super.onScrolled(recyclerView, dx, dy);
+            }
+        });
+
         return binding.getRoot();
     }
 
@@ -81,17 +115,39 @@ public class LandedCostFragment extends Fragment implements View.OnClickListener
                 limitStart);
     }
 
+    private void searchItems() {
+        mViewModel.searchLandedCostList(doctype,
+                20,
+                true,
+                "`tabLanded Cost Voucher`.`modified` desc",
+                searchLimitStart,
+                pickedDate);
+    }
+
     private void setObservers() {
         mViewModel.getItems().observe(getActivity(), lists -> {
             if (lists != null) {
+                binding.listRv.setVisibility(View.VISIBLE);
+                binding.searchRv.setVisibility(View.GONE);
                 setItemsAdapter(lists);
             }
         });
+
+        mViewModel.getSearchedItems().observe(getActivity(), lists -> {
+            binding.listRv.setVisibility(View.GONE);
+            binding.searchRv.setVisibility(View.VISIBLE);
+            if (searchStockListsAdapter == null || searchStockListsAdapter.getAllItems() == null || searchStockListsAdapter.getAllItems().isEmpty() || renew) {
+                setSearchItemsAdapter(lists);
+                renew = false;
+            } else searchStockListsAdapter.notifyItemRangeChanged(0, lists.size());
+        });
+
     }
 
     private void setClickListeners() {
         binding.back.setOnClickListener(this);
         binding.addNew.setOnClickListener(this);
+        binding.search.setOnClickListener(this);
     }
 
     private void setItemsAdapter(List<List<String>> profilesList) {
@@ -99,6 +155,14 @@ public class LandedCostFragment extends Fragment implements View.OnClickListener
         stockListsAdapter = new StockListsAdapter(getContext(), profilesList, doctype, this);
         binding.listRv.setLayoutManager(linearLayoutManager);
         binding.listRv.setAdapter(stockListsAdapter);
+    }
+
+
+    private void setSearchItemsAdapter(List<List<String>> profilesList) {
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        searchStockListsAdapter = new StockListsAdapter(getContext(), profilesList, doctype, this);
+        binding.searchRv.setLayoutManager(linearLayoutManager);
+        binding.searchRv.setAdapter(searchStockListsAdapter);
     }
 
 
@@ -110,6 +174,28 @@ public class LandedCostFragment extends Fragment implements View.OnClickListener
                 break;
             case R.id.add_new:
                 startActivityForResult(new Intent(getActivity(), AddNewLandedCostActivity.class), RequestCodes.ADD_ITEM_PRICE);
+                break;
+            case R.id.search:
+                if (clear) {
+                    Utils.pickDate(requireContext(), date -> {
+                        //filterTasks(date);
+                        pickedDate = date;
+                        binding.search.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_close_24));
+                        clear = false;
+                        renew = true;
+                        searchItems();
+
+                    });
+                } else {
+                    binding.search.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_search_24));
+                    clear = true;
+                    pickedDate = "";
+                    searchLimitStart = 0;
+                    binding.listRv.setVisibility(View.VISIBLE);
+                    binding.searchRv.setVisibility(View.GONE);
+
+//                    getInvoices();
+                }
                 break;
         }
     }
