@@ -2,13 +2,23 @@ package com.example.erpnext.fragments;
 
 import static android.app.Activity.RESULT_OK;
 
+import static com.example.erpnext.utils.Constants.COURSE_lOCATION;
+import static com.example.erpnext.utils.RequestCodes.LOCATION_REQUEST_CODE;
+
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -41,6 +51,7 @@ import com.example.erpnext.models.SPLocHisDatum;
 import com.example.erpnext.models.SPLocHisRes;
 import com.example.erpnext.network.ApiServices;
 import com.example.erpnext.repositories.LocationHistoryRepo;
+import com.example.erpnext.utils.Constants;
 import com.example.erpnext.utils.DateTime;
 import com.example.erpnext.utils.Notify;
 import com.example.erpnext.utils.RequestCodes;
@@ -83,6 +94,7 @@ public class LocationHistoryFragment extends Fragment implements View.OnClickLis
         setClickListeners();
         getItems();
         setObservers();
+        checkGPS();
         binding.listRv.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
@@ -264,6 +276,41 @@ public class LocationHistoryFragment extends Fragment implements View.OnClickLis
             date_on.setText(date);
         }
     }
+    private void getLocationAccess() {
+        if (ContextCompat.checkSelfPermission(getActivity(), Constants.FINE_lOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(getActivity(), COURSE_lOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_REQUEST_CODE);
 
+        }
+    }
+    private void buildAlertMessageNoGps() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setMessage("Your GPS Location seems to be disabled, You have to enable it, Do you want to enable it?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, final int id) {
+                        startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, final int id) {
+                        dialog.cancel();
+                    }
+                });
+        final AlertDialog alert = builder.create();
+        alert.show();
+    }
+    public void checkGPS() {
+        LocationManager manager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        getLocationAccess();
+        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            buildAlertMessageNoGps();
+
+
+        } else {
+            getLocationAccess();
+        }
+    }
 
 }

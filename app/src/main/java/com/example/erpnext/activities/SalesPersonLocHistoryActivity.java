@@ -1,16 +1,23 @@
 package com.example.erpnext.activities;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.Toast;
+
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.graphics.Color;
-import android.os.Bundle;
-import android.util.Log;
-import android.widget.Toast;
-
 import com.example.erpnext.R;
-import com.example.erpnext.models.CustomerInfo;
-import com.example.erpnext.models.CustomerRes;
 import com.example.erpnext.models.SPLocHistoryDatum;
 import com.example.erpnext.models.SPLocHistoryRes;
 import com.example.erpnext.network.ApiServices;
@@ -20,6 +27,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -36,12 +44,13 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class SalesPersonLocHistoryActivity extends AppCompatActivity implements
-        OnMapReadyCallback, GoogleMap.OnMarkerClickListener,GoogleMap.OnCameraMoveStartedListener {
+        OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnCameraMoveStartedListener {
 
     private ArrayList<LatLng> latLngArrayList;
     private ArrayList<String> locationNameArraylist;
     private ArrayList<String> locationReferenceArraylist;
     private GoogleMap mGoogleMap;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,19 +91,20 @@ public class SalesPersonLocHistoryActivity extends AppCompatActivity implements
                         for (int i = 0; i < list.size(); i++) {
                             String lat = list.get(i).getLat();
                             String lng = list.get(i).getLng();
-                        String shopname = list.get(i).getSalesPersonEmail();
-                        String shopreference = list.get(i).getDate();
+                            String shopname = list.get(i).getSalesPersonEmail();
+                            String shopreference = list.get(i).getDate();
                             LatLng latLng = new LatLng(Double.parseDouble(lat), Double.parseDouble(lng));
                             polyOptions.addAll(Collections.singleton(latLng));
                             Log.wtf("latlong", String.valueOf(latLng));
                             latLngArrayList.add(latLng);
-                        locationNameArraylist.add(shopname);
-                        locationReferenceArraylist.add(shopreference);
+                            locationNameArraylist.add(shopname);
+                            locationReferenceArraylist.add(shopreference);
                             for (int j = 0; j < latLngArrayList.size(); j++) {
                                 // adding marker to each location on google maps
                                 Utils.dismiss();
                                 mGoogleMap.addMarker(new MarkerOptions().position(latLngArrayList.get(j)).title("Email: " + locationNameArraylist.get(i))
-                                        .snippet("Date: " + locationReferenceArraylist.get(i)));
+                                        .snippet("Date: " + locationReferenceArraylist.get(i))
+                                        .icon(BitmapDescriptorFactory.fromBitmap(getMarkerBitmapFromView(R.drawable.salesman_icon))));
                                 // below line is use to move camera.
                                 mGoogleMap.addPolyline(polyOptions);
                                 mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
@@ -130,6 +140,25 @@ public class SalesPersonLocHistoryActivity extends AppCompatActivity implements
                 return false;
             }
         });
+    }
+
+    private Bitmap getMarkerBitmapFromView(@DrawableRes int resId) {
+
+        View customMarkerView = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.view_customer_marker, null);
+        ImageView markerImageView = (ImageView) customMarkerView.findViewById(R.id.profile_image);
+        markerImageView.setImageResource(resId);
+        customMarkerView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        customMarkerView.layout(0, 0, customMarkerView.getMeasuredWidth(), customMarkerView.getMeasuredHeight());
+        customMarkerView.buildDrawingCache();
+        Bitmap returnedBitmap = Bitmap.createBitmap(customMarkerView.getMeasuredWidth(), customMarkerView.getMeasuredHeight(),
+                Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(returnedBitmap);
+        canvas.drawColor(Color.WHITE, PorterDuff.Mode.SRC_IN);
+        Drawable drawable = customMarkerView.getBackground();
+        if (drawable != null)
+            drawable.draw(canvas);
+        customMarkerView.draw(canvas);
+        return returnedBitmap;
     }
 
     @Override
