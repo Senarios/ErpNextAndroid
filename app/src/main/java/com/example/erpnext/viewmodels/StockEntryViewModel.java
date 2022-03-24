@@ -17,8 +17,8 @@ public class StockEntryViewModel extends ViewModel {
         stockEntryRepo = StockEntryRepo.getInstance();
     }
 
-    public void getStockEntriesApi(Activity activity, String docType, int pageLength, boolean isCommentCount, String orderBy, int limitStart) {
-        stockEntryRepo.getStockEntries(activity, docType, pageLength, isCommentCount, orderBy, limitStart);
+    public void getStockEntriesApi(Activity activity, String docType,String filter, int pageLength, boolean isCommentCount, String orderBy, int limitStart) {
+        stockEntryRepo.getStockEntries(activity, docType, filter,pageLength, isCommentCount, orderBy, limitStart);
     }
 
     public LiveData<List<List<String>>> getStockEntries() {

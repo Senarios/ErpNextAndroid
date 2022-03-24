@@ -5,11 +5,13 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -34,6 +36,9 @@ public class StockEntryFragment extends Fragment implements ProfilesCallback, Vi
     ActivityResultLauncher<Intent> newStockEntryLauncher;
     private StockEntryViewModel mViewModel;
     private StockEntryFragmentBinding binding;
+    private boolean clear = true;
+    private boolean renew = true;
+    String pickedDate = "";
 
     public StockEntryFragment() {
         // Required empty public constructor
@@ -48,9 +53,10 @@ public class StockEntryFragment extends Fragment implements ProfilesCallback, Vi
                              @Nullable Bundle savedInstanceState) {
         binding = StockEntryFragmentBinding.inflate(inflater, container, false);
         setClickListeners();
+        Toast.makeText(getContext(), "aaa", Toast.LENGTH_SHORT).show();
         mViewModel = new ViewModelProvider(requireActivity()).get(StockEntryViewModel.class);
         if (Utils.isNetworkAvailable()) {
-            getStockEntries();
+            getStockEntries("[]");
             setEntriesObserver();
         }
         binding.stockEntryRv.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -60,7 +66,7 @@ public class StockEntryFragment extends Fragment implements ProfilesCallback, Vi
                     if (Utils.isLastItemDisplaying(binding.stockEntryRv)) {
                         if (!isProfilesEnded) {
                             limitStart = limitStart + 20;
-                            getStockEntries();
+                            getStockEntries("[]");
                         }
                     }
                 }
@@ -74,15 +80,16 @@ public class StockEntryFragment extends Fragment implements ProfilesCallback, Vi
                     // There are no request codes
                     Intent data = result.getData();
                     stockEntryAdapter = null; // to get latest list
-                    getStockEntries();
+                    getStockEntries("[]");
                 });
 
         return binding.getRoot();
     }
 
-    private void getStockEntries() {
+    private void getStockEntries(String filter) {
         mViewModel.getStockEntriesApi(getActivity(),
                 "Stock Entry",
+                filter,
                 20,
                 true,
                 "`tabStock Entry`.`modified` desc",
@@ -103,6 +110,7 @@ public class StockEntryFragment extends Fragment implements ProfilesCallback, Vi
     private void setClickListeners() {
         binding.back.setOnClickListener(this);
         binding.addNew.setOnClickListener(this);
+        binding.search.setOnClickListener(this);
     }
 
     private void setLeadsAdapter(List<List<String>> profilesList) {
@@ -131,6 +139,28 @@ public class StockEntryFragment extends Fragment implements ProfilesCallback, Vi
                 break;
             case R.id.add_new:
                 openNewStockEntry();
+                break;
+            case R.id.search:
+                if (clear) {
+                    Utils.pickDate(requireContext(), date -> {
+                        //filterTasks(date);
+                        pickedDate = date;
+                        binding.search.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_close_24));
+                        clear = false;
+                        renew = true;
+                        Toast.makeText(getContext(), "clear", Toast.LENGTH_SHORT).show();
+                        getStockEntries("[[\"Stock Entry\",\"posting_date\",\"=\",\""+pickedDate+"\"]]");
+
+                    });
+                } else {
+                    binding.search.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_search_24));
+                    clear = true;
+                    pickedDate = "";
+                    Toast.makeText(getContext(), "search", Toast.LENGTH_SHORT).show();
+                    getStockEntries("[]");
+
+//                    getInvoices();
+                }
                 break;
         }
     }

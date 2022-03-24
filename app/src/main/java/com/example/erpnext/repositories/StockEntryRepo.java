@@ -34,9 +34,9 @@ public class StockEntryRepo implements OnNetworkResponse {
         return instance;
     }
 
-    public void getStockEntries(Activity activity, String docType, int pageLength, boolean isCommentCount, String orderBy, int limitStart) {
+    public void getStockEntries(Activity activity, String docType, String filter, int pageLength, boolean isCommentCount, String orderBy, int limitStart) {
         this.limitSet = limitStart;
-        getReportView(activity, docType, new Gson().toJson(getFieldsLeads(docType)), pageLength, isCommentCount, orderBy, limitStart);
+        getReportView(activity, docType, new Gson().toJson(getFieldsLeads(docType)),filter, pageLength, isCommentCount, orderBy, limitStart);
     }
 
     public LiveData<List<List<String>>> getStockEntriesList() {
@@ -48,12 +48,12 @@ public class StockEntryRepo implements OnNetworkResponse {
         stockEntriesList.setValue(new ArrayList<>());
     }
 
-    private void getReportView(Activity activity, String docType, String fields, int pageLength, boolean isCommentCount, String orderBy, int limitStart) {
+    private void getReportView(Activity activity, String docType, String fields, String filter,int pageLength, boolean isCommentCount, String orderBy, int limitStart) {
         NetworkCall.make()
                 .setCallback(this)
                 .setTag(RequestCodes.API.REPORT_VIEW)
                 .autoLoadingCancel(Utils.getLoading(activity, "Loading..."))
-                .enque(Network.apis().getReportView(docType, fields, "[]", pageLength, isCommentCount, orderBy, limitSet))
+                .enque(Network.apis().getReportView(docType, fields, filter, pageLength, isCommentCount, orderBy, limitSet))
                 .execute();
     }
 
