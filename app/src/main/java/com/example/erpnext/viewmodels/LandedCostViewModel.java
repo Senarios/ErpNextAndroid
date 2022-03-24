@@ -21,7 +21,15 @@ public class LandedCostViewModel extends ViewModel {
         repo.getItemsApi(docType, pageLength, isCommentCount, orderBy, limitStart);
     }
 
+    public void searchLandedCostList(String docType, int pageLength, boolean isCommentCount, String orderBy, int limitStart, String date) {
+        repo.searchItemsApi(docType, pageLength, isCommentCount, orderBy, limitStart, date);
+    }
+
     public LiveData<List<List<String>>> getItems() {
         return repo.getItems();
+    }
+
+    public LiveData<List<List<String>>> getSearchedItems() {
+        return repo.getSearchedItems();
     }
 }
