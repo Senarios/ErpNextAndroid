@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.erpnext.R;
 import com.example.erpnext.activities.AddReconciliationActivity;
 import com.example.erpnext.adapters.StockListsAdapter;
+import com.example.erpnext.app.AppSession;
 import com.example.erpnext.app.MainApp;
 import com.example.erpnext.callbacks.ProfilesCallback;
 import com.example.erpnext.databinding.StockReconcilationFragmentBinding;
@@ -50,7 +51,7 @@ public class StockReconciliationFragment extends Fragment implements View.OnClic
         binding = StockReconcilationFragmentBinding.inflate(inflater, container, false);
 
         setClickListeners();
-        getItems();
+        getItems("[[\"Stock Reconciliation\",\"owner\",\"=\",\"" + AppSession.get("email") + "\"]]");
         setObservers();
         binding.stockReconciliationRv.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -64,7 +65,7 @@ public class StockReconciliationFragment extends Fragment implements View.OnClic
                     if (Utils.isLastItemDisplaying(binding.stockReconciliationRv)) {
                         if (!isItemsEnded) {
                             limitStart = limitStart + 20;
-                            getItems();
+                            getItems("[[\"Stock Reconciliation\",\"owner\",\"=\",\"" + AppSession.get("email") + "\"]]");
                         }
                     }
                 }
@@ -74,8 +75,9 @@ public class StockReconciliationFragment extends Fragment implements View.OnClic
         return binding.getRoot();
     }
 
-    private void getItems() {
+    private void getItems(String filter) {
         mViewModel.getReconciliationItems(doctype,
+                filter,
                 20,
                 true,
                 "`tabStock Reconciliation`.`modified` desc",
@@ -132,7 +134,7 @@ public class StockReconciliationFragment extends Fragment implements View.OnClic
             if (resultCode == RESULT_OK) {
                 ItemPriceRepo.getInstance().items.setValue(new ArrayList<>());
                 limitStart = 0;
-                getItems();
+                getItems("[[\"Stock Reconciliation\",\"owner\",\"=\",\"" + AppSession.get("email") + "\"]]");
             }
         }
     }
