@@ -15,6 +15,7 @@
         <entry key="..\:/Users/ukash/AndroidStudioProjects/ErpNextLatest/app/src/main/res/drawable/round_bg.xml" value="0.18385416666666668" />
         <entry key="..\:/Users/ukash/AndroidStudioProjects/ErpNextLatest/app/src/main/res/layout/activity_login.xml" value="0.16666666666666666" />
         <entry key="..\:/Users/ukash/AndroidStudioProjects/ErpNextLatest/app/src/main/res/layout/activity_message.xml" value="0.16770833333333332" />
+        <entry key="..\:/Users/ukash/AndroidStudioProjects/ErpNextLatest/app/src/main/res/layout/add_territory_dialog.xml" value="0.16770833333333332" />
         <entry key="..\:/Users/ukash/AndroidStudioProjects/ErpNextLatest/app/src/main/res/layout/customer_fragment.xml" value="0.16770833333333332" />
         <entry key="..\:/Users/ukash/AndroidStudioProjects/ErpNextLatest/app/src/main/res/layout/customer_info_window.xml" value="0.16770833333333332" />
         <entry key="..\:/Users/ukash/AndroidStudioProjects/ErpNextLatest/app/src/main/res/layout/customers_location_fragment.xml" value="0.16770833333333332" />
@@ -25,6 +26,7 @@
         <entry key="..\:/Users/ukash/AndroidStudioProjects/ErpNextLatest/app/src/main/res/layout/fragment_profile.xml" value="0.16770833333333332" />
         <entry key="..\:/Users/ukash/AndroidStudioProjects/ErpNextLatest/app/src/main/res/layout/fragment_stock.xml" value="0.16770833333333332" />
         <entry key="..\:/Users/ukash/AndroidStudioProjects/ErpNextLatest/app/src/main/res/layout/pos_invoice_layout.xml" value="0.16770833333333332" />
+        <entry key="..\:/Users/ukash/AndroidStudioProjects/ErpNextLatest/app/src/main/res/layout/purchase_receipt_fragment.xml" value="0.16770833333333332" />
         <entry key="..\:/Users/ukash/AndroidStudioProjects/ErpNextLatest/app/src/main/res/layout/settings_fragment.xml" value="0.22" />
         <entry key="..\:/Users/ukash/AndroidStudioProjects/ErpNextLatest/app/src/main/res/layout/show_customer_layout.xml" value="0.22" />
         <entry key="..\:/Users/ukash/AndroidStudioProjects/ErpNextLatest/app/src/main/res/layout/show_location_screen.xml" value="0.16770833333333332" />

@@ -53,7 +53,6 @@ public class StockEntryFragment extends Fragment implements ProfilesCallback, Vi
                              @Nullable Bundle savedInstanceState) {
         binding = StockEntryFragmentBinding.inflate(inflater, container, false);
         setClickListeners();
-        Toast.makeText(getContext(), "aaa", Toast.LENGTH_SHORT).show();
         mViewModel = new ViewModelProvider(requireActivity()).get(StockEntryViewModel.class);
         if (Utils.isNetworkAvailable()) {
             getStockEntries("[]");
@@ -64,7 +63,7 @@ public class StockEntryFragment extends Fragment implements ProfilesCallback, Vi
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 if (Utils.isNetworkAvailable()) {
                     if (Utils.isLastItemDisplaying(binding.stockEntryRv)) {
-                        if (!isProfilesEnded) {
+                        if (!isProfilesEnded&&clear) {
                             limitStart = limitStart + 20;
                             getStockEntries("[]");
                         }
@@ -148,7 +147,6 @@ public class StockEntryFragment extends Fragment implements ProfilesCallback, Vi
                         binding.search.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_close_24));
                         clear = false;
                         renew = true;
-                        Toast.makeText(getContext(), "clear", Toast.LENGTH_SHORT).show();
                         getStockEntries("[[\"Stock Entry\",\"posting_date\",\"=\",\""+pickedDate+"\"]]");
 
                     });
@@ -156,10 +154,7 @@ public class StockEntryFragment extends Fragment implements ProfilesCallback, Vi
                     binding.search.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_search_24));
                     clear = true;
                     pickedDate = "";
-                    Toast.makeText(getContext(), "search", Toast.LENGTH_SHORT).show();
                     getStockEntries("[]");
-
-//                    getInvoices();
                 }
                 break;
         }

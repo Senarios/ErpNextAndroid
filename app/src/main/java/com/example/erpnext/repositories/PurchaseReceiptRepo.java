@@ -39,14 +39,14 @@ public class PurchaseReceiptRepo implements OnNetworkResponse {
         return purchaseReceipts;
     }
 
-    public void getPurchaseReceipts(String docType, int pageLength, boolean isCommentCount, String orderBy, int limitStart) {
+    public void getPurchaseReceipts(String docType, String filter,int pageLength, boolean isCommentCount, String orderBy, int limitStart) {
         limitSet = limitStart;
         String fields = new Gson().toJson(getFields(docType));
         NetworkCall.make()
                 .setCallback(this)
                 .setTag(RequestCodes.API.REPORT_VIEW)
                 .autoLoadingCancel(Utils.getLoading(MainApp.INSTANCE.getCurrentActivity(), "Loading..."))
-                .enque(Network.apis().getReportView(docType, fields, "[[\"Purchase Receipt\",\"owner\",\"=\",\"" + AppSession.get("email") + "\"],[\"Purchase Receipt\",\"company\",\"=\",\"Izat Afghan Limited\"]]", pageLength, isCommentCount, orderBy, limitSet))
+                .enque(Network.apis().getReportView(docType, fields, filter, pageLength, isCommentCount, orderBy, limitSet))
                 .execute();
     }
 

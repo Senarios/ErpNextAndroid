@@ -42,6 +42,7 @@
                 android:textColor="@color/black"
                 android:textSize="@dimen/_14sdp"
                 android:textStyle="bold" />
+
             <ImageView
                 android:id="@+id/search"
                 android:layout_width="wrap_content"
