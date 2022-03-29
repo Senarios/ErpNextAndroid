@@ -429,5 +429,11 @@ public interface ApiServices {
                                      @Part("lng") RequestBody lng);
     @GET("ShowCustomers.php")
     Call<ShowCustomerRes> getAllCustomers();
+
+    @FormUrlEncoded
+    @POST("qrcode_scan.php")
+    Call<ScanQRRes> getStatusColor (@Field("sales_person_email") String sales_person_email,
+                                    @Field("task_name") String task_name,
+                                    @Field("shop_name") String shop_name);
 }
 

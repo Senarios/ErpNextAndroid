@@ -28,7 +28,7 @@ public class ShowCustomerAdapter extends RecyclerView.Adapter<ShowCustomerAdapte
     }
 
     public interface CustomerClick {
-        void doClick(String name,String phone,String ref,String image);
+        void doClick(String name,String phone,String ref,String image,String qr);
     }
 
     @NonNull
@@ -48,7 +48,8 @@ public class ShowCustomerAdapter extends RecyclerView.Adapter<ShowCustomerAdapte
         holder.dayAgo.setVisibility(View.GONE);
         holder.itemView.setOnClickListener(v ->{
             customerClick.doClick(showCustomerData.get(position).getName(),showCustomerData.get(position).getPhoneNumber()
-            ,showCustomerData.get(position).getReference(),showCustomerData.get(position).getImage());
+            ,showCustomerData.get(position).getReference(),showCustomerData.get(position).getImage(),
+                    showCustomerData.get(position).getQrcode());
         });
     }
 

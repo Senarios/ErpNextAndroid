@@ -75,7 +75,7 @@ public class SalesPersonLocHistoryActivity extends AppCompatActivity implements
         polyOptions.color(Color.RED);
         polyOptions.width(5);
 
-        Retrofit retrofit = new Retrofit.Builder().baseUrl("http://75.119.143.175:8080/ErpNext/")
+        Retrofit retrofit = new Retrofit.Builder().baseUrl(getString(R.string.frappeurl))
                 .addConverterFactory(GsonConverterFactory.create()).build();
         ApiServices apiServices = retrofit.create(ApiServices.class);
         String date = getIntent().getStringExtra("selectedDate");

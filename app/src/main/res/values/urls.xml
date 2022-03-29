@@ -3,4 +3,5 @@
     <string name="uploads" translatable="false">https://newhellowork.londonfashionoriginals.com/</string>
     <string name="authURl" translatable="false">http://newhellowork.londonfashionoriginals.com/</string>
     <string name="chatBaseURL" translatable="false">http://pusher.londonfashionoriginals.com/</string>
+    <string name="frappeurl" translatable="false">http://75.119.143.175:8080/ErpNext/</string>
 </resources>

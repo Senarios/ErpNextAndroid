@@ -601,7 +601,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         // Get new FCM registration token
                         String token = task.getResult();
                         Log.wtf("fcmtokemn", token);
-                        Retrofit retrofit = new Retrofit.Builder().baseUrl("http://75.119.143.175:8080/ErpNext/")
+                        Retrofit retrofit = new Retrofit.Builder().baseUrl(getString(R.string.frappeurl))
                                 .addConverterFactory(GsonConverterFactory.create()).build();
                         ApiServices apiServices = retrofit.create(ApiServices.class);
                         Call<FcmRes> call = apiServices.getFcmToken(AppSession.get("email"), token);

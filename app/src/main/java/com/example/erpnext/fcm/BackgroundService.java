@@ -91,7 +91,7 @@ public class BackgroundService extends Service {
                 public void onComplete(@NonNull Task<Location> task) {
                     Location location = task.getResult();
                     if (location != null) {
-                        Retrofit retrofit = new Retrofit.Builder().baseUrl("http://75.119.143.175:8080/ErpNext/")
+                        Retrofit retrofit = new Retrofit.Builder().baseUrl(getString(R.string.frappeurl))
                                 .addConverterFactory(GsonConverterFactory.create()).build();
                         ApiServices apiServices = retrofit.create(ApiServices.class);
                         Call<SalesPersonLocRes> call = apiServices.sendSalesPersonLoc(AppSession.get("email"), location.getLatitude(), location.getLongitude());

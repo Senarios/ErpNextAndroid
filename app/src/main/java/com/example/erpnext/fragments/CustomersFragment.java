@@ -5,8 +5,14 @@ import static android.app.Activity.RESULT_OK;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Gravity;
@@ -20,6 +26,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,9 +40,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.request.transition.Transition;
 import com.example.erpnext.R;
 import com.example.erpnext.activities.AddCustomerActivity;
 import com.example.erpnext.adapters.ShowCustomerAdapter;
@@ -53,6 +63,9 @@ import com.example.erpnext.utils.RequestCodes;
 import com.example.erpnext.utils.Utils;
 import com.example.erpnext.viewmodels.CustomersViewModel;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -237,7 +250,7 @@ public class CustomersFragment extends Fragment implements View.OnClickListener,
 
     private void enlistCustomers() {
         Utils.showLoading(getActivity());
-        Retrofit retrofit = new Retrofit.Builder().baseUrl("http://75.119.143.175:8080/ErpNext/")
+        Retrofit retrofit = new Retrofit.Builder().baseUrl(getString(R.string.frappeurl))
                 .addConverterFactory(GsonConverterFactory.create()).build();
         ApiServices apiServices = retrofit.create(ApiServices.class);
         Call<ShowCustomerRes> call = apiServices.getAllCustomers();
@@ -265,13 +278,12 @@ public class CustomersFragment extends Fragment implements View.OnClickListener,
             }
         });
     }
-
     @Override
-    public void doClick(String name, String phone, String ref, String image) {
-        showCustomerDialog(name, phone, ref, image);
+    public void doClick(String name, String phone, String ref, String image, String qr) {
+        showCustomerDialog(name, phone, ref, image,qr);
     }
 
-    private void showCustomerDialog(String name, String phone, String ref, String image) {
+    private void showCustomerDialog(String name, String phone, String ref, String image,String qr) {
         dialog = new Dialog(getActivity());
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.show_customer_layout);
@@ -286,6 +298,9 @@ public class CustomersFragment extends Fragment implements View.OnClickListener,
         dialog.show();
         ProgressBar progressBar = dialog.findViewById(R.id.customerProgress);
         ImageView customer_image = dialog.findViewById(R.id.show_image);
+        ImageView customer_qr = dialog.findViewById(R.id.show_qr);
+        RelativeLayout print_qr = dialog.findViewById(R.id.print_qr);
+        RelativeLayout share_qr = dialog.findViewById(R.id.share_qr);
         TextView tvname = dialog.findViewById(R.id.show_cus_name);
         TextView tvphone = dialog.findViewById(R.id.show_phone_no);
         TextView tvrefernce = dialog.findViewById(R.id.show_reference);
@@ -294,7 +309,7 @@ public class CustomersFragment extends Fragment implements View.OnClickListener,
         tvphone.setText(phone);
         tvrefernce.setText(ref);
         progressBar.setVisibility(View.VISIBLE);
-        Glide.with(getContext()).load("http://75.119.143.175:8080/ErpNext/" + image)
+        Glide.with(getContext()).load(getString(R.string.frappeurl) + image)
                 .placeholder(R.drawable.logo)
                 .addListener(new RequestListener<Drawable>() {
                     @Override
@@ -310,6 +325,47 @@ public class CustomersFragment extends Fragment implements View.OnClickListener,
                     }
                 })
                 .into(customer_image);
+        Glide.with(getContext()).load(getString(R.string.frappeurl) + qr)
+                .placeholder(R.drawable.logo)
+                .addListener(new RequestListener<Drawable>() {
+                    @Override
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                        progressBar.setVisibility(View.GONE);
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                        progressBar.setVisibility(View.GONE);
+                        return false;
+                    }
+                })
+                .into(customer_qr);
+
+        share_qr.setOnClickListener(v->{
+            Utils.showLoading(getActivity());
+            Glide.with(getContext()).asBitmap()
+                    .load(getString(R.string.frappeurl) + qr).skipMemoryCache(true)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .into(new SimpleTarget<Bitmap>(250,250) {
+                        @Override
+                        public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                            Intent intent = new Intent(Intent.ACTION_SEND);
+                            intent.putExtra(Intent.EXTRA_TEXT, "Hey view/download this image");
+                            String path = MediaStore.Images.Media.insertImage(getActivity().getContentResolver(), resource, "", null);
+                            Uri screenshotUri = Uri.parse(path);
+                            intent.putExtra(Intent.EXTRA_STREAM, screenshotUri);
+                            intent.setType("image/*");
+                            Utils.dismiss();
+                            startActivity(Intent.createChooser(intent, "Share image via..."));
+
+                        }
+                    });
+
+        });
+        print_qr.setOnClickListener(v->{
+            saveReceipt();
+        });
         cancel.setOnClickListener(v -> {
             dialog.dismiss();
         });
@@ -343,5 +399,51 @@ public class CustomersFragment extends Fragment implements View.OnClickListener,
 //            else loadFromLoacal();
         });
     }
+    private void saveReceipt() {
+        View mainView;
+        mainView = getActivity().getWindow().getDecorView()
+                .findViewById(android.R.id.content);
+        mainView.setDrawingCacheEnabled(true);
+// This is the bitmap for the main activity
+        Bitmap bitmap = mainView.getDrawingCache();
 
+        View dialogView = dialog.getWindow().getDecorView().findViewById(R.id.show_qr);
+        int[] location = new int[2];
+        mainView.getLocationOnScreen(location);
+        int[] location2 = new int[2];
+        dialogView.getLocationOnScreen(location2);
+
+        dialogView.setDrawingCacheEnabled(true);
+// This is the bitmap for the dialog view
+        Bitmap bitmap2 = dialogView.getDrawingCache();
+
+        Canvas canvas = new Canvas(bitmap);
+// Need to draw the dialogView into the right position
+        canvas.drawBitmap(bitmap2, location2[0] - location[0], location2[1] - location[1],
+                new Paint());
+
+        String filename = String.valueOf(System.currentTimeMillis());// filename to save
+        File myPath = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + Environment.DIRECTORY_DOWNLOADS + "/" + filename + ".jpg");
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(myPath);
+            bitmap2.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+//            fos.flush();
+            fos.close();
+            File pdfFile = Utils.convertToPDF(bitmap2, myPath);
+            Utils.openPDFFile(pdfFile, getActivity());
+            Utils.loadImageToGallery(getActivity(), myPath);
+//            dialog.dismiss();
+//            final Handler handler = new Handler(Looper.getMainLooper());
+//            handler.postDelayed(() -> getActivity().onBackPressed(), 500);
+
+
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
 }

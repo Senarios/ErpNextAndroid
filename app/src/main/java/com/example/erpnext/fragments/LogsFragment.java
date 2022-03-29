@@ -174,7 +174,7 @@ public class LogsFragment extends Fragment implements LogsTasksAdapter.LogTaskUp
 
     public void updateTaskApi(String email, String taskName, String shopName, String shopStatus, String comment) {
         Utils.showLoading(getActivity());
-        Retrofit retrofit = new Retrofit.Builder().baseUrl("http://75.119.143.175:8080/ErpNext/")
+        Retrofit retrofit = new Retrofit.Builder().baseUrl(getString(R.string.frappeurl))
                 .addConverterFactory(GsonConverterFactory.create()).build();
         ApiServices apiServices = retrofit.create(ApiServices.class);
         Call<MyTaskUpdateRes> call = apiServices.getMyTaskUpdateitem(email, taskName, shopName, shopStatus, comment);
@@ -255,7 +255,7 @@ public class LogsFragment extends Fragment implements LogsTasksAdapter.LogTaskUp
 
     private void syncCustomer(AddCustomerOfflineModel customerModel){
         Utils.showLoading(requireActivity());
-        Retrofit retrofit = new Retrofit.Builder().baseUrl("http://75.119.143.175:8080/ErpNext/")
+        Retrofit retrofit = new Retrofit.Builder().baseUrl(getString(R.string.frappeurl))
                 .addConverterFactory(GsonConverterFactory.create()).build();
 
         File file = new File(customerModel.getImage());

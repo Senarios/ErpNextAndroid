@@ -327,7 +327,7 @@ public class AddCustomerActivity extends AppCompatActivity implements View.OnCli
 
     private void addCustomer(String cus_name, String phone, String reference, double lat, double lng) {
         Utils.showLoading(this);
-        Retrofit retrofit = new Retrofit.Builder().baseUrl("http://75.119.143.175:8080/ErpNext/")
+        Retrofit retrofit = new Retrofit.Builder().baseUrl(getString(R.string.frappeurl))
                 .addConverterFactory(GsonConverterFactory.create()).build();
 
         File file = new File(path);

@@ -165,7 +165,7 @@ public class CustomersLocationFragment extends Fragment implements OnMapReadyCal
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mGoogleMap = googleMap;
-        Retrofit retrofit = new Retrofit.Builder().baseUrl("http://75.119.143.175:8080/ErpNext/")
+        Retrofit retrofit = new Retrofit.Builder().baseUrl(getString(R.string.frappeurl))
                 .addConverterFactory(GsonConverterFactory.create()).build();
         ApiServices apiServices = retrofit.create(ApiServices.class);
         Call<CustomerRes> call = apiServices.getCustomers();
@@ -253,6 +253,59 @@ public class CustomersLocationFragment extends Fragment implements OnMapReadyCal
         });
     }
 
+    private void markUpdatedStatus() {
+        Retrofit retrofit = new Retrofit.Builder().baseUrl(getString(R.string.frappeurl))
+                .addConverterFactory(GsonConverterFactory.create()).build();
+        ApiServices apiServices = retrofit.create(ApiServices.class);
+        Call<CustomerRes> call = apiServices.getCustomers();
+        call.enqueue(new Callback<CustomerRes>() {
+            @Override
+            public void onResponse(Call<CustomerRes> call, Response<CustomerRes> response) {
+                if (response.isSuccessful()) {
+                    Utils.dismiss();
+                    CustomerRes resObj = response.body();
+                    List<CustomerInfo> list = resObj.getInfo();
+                    for (int i = 0; i < list.size(); i++) {
+                        String lat = list.get(i).getShopLat();
+                        String lng = list.get(i).getShopLng();
+                        String shopname = list.get(i).getName().trim();
+                        String shopreference = list.get(i).getReference().trim();
+                        LatLng latLng = new LatLng(Double.parseDouble(lat), Double.parseDouble(lng));
+                        Log.wtf("latlong", String.valueOf(latLng));
+                        latLngArrayList.add(latLng);
+                        locationNameArraylist.add(shopname);
+                        locationReferenceArraylist.add(shopreference);
+                        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                        for (int j = 0; j < latLngArrayList.size(); j++) {
+
+                            // adding marker to each location on google maps
+                            mGoogleMap.addMarker(new MarkerOptions().position(latLngArrayList.get(j)).title("Shop name: " + locationNameArraylist.get(i))
+                                    .snippet("Shop refernce: " + locationReferenceArraylist.get(i))
+                                    .icon(BitmapDescriptorFactory.fromBitmap(getMarkerBitmapFromView(R.drawable.shopowner))));
+//                            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                        }
+                        builder.include(latLngArrayList.get(i));
+                        LatLngBounds bounds = builder.build();
+                        int width = getResources().getDisplayMetrics().widthPixels;
+                        int height = getResources().getDisplayMetrics().heightPixels;
+                        int padding = (int) (width * 0.15);
+                        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
+                        mGoogleMap.animateCamera(cu);
+                    }
+
+                } else {
+                    Utils.dismiss();
+                    Toast.makeText(getContext(), "Process Failed", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CustomerRes> call, Throwable t) {
+                Utils.dismiss();
+                Toast.makeText(getContext(), t.toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
     @Override
     public void onCameraIdle() {
         mapCenterLatLng = mGoogleMap.getCameraPosition().target;

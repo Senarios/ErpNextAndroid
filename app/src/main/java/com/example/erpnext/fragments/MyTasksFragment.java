@@ -186,7 +186,7 @@ public class MyTasksFragment extends Fragment implements View.OnClickListener, P
 
     private void enlistRecords() {
         Utils.showLoading(getActivity());
-        Retrofit retrofit = new Retrofit.Builder().baseUrl("http://75.119.143.175:8080/ErpNext/")
+        Retrofit retrofit = new Retrofit.Builder().baseUrl(getString(R.string.frappeurl))
                 .addConverterFactory(GsonConverterFactory.create()).build();
         ApiServices apiServices = retrofit.create(ApiServices.class);
         Call<MyTaskRes> call = apiServices.getMyTaskitem(AppSession.get("email"));
@@ -231,7 +231,7 @@ public class MyTasksFragment extends Fragment implements View.OnClickListener, P
     }
 
     public void updateTaskApi(String email, String taskName, String shopName, String shopStatus, String comment) {
-        Retrofit retrofit = new Retrofit.Builder().baseUrl("http://75.119.143.175:8080/ErpNext/")
+        Retrofit retrofit = new Retrofit.Builder().baseUrl(getString(R.string.frappeurl))
                 .addConverterFactory(GsonConverterFactory.create()).build();
         ApiServices apiServices = retrofit.create(ApiServices.class);
         Call<MyTaskUpdateRes> call = apiServices.getMyTaskUpdateitem(email, taskName, shopName, shopStatus, comment);

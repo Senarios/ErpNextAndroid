@@ -1210,7 +1210,7 @@ public class PointOfSaleFragment extends Fragment implements View.OnClickListene
 
     private void scan_qr() {
         Utils.showLoading(getActivity());
-        Retrofit retrofit = new Retrofit.Builder().baseUrl("http://75.119.143.175:8080/ErpNext/")
+        Retrofit retrofit = new Retrofit.Builder().baseUrl(getString(R.string.frappeurl))
                 .addConverterFactory(GsonConverterFactory.create()).build();
         ApiServices apiServices = retrofit.create(ApiServices.class);
         Call<ScanQRRes> call = apiServices.getScannedCustomer(contents);
