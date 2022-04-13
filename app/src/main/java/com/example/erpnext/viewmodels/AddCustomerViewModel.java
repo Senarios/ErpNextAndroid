@@ -34,7 +34,7 @@ public class AddCustomerViewModel extends ViewModel {
 
     public void saveDocApi(HashMap<String, String> data) {
         try {
-            JSONObject jsonDoc = new JSONObject("{\"docstatus\":0,\"doctype\":\"Customer\",\"name\":\"new-customer-4\",\"__islocal\":1,\"__unsaved\":1,\"owner\":\""+AppSession.get("email")+"\",\"naming_series\":\"CUST-.YYYY.-\",\"so_required\":0,\"dn_required\":0,\"disabled\":0,\"is_internal_customer\":0,\"language\":\"en\",\"is_frozen\":0,\"__run_link_triggers\":1}");
+            JSONObject jsonDoc = new JSONObject("{\"docstatus\":0,\"doctype\":\"Customer\",\"name\":\"new-customer-12\",\"__islocal\":1,\"__unsaved\":1,\"owner\":\""+AppSession.get("email")+"\",\"naming_series\":\"CUST-.YYYY.-\",\"customer_type\":\"Company\",\"customer_group\":\"All Customer Groups\",\"territory\":\"All Territories\",\"so_required\":0,\"dn_required\":0,\"disabled\":0,\"is_internal_customer\":0,\"language\":\"en\",\"is_frozen\":0,\"customer_name\":\"March Rec\",\"image\":\"/files/mytask.png\",\"accounts\":[{\"docstatus\":0,\"doctype\":\"Party Account\",\"name\":\"new-party-account-3\",\"__islocal\":1,\"__unsaved\":1,\"owner\":\"rvlirshad@gmail.com\",\"company\":\"Izat Afghan Limited\",\"parent\":\"new-customer-12\",\"parentfield\":\"accounts\",\"parenttype\":\"Customer\",\"idx\":1,\"__unedited\":false,\"account\":\"Debtors - IAL\"}],\"phone\":\"12345678\",\"reference\":\"near march\"}");
             JSONObject jsonObject1 = new JSONObject(data);
 
             JSONObject json = new JSONObject();
@@ -49,6 +49,8 @@ public class AddCustomerViewModel extends ViewModel {
                 tmp_key = (String) i2.next();
                 json.put(tmp_key, jsonDoc.get(tmp_key));
             }
+            json.put("image", data.get("image"));
+            json.put("customer_name", data.get("customer_name"));
             repo.saveDoc(json);
         } catch (JSONException e) {
             e.printStackTrace();

@@ -82,6 +82,7 @@ import com.example.erpnext.fragments.PosInvoicesFragment;
 import com.example.erpnext.fragments.ProfileFragment;
 import com.example.erpnext.fragments.PurchaseReceiptFragment;
 import com.example.erpnext.fragments.RetailFragment;
+import com.example.erpnext.fragments.SalesPersonSummaryFragment;
 import com.example.erpnext.fragments.SalesPersonsFragment;
 import com.example.erpnext.fragments.SettingsFragment;
 import com.example.erpnext.fragments.StockBalanceFragment;
@@ -329,6 +330,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         else if (menuItem.getTitle().equals(getString(R.string.settings))) {
             fragmentTrx(SettingsFragment.newInstance(), null, "SettingsFragment");
         }
+        else if (menuItem.getTitle().equals(getString(R.string.sp_report_summary))) {
+            fragmentTrx(SalesPersonSummaryFragment.newInstance(), null, "SalesPersonSummaryFragment");
+        }
 
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -524,6 +528,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 navView.getMenu().add(getString(R.string.chatroom));
 //                navView.getMenu().add(getString(R.string.logs));
                 navView.getMenu().add(getString(R.string.settings));
+                navView.getMenu().add(getString(R.string.sp_report_summary));
                 if (navView.getMenu().hasVisibleItems()) {
 //                    getItem(navView.getMenu().getItem(0).getTitle());
                 }

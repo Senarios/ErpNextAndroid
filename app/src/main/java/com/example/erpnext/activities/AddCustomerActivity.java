@@ -12,6 +12,8 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -86,9 +88,9 @@ public class AddCustomerActivity extends AppCompatActivity implements View.OnCli
         viewModel = new ViewModelProvider(this).get(AddCustomerViewModel.class);
 
         setClickListeners();
-//        setFocusListeners();
-//        setOnItemSelectListeners();
-//        setObservers();
+        setFocusListeners();
+        setOnItemSelectListeners();
+        setObservers();
     }
 
     private void setClickListeners() {
@@ -97,7 +99,7 @@ public class AddCustomerActivity extends AppCompatActivity implements View.OnCli
         binding.cusCurrentLoc.setOnClickListener(this);
         binding.saveCustomer.setOnClickListener(this);
         binding.selectImageButton.setOnClickListener(this);
-        cus_Name = findViewById(R.id.customer_namee);
+        cus_Name = findViewById(R.id.full_name);
         phone = findViewById(R.id.phone_no);
         reference = findViewById(R.id.reference);
         lat = findViewById(R.id.shop_latitude);
@@ -113,12 +115,12 @@ public class AddCustomerActivity extends AppCompatActivity implements View.OnCli
             }
         });
 
-//        binding.customerGroup.setText("All Customer Groups");
-//        binding.territory.setText("All Territories");
-//        binding.type.setText("Company");
-//        data.put("customer_group", "All Customer Groups");
-//        data.put("territory", "All Territories");
-//        data.put("customer_type", "Company");
+        binding.customerGroup.setText("All Customer Groups");
+        binding.territory.setText("All Territories");
+        binding.type.setText("Company");
+        data.put("customer_group", "All Customer Groups");
+        data.put("territory", "All Territories");
+        data.put("customer_type", "Company");
     }
 
 
@@ -138,13 +140,14 @@ public class AddCustomerActivity extends AppCompatActivity implements View.OnCli
                 getCurrentLocation();
                 break;
             case R.id.save_customer:
-                if (!fieldErrorExist()) {
-                    addCustomer(cus_Name.getText().toString(), phone.getText().toString(), reference.getText().toString(), Double.parseDouble(lat.getText().toString()), Double.parseDouble(lng.getText().toString()));
-                }
 //                if (!fieldErrorExist()) {
-//                    viewModel.saveDocApi(data);
-//                    setSaveObserver();
+//                    addCustomer(cus_Name.getText().toString(), phone.getText().toString(), reference.getText().toString(), Double.parseDouble(lat.getText().toString()), Double.parseDouble(lng.getText().toString()));
 //                }
+                if (!fieldErrorExist()) {
+                    data.put("image", path);
+                    viewModel.saveDocApi(data);
+                    setSaveObserver();
+                }
                 break;
         }
     }
@@ -190,46 +193,46 @@ public class AddCustomerActivity extends AppCompatActivity implements View.OnCli
     }
 
     private void setObservers() {
-//        viewModel.getSearchResult().observe(this, searchLinkResponse -> {
-//            if (searchLinkResponse != null && searchLinkResponse.getResults() != null && searchLinkResponse.getResults() != null && !searchLinkResponse.getResults().isEmpty()) {
-//                if (searchLinkResponse.getRequestCode() == RequestCodes.API.SEARCH_TERRITORY) {
-//                    Utils.setSearchAdapter(this, binding.territory, searchLinkResponse);
-//                } else if (searchLinkResponse.getRequestCode() == RequestCodes.API.CUSTOMER_GROUP) {
-//                    Utils.setSearchAdapter(this, binding.customerGroup, searchLinkResponse);
-//                }
-//                AddCustomerRepo.getInstance().searchLinkResponseMutableLiveData.setValue(null);
-//            }
-//        });
+        viewModel.getSearchResult().observe(this, searchLinkResponse -> {
+            if (searchLinkResponse != null && searchLinkResponse.getResults() != null && searchLinkResponse.getResults() != null && !searchLinkResponse.getResults().isEmpty()) {
+                if (searchLinkResponse.getRequestCode() == RequestCodes.API.SEARCH_TERRITORY) {
+                    Utils.setSearchAdapter(this, binding.territory, searchLinkResponse);
+                } else if (searchLinkResponse.getRequestCode() == RequestCodes.API.CUSTOMER_GROUP) {
+                    Utils.setSearchAdapter(this, binding.customerGroup, searchLinkResponse);
+                }
+                AddCustomerRepo.getInstance().searchLinkResponseMutableLiveData.setValue(null);
+            }
+        });
 
     }
 
     private void setFocusListeners() {
-//        binding.customerGroup.setOnFocusChangeListener((v, hasFocus) -> {
-//            if (hasFocus) {
-//                viewModel.getSearchLinkApi("Customer Group", "", null, "0", RequestCodes.API.CUSTOMER_GROUP);
-//            }
-//        });
-//        binding.territory.setOnFocusChangeListener((v, hasFocus) -> {
-//            if (hasFocus) {
-//                viewModel.getSearchLinkApi("Territory", "", null, "0", RequestCodes.API.SEARCH_TERRITORY);
-//            }
-//        });
-//        binding.type.setOnFocusChangeListener((v, hasFocus) -> {
-//            if (hasFocus) {
-//                SearchLinkResponse searchLinkResponse = new SearchLinkResponse();
-//                List<SearchResult> searchResults = new ArrayList<>();
-//                List<String> statusList = new ArrayList<>();
-//                statusList.add("Company");
-//                statusList.add("Individual");
-//                for (String staus : statusList) {
-//                    SearchResult searchResult = new SearchResult();
-//                    searchResult.setValue(staus);
-//                    searchResults.add(searchResult);
-//                }
-//                searchLinkResponse.setResults(searchResults);
-//                Utils.setSearchAdapter(this, binding.type, searchLinkResponse);
-//            }
-//        });
+        binding.customerGroup.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) {
+                viewModel.getSearchLinkApi("Customer Group", "", null, "0", RequestCodes.API.CUSTOMER_GROUP);
+            }
+        });
+        binding.territory.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) {
+                viewModel.getSearchLinkApi("Territory", "", null, "0", RequestCodes.API.SEARCH_TERRITORY);
+            }
+        });
+        binding.type.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) {
+                SearchLinkResponse searchLinkResponse = new SearchLinkResponse();
+                List<SearchResult> searchResults = new ArrayList<>();
+                List<String> statusList = new ArrayList<>();
+                statusList.add("Company");
+                statusList.add("Individual");
+                for (String staus : statusList) {
+                    SearchResult searchResult = new SearchResult();
+                    searchResult.setValue(staus);
+                    searchResults.add(searchResult);
+                }
+                searchLinkResponse.setResults(searchResults);
+                Utils.setSearchAdapter(this, binding.type, searchLinkResponse);
+            }
+        });
 
     }
 
@@ -247,32 +250,32 @@ public class AddCustomerActivity extends AppCompatActivity implements View.OnCli
     }
 
     private void setOnItemSelectListeners() {
-//        binding.customerGroup.setOnItemClickListener((parent, view, position, id) -> {
-//            String selected = (String) parent.getItemAtPosition(position);
-//            data.put("customer_group", selected);
-//        });
-//        binding.territory.setOnItemClickListener((parent, view, position, id) -> {
-//            String selected = (String) parent.getItemAtPosition(position);
-//            data.put("territory", selected);
-//        });
-//        binding.fullName.addTextChangedListener(new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//
-//            }
-//
-//            @Override
-//            public void onTextChanged(CharSequence s, int start, int before, int count) {
-//
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable s) {
-//                if (s.toString() != null && !s.toString().isEmpty()) {
-//                    data.put("customer_name", s.toString());
-//                }
-//            }
-//        });
+        binding.customerGroup.setOnItemClickListener((parent, view, position, id) -> {
+            String selected = (String) parent.getItemAtPosition(position);
+            data.put("customer_group", selected);
+        });
+        binding.territory.setOnItemClickListener((parent, view, position, id) -> {
+            String selected = (String) parent.getItemAtPosition(position);
+            data.put("territory", selected);
+        });
+        binding.fullName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.toString() != null && !s.toString().isEmpty()) {
+                    data.put("customer_name", s.toString());
+                }
+            }
+        });
 //        binding.email.addTextChangedListener(new TextWatcher() {
 //            @Override
 //            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -291,24 +294,24 @@ public class AddCustomerActivity extends AppCompatActivity implements View.OnCli
 //                }
 //            }
 //        });
-//        binding.mobile.addTextChangedListener(new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//
-//            }
-//
-//            @Override
-//            public void onTextChanged(CharSequence s, int start, int before, int count) {
-//
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable s) {
-//                if (s.toString() != null && !s.toString().isEmpty()) {
-//                    data.put("mobile_no", s.toString());
-//                }
-//            }
-//        });
+        binding.mobile.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.toString() != null && !s.toString().isEmpty()) {
+                    data.put("mobile_no", s.toString());
+                }
+            }
+        });
 
     }
 
@@ -325,60 +328,60 @@ public class AddCustomerActivity extends AppCompatActivity implements View.OnCli
         onBackPressed();
     }
 
-    private void addCustomer(String cus_name, String phone, String reference, double lat, double lng) {
-        Utils.showLoading(this);
-        Retrofit retrofit = new Retrofit.Builder().baseUrl(getString(R.string.frappeurl))
-                .addConverterFactory(GsonConverterFactory.create()).build();
-
-        File file = new File(path);
-        RequestBody requestFile =
-                RequestBody.create(MediaType.parse("multipart/form-data"), file);
-
-// MultipartBody.Part is used to send also the actual file name
-        MultipartBody.Part body =
-                MultipartBody.Part.createFormData("image", file.getName(), requestFile);
-
-        RequestBody cusFullName =
-                RequestBody.create(MediaType.parse("multipart/form-data"), cus_name);
-        RequestBody cusPhone =
-                RequestBody.create(MediaType.parse("multipart/form-data"), phone);
-        RequestBody cusReference =
-                RequestBody.create(MediaType.parse("multipart/form-data"), reference);
-        RequestBody cusLat =
-                RequestBody.create(MediaType.parse("multipart/form-data"), String.valueOf(lat));
-        RequestBody cusLng =
-                RequestBody.create(MediaType.parse("multipart/form-data"), String.valueOf(lng));
-
-        ApiServices apiServices = retrofit.create(ApiServices.class);
-        Call<AddCustomerRes> call = apiServices.addCustomer(body, cusFullName, cusPhone, cusReference, cusLat, cusLng);
-        call.enqueue(new Callback<AddCustomerRes>() {
-            @Override
-            public void onResponse(Call<AddCustomerRes> call, Response<AddCustomerRes> response) {
-                if (response.isSuccessful()) {
-                    if (response.body().getStatus().toString().equals("200")) {
-                        Utils.dismiss();
-                        Toast.makeText(getApplicationContext(), "Customer Added", Toast.LENGTH_SHORT).show();
-                        onBackPressed();
-                    } else {
-                        Utils.dismiss();
-                        saveCustomerForOffline(path,cus_name,phone,reference,lat,lng);
-                        Toast.makeText(getApplicationContext(), "Customer already exist", Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    Utils.dismiss();
-                    saveCustomerForOffline(path,cus_name,phone,reference,lat,lng);
-                    Toast.makeText(getApplicationContext(), "Process Failed", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<AddCustomerRes> call, Throwable t) {
-                Utils.dismiss();
-                saveCustomerForOffline(path,cus_name,phone,reference,lat,lng);
-//                Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
+//    private void addCustomer(String cus_name, String phone, String reference, double lat, double lng) {
+//        Utils.showLoading(this);
+//        Retrofit retrofit = new Retrofit.Builder().baseUrl(getString(R.string.frappeurl))
+//                .addConverterFactory(GsonConverterFactory.create()).build();
+//
+//        File file = new File(path);
+//        RequestBody requestFile =
+//                RequestBody.create(MediaType.parse("multipart/form-data"), file);
+//
+//// MultipartBody.Part is used to send also the actual file name
+//        MultipartBody.Part body =
+//                MultipartBody.Part.createFormData("image", file.getName(), requestFile);
+//
+//        RequestBody cusFullName =
+//                RequestBody.create(MediaType.parse("multipart/form-data"), cus_name);
+//        RequestBody cusPhone =
+//                RequestBody.create(MediaType.parse("multipart/form-data"), phone);
+//        RequestBody cusReference =
+//                RequestBody.create(MediaType.parse("multipart/form-data"), reference);
+//        RequestBody cusLat =
+//                RequestBody.create(MediaType.parse("multipart/form-data"), String.valueOf(lat));
+//        RequestBody cusLng =
+//                RequestBody.create(MediaType.parse("multipart/form-data"), String.valueOf(lng));
+//
+//        ApiServices apiServices = retrofit.create(ApiServices.class);
+//        Call<AddCustomerRes> call = apiServices.addCustomer(body, cusFullName, cusPhone, cusReference, cusLat, cusLng);
+//        call.enqueue(new Callback<AddCustomerRes>() {
+//            @Override
+//            public void onResponse(Call<AddCustomerRes> call, Response<AddCustomerRes> response) {
+//                if (response.isSuccessful()) {
+//                    if (response.body().getStatus().toString().equals("200")) {
+//                        Utils.dismiss();
+//                        Toast.makeText(getApplicationContext(), "Customer Added", Toast.LENGTH_SHORT).show();
+//                        onBackPressed();
+//                    } else {
+//                        Utils.dismiss();
+//                        saveCustomerForOffline(path,cus_name,phone,reference,lat,lng);
+//                        Toast.makeText(getApplicationContext(), "Customer already exist", Toast.LENGTH_SHORT).show();
+//                    }
+//                } else {
+//                    Utils.dismiss();
+//                    saveCustomerForOffline(path,cus_name,phone,reference,lat,lng);
+//                    Toast.makeText(getApplicationContext(), "Process Failed", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<AddCustomerRes> call, Throwable t) {
+//                Utils.dismiss();
+//                saveCustomerForOffline(path,cus_name,phone,reference,lat,lng);
+////                Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//    }
 
     @SuppressLint("MissingPermission")
     private void getCurrentLocation() {
@@ -397,19 +400,21 @@ public class AddCustomerActivity extends AppCompatActivity implements View.OnCli
     }
 
     private boolean fieldErrorExist() {
-        if (binding.customerNamee.getText().toString() == null || binding.customerNamee.getText().toString().isEmpty()) {
+        if (binding.fullName.getText().toString() == null || binding.fullName.getText().toString().isEmpty()) {
             Notify.Toast(getString(R.string.add_customer_name));
             return true;
-        } else if (binding.phoneNo.getText().toString() == null || binding.phoneNo.getText().toString().isEmpty()) {
+        } else if (binding.mobile.getText().toString() == null || binding.mobile.getText().toString().isEmpty()) {
             Notify.Toast(getString(R.string.add_phone));
             return true;
-        } else if (binding.shopLatitude.getText().toString() == null || binding.shopLatitude.getText().toString().isEmpty()) {
-            Notify.Toast(getString(R.string.add_cus_lat));
-            return true;
-        } else if (binding.shopLongitude.getText().toString() == null || binding.shopLongitude.getText().toString().isEmpty()) {
-            Notify.Toast(getString(R.string.add_cus_lng));
-            return true;
-        } else if (binding.selectImage.getDrawable() == null) {
+        }
+//        else if (binding.shopLatitude.getText().toString() == null || binding.shopLatitude.getText().toString().isEmpty()) {
+//            Notify.Toast(getString(R.string.add_cus_lat));
+//            return true;
+//        } else if (binding.shopLongitude.getText().toString() == null || binding.shopLongitude.getText().toString().isEmpty()) {
+//            Notify.Toast(getString(R.string.add_cus_lng));
+//            return true;
+//        }
+        else if (binding.selectImage.getDrawable() == null) {
             Notify.Toast(getString(R.string.add_cus_img));
             return true;
         } else {

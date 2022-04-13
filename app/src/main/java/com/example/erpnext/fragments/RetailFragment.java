@@ -70,7 +70,7 @@ public class RetailFragment extends Fragment implements View.OnClickListener, Sh
     private ItemResponse itemResponse;
     private SelectOPEAdapter selectOPEAdapter;
     private NewDocModel newDocModel;
-    LinearLayout pointofsale, pointofsaleprofile, loyaltyprogram,posopening,posclosing;
+    LinearLayout pointofsale, pointofsaleprofile, loyaltyprogram,posopening,posclosing,sp_summary;
 
     public RetailFragment() {
         // Required empty public constructor
@@ -118,6 +118,7 @@ public class RetailFragment extends Fragment implements View.OnClickListener, Sh
         loyaltyprogram = view.findViewById(R.id.loyaltyprogram);
         posopening = view.findViewById(R.id.posopeningentry);
         posclosing = view.findViewById(R.id.posclosingentry);
+        sp_summary = view.findViewById(R.id.sp_summary);
 
     }
 
@@ -128,6 +129,7 @@ public class RetailFragment extends Fragment implements View.OnClickListener, Sh
         loyaltyprogram.setOnClickListener(this);
         posopening.setOnClickListener(this);
         posclosing.setOnClickListener(this);
+        sp_summary.setOnClickListener(this);
     }
 
     private void setCardsAdapter(List<Item> itemList) {
@@ -197,6 +199,10 @@ public class RetailFragment extends Fragment implements View.OnClickListener, Sh
             case R.id.posclosingentry:
                 bundle.putString("docType", "POS Closing Entry");
                 ((MainActivity) getActivity()).fragmentTrx(POSProfileListFragment.newInstance(), bundle, "POSProfileListFragment");
+                break;
+            case R.id.sp_summary:
+                bundle.putString("docType", "Sales Person Summary");
+                ((MainActivity) getActivity()).fragmentTrx(SalesPersonSummaryFragment.newInstance(), bundle, "SalesPersonSummary");
                 break;
         }
     }

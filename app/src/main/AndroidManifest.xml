@@ -34,6 +34,9 @@
         android:theme="@style/Theme.ERPNext"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".activities.AddCustomerFrappeActivity"
+            android:exported="true" />
+        <activity
             android:name=".activities.MessageActivity"
             android:exported="true" />
         <activity
@@ -105,16 +108,13 @@
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
-        </receiver>
-
-<!--        <service-->
-<!--            android:name=".fcm.FCMService"-->
-<!--            android:exported="false">-->
-<!--            <intent-filter>-->
-<!--                <action android:name="com.google.firebase.MESSAGING_EVENT" />-->
-<!--            </intent-filter>-->
-<!--        </service>-->
-
+        </receiver> <!-- <service -->
+        <!-- android:name=".fcm.FCMService" -->
+        <!-- android:exported="false"> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="com.google.firebase.MESSAGING_EVENT" /> -->
+        <!-- </intent-filter> -->
+        <!-- </service> -->
         <service
             android:name=".chatroom.chatnotification.MyFirebaseIdService"
             android:enabled="true"

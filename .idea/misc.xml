@@ -14,6 +14,8 @@
         <entry key="..\:/Projects/ErpNextAndroid/app/src/main/res/menu/sync_log_menu.xml" value="0.1140625" />
         <entry key="..\:/Users/ukash/AndroidStudioProjects/ErpNextLatest/app/src/main/res/drawable/ic_baseline_close_24.xml" value="0.18385416666666668" />
         <entry key="..\:/Users/ukash/AndroidStudioProjects/ErpNextLatest/app/src/main/res/drawable/round_bg.xml" value="0.18385416666666668" />
+        <entry key="..\:/Users/ukash/AndroidStudioProjects/ErpNextLatest/app/src/main/res/layout/activity_add_customer.xml" value="0.3333333333333333" />
+        <entry key="..\:/Users/ukash/AndroidStudioProjects/ErpNextLatest/app/src/main/res/layout/activity_add_customer_frappe.xml" value="0.22" />
         <entry key="..\:/Users/ukash/AndroidStudioProjects/ErpNextLatest/app/src/main/res/layout/activity_add_territory.xml" value="0.16770833333333332" />
         <entry key="..\:/Users/ukash/AndroidStudioProjects/ErpNextLatest/app/src/main/res/layout/activity_login.xml" value="0.16666666666666666" />
         <entry key="..\:/Users/ukash/AndroidStudioProjects/ErpNextLatest/app/src/main/res/layout/activity_message.xml" value="0.16770833333333332" />
@@ -22,20 +24,25 @@
         <entry key="..\:/Users/ukash/AndroidStudioProjects/ErpNextLatest/app/src/main/res/layout/customer_info_window.xml" value="0.16770833333333332" />
         <entry key="..\:/Users/ukash/AndroidStudioProjects/ErpNextLatest/app/src/main/res/layout/customers_location_fragment.xml" value="0.16770833333333332" />
         <entry key="..\:/Users/ukash/AndroidStudioProjects/ErpNextLatest/app/src/main/res/layout/fragment_leads_and_opportunity.xml" value="0.16770833333333332" />
+        <entry key="..\:/Users/ukash/AndroidStudioProjects/ErpNextLatest/app/src/main/res/layout/fragment_logs.xml" value="0.16770833333333332" />
         <entry key="..\:/Users/ukash/AndroidStudioProjects/ErpNextLatest/app/src/main/res/layout/fragment_point_of_sale.xml" value="0.16770833333333332" />
         <entry key="..\:/Users/ukash/AndroidStudioProjects/ErpNextLatest/app/src/main/res/layout/fragment_pos_invoices.xml" value="0.16666666666666666" />
         <entry key="..\:/Users/ukash/AndroidStudioProjects/ErpNextLatest/app/src/main/res/layout/fragment_pos_profile_list.xml" value="0.16770833333333332" />
         <entry key="..\:/Users/ukash/AndroidStudioProjects/ErpNextLatest/app/src/main/res/layout/fragment_profile.xml" value="0.16770833333333332" />
+        <entry key="..\:/Users/ukash/AndroidStudioProjects/ErpNextLatest/app/src/main/res/layout/fragment_retail.xml" value="0.16770833333333332" />
         <entry key="..\:/Users/ukash/AndroidStudioProjects/ErpNextLatest/app/src/main/res/layout/fragment_stock.xml" value="0.16770833333333332" />
+        <entry key="..\:/Users/ukash/AndroidStudioProjects/ErpNextLatest/app/src/main/res/layout/generate_report_dialog.xml" value="0.16770833333333332" />
         <entry key="..\:/Users/ukash/AndroidStudioProjects/ErpNextLatest/app/src/main/res/layout/location_history_fragment.xml" value="0.16770833333333332" />
         <entry key="..\:/Users/ukash/AndroidStudioProjects/ErpNextLatest/app/src/main/res/layout/opportunities_fragment.xml" value="0.16770833333333332" />
         <entry key="..\:/Users/ukash/AndroidStudioProjects/ErpNextLatest/app/src/main/res/layout/pos_invoice_layout.xml" value="0.16770833333333332" />
         <entry key="..\:/Users/ukash/AndroidStudioProjects/ErpNextLatest/app/src/main/res/layout/purchase_receipt_fragment.xml" value="0.16770833333333332" />
         <entry key="..\:/Users/ukash/AndroidStudioProjects/ErpNextLatest/app/src/main/res/layout/sales_person_fragment.xml" value="0.16770833333333332" />
+        <entry key="..\:/Users/ukash/AndroidStudioProjects/ErpNextLatest/app/src/main/res/layout/sales_person_summary_fragment.xml" value="0.22" />
         <entry key="..\:/Users/ukash/AndroidStudioProjects/ErpNextLatest/app/src/main/res/layout/settings_fragment.xml" value="0.22" />
         <entry key="..\:/Users/ukash/AndroidStudioProjects/ErpNextLatest/app/src/main/res/layout/show_customer_layout.xml" value="0.16666666666666666" />
         <entry key="..\:/Users/ukash/AndroidStudioProjects/ErpNextLatest/app/src/main/res/layout/show_location_screen.xml" value="0.16770833333333332" />
         <entry key="..\:/Users/ukash/AndroidStudioProjects/ErpNextLatest/app/src/main/res/layout/stock_entry_fragment.xml" value="0.16770833333333332" />
+        <entry key="..\:/Users/ukash/AndroidStudioProjects/ErpNextLatest/app/src/main/res/layout/stock_ledger_fragment.xml" value="0.16770833333333332" />
         <entry key="..\:/Users/ukash/AndroidStudioProjects/ErpNextLatest/app/src/main/res/layout/stock_reconcilation_fragment.xml" value="0.16770833333333332" />
         <entry key="..\:/Users/ukash/AndroidStudioProjects/ErpNextLatest/app/src/main/res/layout/stock_summ_fragment.xml" value="0.16770833333333332" />
         <entry key="..\:/Users/ukash/AndroidStudioProjects/ErpNextLatest/app/src/main/res/layout/stock_summary_fragment.xml" value="0.16770833333333332" />

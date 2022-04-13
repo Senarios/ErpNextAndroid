@@ -5,6 +5,7 @@ import com.example.erpnext.models.CustomerRes;
 import com.example.erpnext.models.FcmRes;
 import com.example.erpnext.models.MyTaskRes;
 import com.example.erpnext.models.MyTaskUpdateRes;
+import com.example.erpnext.models.ReportSummaryRes;
 import com.example.erpnext.models.SPLocHisRes;
 import com.example.erpnext.models.SPLocHistoryRes;
 import com.example.erpnext.models.SalesPersonLocRes;
@@ -319,6 +320,9 @@ public interface ApiServices {
     @GET("method/frappe.desk.query_report.run")
     Call<ReportResponse> getReport(@Query("report_name") String report_name, @Query("filters") JSONObject jsonObject);
 
+    @GET("method/frappe.desk.query_report.run")
+    Call<ReportSummaryRes> getSpReportSummary(@Query(value = "report_name",encoded = true) String report_name,
+                                              @Query(value = "filters",encoded = true) String filters);
 
     @GET("method/frappe.desk.search.search_widget")
     Call<SearchItemResponse> searchItem(@Query("doctype") String doctype,

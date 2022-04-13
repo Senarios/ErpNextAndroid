@@ -117,8 +117,8 @@
 
                             <TextView
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/customer_name"
+                                android:layout_height="match_parent"
+                                android:text="Full Name"
                                 android:textColor="@color/newGrey" />
 
                             <TextView
@@ -132,7 +132,7 @@
                         </LinearLayout>
 
                         <AutoCompleteTextView
-                            android:id="@+id/customer_namee"
+                            android:id="@+id/full_name"
                             style="@style/editTextStyle"
                             android:layout_width="match_parent"
                             android:layout_height="@dimen/_35sdp"
@@ -169,7 +169,7 @@
                         </LinearLayout>
 
                         <AutoCompleteTextView
-                            android:id="@+id/phone_no"
+                            android:id="@+id/mobile"
                             style="@style/editTextStyle"
                             android:layout_width="match_parent"
                             android:layout_height="@dimen/_35sdp"
@@ -208,6 +208,114 @@
 
                         <AutoCompleteTextView
                             android:id="@+id/reference"
+                            style="@style/editTextStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/_35sdp"
+                            android:layout_below="@+id/field_label"
+                            android:completionThreshold="0" />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_10sdp"
+                        android:orientation="vertical"
+                        android:visibility="visible">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Customer Group"
+                                android:textColor="@color/newGrey" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="@dimen/_5sdp"
+                                android:layout_toRightOf="@id/field_label"
+                                android:text="*"
+                                android:textColor="@color/red"
+                                android:visibility="gone" />
+                        </LinearLayout>
+
+                        <AutoCompleteTextView
+                            android:id="@+id/customer_group"
+                            style="@style/editTextStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/_35sdp"
+                            android:layout_below="@+id/field_label"
+                            android:completionThreshold="0" />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_10sdp"
+                        android:orientation="vertical"
+                        android:visibility="visible">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Territory"
+                                android:textColor="@color/newGrey" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="@dimen/_5sdp"
+                                android:layout_toRightOf="@id/field_label"
+                                android:text="*"
+                                android:textColor="@color/red"
+                                android:visibility="gone" />
+                        </LinearLayout>
+
+                        <AutoCompleteTextView
+                            android:id="@+id/territory"
+                            style="@style/editTextStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/_35sdp"
+                            android:layout_below="@+id/field_label"
+                            android:completionThreshold="0" />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_10sdp"
+                        android:orientation="vertical"
+                        android:visibility="visible">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Type"
+                                android:textColor="@color/newGrey" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="@dimen/_5sdp"
+                                android:layout_toRightOf="@id/field_label"
+                                android:text="*"
+                                android:textColor="@color/red"
+                                android:visibility="gone" />
+                        </LinearLayout>
+
+                        <AutoCompleteTextView
+                            android:id="@+id/type"
                             style="@style/editTextStyle"
                             android:layout_width="match_parent"
                             android:layout_height="@dimen/_35sdp"
@@ -258,7 +366,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_10sdp"
                         android:orientation="vertical"
-                        android:visibility="visible">
+                        android:visibility="gone">
 
                         <LinearLayout
                             android:layout_width="wrap_content"
@@ -295,7 +403,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_10sdp"
                         android:orientation="vertical"
-                        android:visibility="visible">
+                        android:visibility="gone">
 
                         <LinearLayout
                             android:layout_width="wrap_content"
@@ -331,6 +439,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:text="@string/get_current_location"
+                        android:visibility="gone"
                         android:layout_gravity="right"
                         android:id="@+id/cus_current_loc"/>
                 </LinearLayout>

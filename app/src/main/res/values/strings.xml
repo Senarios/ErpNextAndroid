@@ -533,6 +533,7 @@
     <string name="totalstocksummaryy">Total Stock Summary</string>
 
     <string name="settings">Settings</string>
+    <string name="sp_report_summary">Sales Person Summary</string>
     <string name="general">General</string>
     <string name="language">Language</string>
     <string name="about">About</string>
@@ -547,6 +548,8 @@
     <string name="pos_opening_entry">POS Opening Entry</string>
     <string name="pos_closing_entry">POS Closing Entry</string>
     <string name="custom_documents">Custom Documents</string>
+    <string name="summary_report">Summary Report</string>
+    <string name="sp_commission_summary">Sales person Commission Summary</string>
     <string name="sd">SD</string>
 
     <string name="not_in_shop_location">You are not in shop Location</string>

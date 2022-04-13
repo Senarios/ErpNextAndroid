@@ -1,5 +1,5 @@
 <resources>
-    <string name="development" translatable="false">http://75.119.143.175/api/</string>
+    <string name="development" translatable="false">https://app.izatafghan.com/api/</string>
     <string name="uploads" translatable="false">https://newhellowork.londonfashionoriginals.com/</string>
     <string name="authURl" translatable="false">http://newhellowork.londonfashionoriginals.com/</string>
     <string name="chatBaseURL" translatable="false">http://pusher.londonfashionoriginals.com/</string>

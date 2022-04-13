@@ -580,6 +580,9 @@
     <string name="logout">خروج</string>
     <string name="search_by_customer_name">جستجو بر اساس نام مشتری</string>
     <string name="location">محل</string>
+    <string name="sp_report_summary">خلاصه فروشندگان</string>
+    <string name="summary_report">گزارش خلاصه</string>
+    <string name="sp_commission_summary">خلاصه کمیسیون شخص فروش</string>
 
     <string-array name="itenms">
         <item>نقطه فروش / پی او ایس</item>

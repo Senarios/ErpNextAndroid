@@ -89,6 +89,7 @@ public class RequestCodes {
         public static final int MENU = 44;
         public static final int ITEM_DETAIL = 45;
         public static final int DOCTYPE = 46;
+        public static final int SP_REPORT_SUMMARY = 4896;
         public static final int REPORT_VIEW = 47;
         public static final int SEARCH_RECONCILIATION_REPORT_VIEW = 4007;
         public static final int SEARCH_PURCHASE_REPORT_VIEW = 4357;

@@ -48,6 +48,7 @@ import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.request.transition.Transition;
 import com.example.erpnext.R;
 import com.example.erpnext.activities.AddCustomerActivity;
+import com.example.erpnext.activities.AddCustomerFrappeActivity;
 import com.example.erpnext.adapters.ShowCustomerAdapter;
 import com.example.erpnext.adapters.StockListsAdapter;
 import com.example.erpnext.app.MainApp;
